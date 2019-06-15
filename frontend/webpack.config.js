@@ -1,10 +1,10 @@
-const webpack = require("webpack"); // access built-in plugins
+// const webpack = require("webpack"); // access built-in plugins
 const glob = require("glob"); // sync all css files, no need to import css
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin'); // to minize js file
-const HtmlWebpackPlugin = require('html-webpack-plugin'); // to build from html template
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin"); // to minize js file
+const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html template
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // to extract css into it own file
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const ImageminPlugin = require('imagemin-webpack-plugin').default
+const ImageminPlugin = require("imagemin-webpack-plugin").default
 
 let plugins = [
     new HtmlWebpackPlugin({
