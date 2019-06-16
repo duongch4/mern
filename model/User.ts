@@ -1,32 +1,72 @@
-export interface IUser {
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-}
-
-import { Document, Schema, Model, model} from "mongoose";
+import * as mongoose from "mongoose";
+// import * as bcryptjs from "bcryptjs";
+import Auth from "../utils/Auth";
 // import { IUser } from "../interfaces/user";
 
-export interface IUserModel extends IUser, Document {
-  fullName(): string;
+export interface IUser extends mongoose.Document {
+    dateCreated: Date;
+    email: string;
+    firstName: string;
+    lastName: string;
+    fullName(): string;
 }
 
-export var UserSchema: Schema = new Schema({
-  createdAt: Date,
-  email: String,
-  firstName: String,
-  lastName: String
+const UserSchema: mongoose.Schema = new mongoose.Schema(
+    {
+        dateCreated: Date,
+        email: {
+            type: String,
+            index: { unique: true },
+            required: true
+        },
+        firstName: String,
+        lastName: String,
+        avatar: {
+            type: String,
+            default: "Avatar URL"
+        },
+        genres: [String],
+        movies: [String],
+
+        google: {
+            id: String
+        },
+        facebook: {
+            id: String
+        },
+        github: {
+            id: String
+        },
+        local: {
+            password: String
+        }
+    }
+);
+
+UserSchema.pre<IUser>("save", function (next) {
+    let user = this;
+    let now = new Date();
+    this.dateCread
+    if (!user..dateCreated) {
+        user.dateCreated = now;
+    }
+    if (!user.isModified("password"))
+        next();
 });
-UserSchema.pre("save", (next) => {
-  let now = new Date();
-  if (!this.createdAt) {
-    this.createdAt = now;
-  }
-  next();
-});
-UserSchema.methods.fullName = function(): string {
-  return (this.firstName.trim() + " " + this.lastName.trim());
+
+UserSchema.methods.fullName = (): string => {
+    return `${this.firstName.trim()} ${this.lastName.trim()}`;
 };
+
+UserSchema.methods.getHash = (password: string): string => {
+    Auth.hashPassword(password, 12, (err, hash) => {
+        if (err) {
+            throw Error(`Error while Hashing: ${err.message}`);
+        } else {
+            // store the new hash in the database etc
+        }
+    });
+}
 
 export const User: Model<IUserModel> = model<IUserModel>("User", UserSchema);
 
@@ -48,10 +88,10 @@ export const User: Model<IUserModel> = model<IUserModel>("User", UserSchema);
 //       next();
 //       return;
 //     }
-  
+
 //     //get the id
 //     var id = req.params[PARAM_ID];
-  
+
 //     //get authorized user
 //     this.authorize(req, res, next).then((user: IUserModel) => {
 //       //make sure the user being deleted is the authorized user
@@ -60,10 +100,10 @@ export const User: Model<IUserModel> = model<IUserModel>("User", UserSchema);
 //         next();
 //         return;
 //       }
-  
+
 //       //log
 //       console.log(`[UsersApi.get] Retrieving user: {id: ${req.params.id}}.`);
-  
+
 //       //find user
 //       User.findById(id).then((user: IUserModel) => {
 //         //verify user was found
@@ -72,7 +112,7 @@ export const User: Model<IUserModel> = model<IUserModel>("User", UserSchema);
 //           next();
 //           return;
 //         }
-  
+
 //         //send json response
 //         res.json(user);
 //         next();
