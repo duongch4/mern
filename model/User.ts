@@ -9,6 +9,7 @@ export interface IUser extends mongoose.Document {
     firstName: string;
     lastName: string;
     fullName(): string;
+    local: {password: string};
 }
 
 const UserSchema: mongoose.Schema = new mongoose.Schema(
@@ -45,30 +46,35 @@ const UserSchema: mongoose.Schema = new mongoose.Schema(
 
 UserSchema.pre<IUser>("save", function (next) {
     let user = this;
+
     let now = new Date();
-    this.dateCread
-    if (!user..dateCreated) {
+    if (!user.dateCreated) {
         user.dateCreated = now;
     }
-    if (!user.isModified("password"))
-        next();
+    
+    if (!user.isModified("local.password")) {
+        return next();
+    }
+
+    if (user.local.password) {
+        Auth.hashPassword(user.local.password, 12, (err, hash) => {
+            if (err) {
+                return next(err);
+            }
+            else {
+                user.local.password = hash;
+                return next();
+            }
+        });
+    }
 });
 
 UserSchema.methods.fullName = (): string => {
     return `${this.firstName.trim()} ${this.lastName.trim()}`;
 };
 
-UserSchema.methods.getHash = (password: string): string => {
-    Auth.hashPassword(password, 12, (err, hash) => {
-        if (err) {
-            throw Error(`Error while Hashing: ${err.message}`);
-        } else {
-            // store the new hash in the database etc
-        }
-    });
-}
 
-export const User: Model<IUserModel> = model<IUserModel>("User", UserSchema);
+export const User: mongoose.Model<IUser> = mongoose.model<IUser>("User", UserSchema);
 
 
 // /**
