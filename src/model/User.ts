@@ -1,81 +1,99 @@
 import * as mongoose from "mongoose";
-// import * as bcryptjs from "bcryptjs";
 import Auth from "../utils/Auth";
-// import { IUser } from "../interfaces/user";
+import * as crypto from "crypto";
+
+export interface IAuthToken {
+    accessToken: string;
+    kind: string;
+}
 
 export interface IUser extends mongoose.Document {
-    dateCreated: Date;
     email: string;
-    firstName: string;
-    lastName: string;
-    fullName(): string;
-    local: {password: string};
+    password: string;
+    passwordResetToken: string;
+    passwordResetExpires: Date;
+
+    facebook: string;
+    tokens: IAuthToken;
+
+    profile: {
+        firstName: string;
+        lastName: string;
+        gender: string,
+        location: string,
+        website: string,
+        picture: string
+    };
+
+    getGravatar: (size: number) => string;
+    getFullName: () => string;
 }
 
 const UserSchema: mongoose.Schema = new mongoose.Schema(
     {
-        dateCreated: Date,
-        email: {
-            type: String,
-            index: { unique: true },
-            required: true
+        email: { type: String, unique: true },
+        password: String,
+        passwordResetToken: String,
+        passwordResetExpires: Date,
+
+        facebook: String,
+        twitter: String,
+        google: String,
+        tokens: Array,
+
+        profile: {
+            firstName: String,
+            lastName: String,
+            gender: String,
+            location: String,
+            website: String,
+            picture: String
         },
-        firstName: String,
-        lastName: String,
-        avatar: {
-            type: String,
-            default: "Avatar URL"
-        },
+
         genres: [String],
         movies: [String],
-
-        google: {
-            id: String
-        },
-        facebook: {
-            id: String
-        },
-        github: {
-            id: String
-        },
-        local: {
-            password: String
-        }
+    },
+    {
+        timestamps: true
     }
 );
 
-UserSchema.pre<IUser>("save", function (next) {
-    let user = this;
+UserSchema.pre<IUser>("save", function save(next) {
+    const user = this;
 
-    let now = new Date();
-    if (!user.dateCreated) {
-        user.dateCreated = now;
-    }
-    
-    if (!user.isModified("local.password")) {
+    if (!user.isModified("password")) {
         return next();
     }
 
-    if (user.local.password) {
-        Auth.hashPassword(user.local.password, 12, (err, hash) => {
+    if (user.password) {
+        Auth.hashPassword(user.password, 12, (err: mongoose.Error, hash) => {
             if (err) {
                 return next(err);
             }
             else {
-                user.local.password = hash;
+                user.password = hash;
                 return next();
             }
         });
     }
 });
 
-UserSchema.methods.fullName = (): string => {
+UserSchema.methods.getFullName = function (): string {
     return `${this.firstName.trim()} ${this.lastName.trim()}`;
 };
 
+/**
+ * Helper method for getting user's gravatar.
+ */
+UserSchema.methods.getGravatar = function (size: number = 200): string {
+    if (!this.email) {
+        return `https://gravatar.com/avatar/?s=${size}&d=retro`;
+    }
+    const md5 = crypto.createHash("md5").update(this.email).digest("hex");
+    return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
+};
 
 export const User: mongoose.Model<IUser> = mongoose.model<IUser>("User", UserSchema);
-
 
 // /**
 //  * Get a user
