@@ -1,28 +1,29 @@
 import * as express from "express";
 import * as session from "express-session";
+import * as cookieParser from "cookie-parser";
 import * as flash from "express-flash";
 
 import * as compression from "compression";  // compresses requests
 import * as bodyParser from "body-parser";
 import * as lusca from "lusca";
-import * as mongoose from "mongoose";
+
 import * as mongo from "connect-mongo";
+import * as mongoose from "mongoose";
+import * as bluebird from "bluebird";
 
 import * as path from "path";
 
 import * as passport from "passport";
-import * as bluebird from "bluebird";
 
 import { MONGODB_URI, SESSION_SECRET } from "./utils/secrets";
 
-const MongoStore = mongo(session);
+import * as routes from "./routes";
 
 // Controllers (route handlers)
-import * as homeController from "./controllers/home";
+// import * as homeController from "./controllers/home";
 // import * as userController from "./controllers/user";
 // import * as apiController from "./controllers/api";
 // import * as contactController from "./controllers/contact";
-
 
 // API keys and Passport configuration
 // import * as passportConfig from "./auth/passport";
@@ -31,6 +32,7 @@ import * as homeController from "./controllers/home";
 const app = express();
 
 // Connect to MongoDB
+const MongoStore = mongo(session);
 const mongoUrl = MONGODB_URI;
 (mongoose as any).Promise = bluebird;
 
@@ -42,52 +44,74 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true }).then(
 
 // Express configuration
 app.set("port", process.env.PORT || 3000);
-app.set("views", path.join(__dirname, "../views"));
-app.set("view engine", "pug");
+
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser(SESSION_SECRET));
 app.use(session({
-    resave: true,
-    saveUninitialized: true,
+    cookie: { maxAge: 60000 },
     secret: SESSION_SECRET,
+    resave: true,
+    saveUninitialized: false,
     store: new MongoStore({
         url: mongoUrl,
         autoReconnect: true
     })
 }));
-app.use(passport.initialize());
-app.use(passport.session());
+
+// Passport
+// app.use(passport.initialize());
+// app.use(passport.session());
+
+// Flash
 app.use(flash());
+// Custom flash middleware -- from Ethan Brown's book, 'Web Development with Node & Express'
+app.use((req, res, next) => {
+    // if there's a flash message in the session request, make it available in the response, then delete it
+    res.locals.sessionFlash = req.session.sessionFlash;
+    delete req.session.sessionFlash;
+    next();
+});
+
+// Lusca
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
+
+// Set Headers to allow Cross Origin Requests
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+    res.setHeader("Access-Control-Allow-Headers",
+        "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, " +
+        "Access-Control-Request-Method, Access-Control-Request-Headers");
+    next();
+});
+
+// Set Request User to be Current User
 app.use((req, res, next) => {
     res.locals.user = req.user;
     next();
 });
-app.use((req, res, next) => {
-    // After successful login, redirect back to the intended page
-    if (!req.user &&
-        req.path !== "/login" &&
-        req.path !== "/signup" &&
-        !req.path.match(/^\/auth/) &&
-        !req.path.match(/\./)) {
-        req.session.returnTo = req.path;
-    } else if (req.user &&
-        req.path == "/account") {
-        req.session.returnTo = req.path;
-    }
-    next();
-});
 
-app.use(
-    express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
-);
+// // Set Static Assets
+// app.use(
+//     express.static(path.join(__dirname, "frontend"), { maxAge: 31557600000 })
+// );
+
+// Connect all our routes to our application
+// app.use("/", routes);
+
+// If request doesn't match api => return the main index.html => react-router render the route in the client
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "index.html"));
+});
 
 /**
  * Primary app routes.
  */
-app.get("/", homeController.index);
+// app.get("/", homeController.index);
 // app.get("/login", userController.getLogin);
 // app.post("/login", userController.postLogin);
 // app.get("/logout", userController.logout);
