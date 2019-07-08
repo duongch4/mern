@@ -9,7 +9,7 @@
         "install-frontend": "cd frontend && npm install",
         "build-frontend": "cd frontend && npm run prod-build",
         "delete-dev": "ts-node deleteDev.ts",
-        "start": "npm run build && npm run serve",
+        "start": "npm run serve",
         "build": "npm run build-ts && npm run tslint && npm run copy-frontend",
         "build-ts": "tsc",
         "tslint": "tslint -c tslint.json -p tsconfig.json",
