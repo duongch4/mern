@@ -19,6 +19,8 @@ import { MONGODB_URI, SESSION_SECRET } from "./utils/secrets";
 
 import * as routes from "./routes";
 
+import * as errorHandler from "errorhandler";
+
 // Controllers (route handlers)
 // import * as homeController from "./controllers/home";
 // import * as userController from "./controllers/user";
@@ -29,84 +31,125 @@ import * as routes from "./routes";
 // import * as passportConfig from "./auth/passport";
 
 // Create Express server
-const app = express();
+export default class App {
+    private app: express.Application;
 
-// Connect to MongoDB
-const MongoStore = mongo(session);
-const mongoUrl = MONGODB_URI;
-(mongoose as any).Promise = bluebird;
+    constructor() {
+        this.app = express();
+    }
 
-mongoose.connect(mongoUrl, { useNewUrlParser: true }).then(
-    () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
-).catch(
-    (err) => { console.log("MongoDB connection error. Please make sure MongoDB is running. " + err); }
-);
+    public config(): void {
+        const MongoStore = mongo(session);
+        (mongoose as any).Promise = bluebird;
+        mongoose.connect(MONGODB_URI, { useNewUrlParser: true }).then(
+            () => { console.log(`========== MongoDB is connected at: ${MONGODB_URI} ==========`); },
+        ).catch(
+            (err) => { console.log(`!!! MongoDB connection error. Please make sure MongoDB is running:: ${err}`); }
+        );
 
-// Express configuration
-app.set("port", process.env.PORT || 3000);
+        this.app.set("port", process.env.PORT || 3000);
+        this.app.use(compression());
+        this.setBodyParser();
+        this.setSession(MongoStore);
+        this.setFlash();
+        this.setLusca();
+        this.setCORS();
+        this.setCurrUser();
+        this.setRoutes();
+        this.setStaticFrontend();
+        this.handleError();
+    }
 
-app.use(compression());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser(SESSION_SECRET));
-app.use(session({
-    cookie: { maxAge: 60000 },
-    secret: SESSION_SECRET,
-    resave: true,
-    saveUninitialized: false,
-    store: new MongoStore({
-        url: mongoUrl,
-        autoReconnect: true
-    })
-}));
+    public listen(): void {
+        this.app.listen(this.app.get("port"), () => {
+            console.log(
+                "\n========== App is running at PORT %d in %s mode ==========",
+                this.app.get("port"),
+                this.app.get("env")
+            );
+            if (process.env.NODE_ENV !== "production") {
+                console.log("========== Press CTRL-C to stop ==========\n");
+            }
+        });
+    }
 
-// Passport
-// app.use(passport.initialize());
-// app.use(passport.session());
+    private setBodyParser() {
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: true }));
+    }
 
-// Flash
-app.use(flash());
-// Custom flash middleware -- from Ethan Brown's book, 'Web Development with Node & Express'
-app.use((req, res, next) => {
-    // if there's a flash message in the session request, make it available in the response, then delete it
-    res.locals.sessionFlash = req.session.sessionFlash;
-    delete req.session.sessionFlash;
-    next();
-});
+    private setSession(MongoStore: mongo.MongoStoreFactory): void {
+        this.app.use(cookieParser(SESSION_SECRET));
+        this.app.use(session({
+            cookie: { maxAge: 60000 },
+            secret: SESSION_SECRET,
+            resave: true,
+            saveUninitialized: false,
+            store: new MongoStore({
+                url: MONGODB_URI,
+                autoReconnect: true
+            })
+        }));
+    }
 
-// Lusca
-app.use(lusca.xframe("SAMEORIGIN"));
-app.use(lusca.xssProtection(true));
+    private setFlash(): void {
+        this.app.use(flash());
+        // Custom flash middleware -- from Ethan Brown's book, 'Web Development with Node & Express'
+        this.app.use((req, res, next) => {
+            // if there's a flash message in the session request, make it available in the response, then delete it
+            res.locals.sessionFlash = req.session.sessionFlash;
+            delete req.session.sessionFlash;
+            next();
+        });
+    }
 
-// Set Headers to allow Cross Origin Requests
-app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
-    res.setHeader("Access-Control-Allow-Headers",
-        "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, " +
-        "Access-Control-Request-Method, Access-Control-Request-Headers");
-    next();
-});
+    private setLusca(): void {
+        this.app.use(lusca.xframe("SAMEORIGIN"));
+        this.app.use(lusca.xssProtection(true));
+    }
 
-// Set Request User to be Current User
-app.use((req, res, next) => {
-    res.locals.user = req.user;
-    next();
-});
+    private setCORS(): void {
+        this.app.use((req, res, next) => {
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Access-Control-Allow-Credentials", "true");
+            res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+            res.setHeader("Access-Control-Allow-Headers",
+                "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, " +
+                "Access-Control-Request-Method, Access-Control-Request-Headers");
+            next();
+        });
+    }
 
-// // Set Static Assets
-// app.use(
-//     express.static(path.join(__dirname, "frontend"), { maxAge: 31557600000 })
-// );
+    private setCurrUser(): void {
+        this.app.use((req, res, next) => {
+            res.locals.user = req.user;
+            next();
+        });
+    }
 
-// Connect all our routes to our application
-// app.use("/", routes);
+    private setRoutes(): void {
+        // Connect all our routes to our application
+        // app.use("/", routes);
+    }
 
-// If request doesn't match api => return the main index.html => react-router render the route in the client
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "frontend", "index.html"));
-});
+    private setStaticFrontend(): void {
+        // Set Static Assets On Frontend: ABSOLUTELY REQUIRED!!!
+        this.app.use(
+            express.static(path.join(__dirname, "frontend"), { maxAge: 31557600000 })
+        );
+        // If request doesn't match api => return the main index.html => react-router render the route in the client
+        this.app.get("*", (req, res) => {
+            res.sendFile(path.join(__dirname, "frontend", "index.html"));
+        });
+    }
+
+    private handleError(): void {
+        // Error Handler. Provides full stack - remove for production
+        if (process.env.NODE_ENV !== "production") {
+            this.app.use(errorHandler());
+        }
+    }
+}
 
 /**
  * Primary app routes.
@@ -143,4 +186,4 @@ app.get("*", (req, res) => {
 //   res.redirect(req.session.returnTo || "/");
 // });
 
-export default app;
+// export default app;
