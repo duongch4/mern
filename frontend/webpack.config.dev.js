@@ -5,28 +5,42 @@ const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // to extract css into it own file
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const ImageminPlugin = require("imagemin-webpack-plugin").default
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin'); // to use with transpileOnly in ts-loader
+const ForkTsCheckerNotifierWebpackPlugin = require('fork-ts-checker-notifier-webpack-plugin');
 
 let plugins = [
     new HtmlWebpackPlugin({
+        inject: true,
         template: "./src/index.html"
     }),
     new MiniCssExtractPlugin({
-        filename: "[name].[hash].css",
-        chunkfilename: "[id].[hash].css"
+        filename: "[name].css",
+        chunkfilename: "[id].css"
     }),
-    new ImageminPlugin({})
+    new ImageminPlugin({}),
+    new ForkTsCheckerWebpackPlugin({
+        tslint: true, 
+        useTypescriptIncrementalApi: true
+    }),
+    new ForkTsCheckerNotifierWebpackPlugin({ 
+        title: 'TypeScript', 
+        excludeWarnings: false 
+    }),
 ];
 
 module.exports = {
     entry: ["./src/index.tsx"].concat(glob.sync("./src/**/*.scss")),
     output: {
-        filename: "[name].[contenthash].js",
+        filename: "[name].js",
         path: `${__dirname}/dist`
     },
     
     devServer: {
+        clientLogLevel: "warning",
+        open: true,
         contentBase: "./dist",
-        historyApiFallback: true
+        historyApiFallback: true,
+        stats: "errors-only"
     },
     devtool: "source-map",
     resolve: {
@@ -59,7 +73,7 @@ module.exports = {
                     {
                         loader: "file-loader",
                         options: {
-                            name: "[hash]/[name].[ext]",
+                            name: "[name].[ext]",
                             outputPath: "assets"
                         }
                     }
@@ -67,7 +81,14 @@ module.exports = {
             },
             {
                 test: /\.tsx?$/,
-                loader: "ts-loader"
+                use: [
+                    {
+                        loader: "ts-loader",
+                        options: { 
+                            transpileOnly: true 
+                        }
+                    }
+                ]
             },
             {
                 enforce: "pre",
