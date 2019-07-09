@@ -4,10 +4,6 @@
     "description": "MERN App Backend",
     "main": "server.js",
     "scripts": {
-        "deploy": "npm run frontend-prep-deploy && npm run backend-prep-deploy && npm run serve",
-        "frontend-prep-deploy": "npm run install-frontend-deploy && npm run build-frontend",
-        "backend-prep-deploy": "npm install --only=dev && npm install && npm run build && npm run delete-dev && npm prune --production",
-        "install-frontend-deploy": "cd frontend && npm install node-sass --save-dev && npm install --only=dev && npm install",
         "install-frontend": "cd frontend && npm install",
         "build-frontend": "cd frontend && npm run prod-build",
         "delete-dev": "ts-node deleteDev.ts",
