@@ -38,6 +38,7 @@ let plugins = [
 ];
 
 module.exports = {
+    mode: "production",
     entry: ["./src/index.tsx"].concat(glob.sync("./src/**/*.scss")),
     output: {
         filename: "[name].[contenthash].js",

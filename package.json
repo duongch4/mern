@@ -6,10 +6,10 @@
     "scripts": {
         "build-prod": "npm run prep-frontend && npm run prep-backend",
         "heroku-postbuild": "npm run build-prod",
-        "prep-frontend": "cd frontend && npm install && npm run prod-build",
+        "prep-frontend": "cd frontend && npm install && npm run build",
         "prep-backend": "npm install && npm run build && npm run delete-dev && rimraf deleteDev.ts && npm prune --production",
         "install-frontend": "cd frontend && npm install",
-        "build-frontend": "cd frontend && npm run prod-build",
+        "build-frontend": "cd frontend && npm run build",
         "delete-dev": "ts-node deleteDev.ts",
         "build": "npm run build-ts && npm run tslint && npm run copy-dist-frontend",
         "build-ts": "tsc",

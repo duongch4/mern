@@ -29,6 +29,7 @@ let plugins = [
 ];
 
 module.exports = {
+    mode: "development",
     entry: ["./src/index.tsx"].concat(glob.sync("./src/**/*.scss")),
     output: {
         filename: "[name].js",
