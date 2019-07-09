@@ -4,7 +4,8 @@
     "description": "MERN App Backend",
     "main": "server.js",
     "scripts": {
-        "heroku-postbuild": "npm run prep-frontend && npm run prep-backend",
+        "build-prod": "npm run prep-frontend && npm run prep-backend",
+        "heroku-postbuild": "npm run build-prod",
         "prep-frontend": "cd frontend && npm install && npm run prod-build",
         "prep-backend": "npm install && npm run build && npm run delete-dev && npm prune --production",
         "install-frontend": "cd frontend && npm install",
