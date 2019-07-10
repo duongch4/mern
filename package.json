@@ -7,7 +7,7 @@
         "build-prod": "npm install && npm run build && ts-node deleteDev.ts && rimraf deleteDev.ts && npm prune --production",
         "heroku-postbuild": "npm run build-prod",
         "prebuild": "rimraf ./dist/*",
-        "build": "webpack --progress --config=webpack.config.prod.js",
+        "build": "webpack --config=webpack.config.prod.js",
         "build-dev": "webpack --progress --config=webpack.config.dev.js",
         "start": "npm run serve",
         "serve": "node dist/server.js",
