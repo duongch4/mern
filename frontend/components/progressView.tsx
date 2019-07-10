@@ -1,19 +1,19 @@
 import * as React from "react";
 import { ProgressBar } from "./progressBar";
 
-interface ProgressViewState {
+interface IProgressViewState {
     isFailed: boolean;
     isLoading: boolean;
 }
 
-interface ProgressViewProps {
+interface IProgressViewProps {
     promise: Promise<any>;
     content?: () => any;
 }
 
-export class ProgressView extends React.Component<ProgressViewProps, ProgressViewState> {
+export class ProgressView extends React.Component<IProgressViewProps, IProgressViewState> {
 
-    constructor(props: ProgressViewProps) {
+    constructor(props: IProgressViewProps) {
         super(props);
         this.state = {
             isFailed: false,
@@ -27,13 +27,13 @@ export class ProgressView extends React.Component<ProgressViewProps, ProgressVie
         }
     }
 
-    public componentWillReceiveProps(newProps: ProgressViewProps) {
+    public componentWillReceiveProps(newProps: IProgressViewProps) {
         if (newProps.promise !== this.props.promise) {
             this.asignToPromise(newProps);
         }
     }
 
-    public async asignToPromise(newProps: ProgressViewProps): Promise<void> {
+    public async asignToPromise(newProps: IProgressViewProps): Promise<void> {
         if (newProps.promise !== null) {
             try {
                 await newProps.promise;
