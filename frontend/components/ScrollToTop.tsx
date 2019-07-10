@@ -6,7 +6,7 @@ import {
 
 class ScrollToTopComponent extends React.Component<any, any> {
 
-    public componentWillReceiveProps(prevProps) {
+    public componentWillReceiveProps(prevProps: any) {
         if (this.props.location !== prevProps.location) {
             window.scrollTo(0, 0);
         }
