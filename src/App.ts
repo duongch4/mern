@@ -17,8 +17,6 @@ import * as passport from "passport";
 
 import { MONGODB_URI, SESSION_SECRET } from "./utils/secrets";
 
-import * as routes from "./routes";
-
 import * as errorHandler from "errorhandler";
 
 import { Server } from "@overnightjs/core";
