@@ -1,4 +1,4 @@
-import App from "./Idx";
+import App from "./App";
 
 const app = new App();
 app.config();
