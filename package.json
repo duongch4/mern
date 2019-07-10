@@ -11,6 +11,7 @@
         "install-frontend": "cd frontend && npm install",
         "build-frontend": "cd frontend && npm run build",
         "delete-dev": "ts-node deleteDev.ts",
+        "prebuild": "rimraf ./dist/*",
         "build": "npm run build-ts && npm run tslint && npm run copy-dist-frontend",
         "build-ts": "tsc",
         "tslint": "tslint -c tslint.json -p tsconfig.json",
