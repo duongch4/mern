@@ -2,7 +2,7 @@
     "name": "backend",
     "version": "1.0.0",
     "description": "MERN App Backend",
-    "main": "server.js",
+    "main": "dist/server.js",
     "scripts": {
         "build-prod": "npm run prep-frontend && npm run prep-backend",
         "heroku-postbuild": "npm run build-prod",
@@ -30,6 +30,8 @@
     "author": "DBC",
     "license": "ISC",
     "dependencies": {
+        "@overnightjs/core": "^1.6.9",
+        "@overnightjs/logger": "^1.1.9",
         "bcryptjs": "^2.4.3",
         "bluebird": "^3.5.5",
         "body-parser": "^1.19.0",

@@ -21,6 +21,10 @@ import * as routes from "./routes";
 
 import * as errorHandler from "errorhandler";
 
+import { Server } from "@overnightjs/core";
+import { Logger } from "@overnightjs/logger";
+import * as controllers from "./controllers";
+
 // Controllers (route handlers)
 // import * as homeController from "./controllers/home";
 // import * as userController from "./controllers/user";
@@ -31,11 +35,12 @@ import * as errorHandler from "errorhandler";
 // import * as passportConfig from "./auth/passport";
 
 // Create Express server
-export default class App {
-    private app: express.Application;
+export default class App extends Server {
+    // private app: express.Application;
 
     constructor() {
-        this.app = express();
+        // this.app = express();
+        super(true);
     }
 
     public config(): void {
@@ -128,8 +133,14 @@ export default class App {
     }
 
     private setRoutes(): void {
-        // Connect all our routes to our application
-        // app.use("/", routes);
+        const controllerInstances = [];
+        for (const name in controllers) {
+            if (controllers.hasOwnProperty(name)) {
+                const controller = (controllers as any)[name];
+                controllerInstances.push(new controller());
+            }
+        }
+        super.addControllers(controllerInstances);
     }
 
     private setStaticFrontend(): void {

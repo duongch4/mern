@@ -31,7 +31,7 @@ let plugins = [
     }),
     new ImageminPlugin({}),
     new ForkTsCheckerWebpackPlugin({
-        async: false,
+        async: false, // check Typing first then build
         useTypescriptIncrementalApi: true,
         memoryLimit: 4096
     }),

@@ -5,6 +5,9 @@
         "noImplicitAny": true,
         "removeComments": true,
         "module": "commonjs",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
         "target": "es5",
         "lib": [
             "dom",
