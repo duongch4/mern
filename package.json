@@ -12,7 +12,7 @@
         "start": "npm run serve",
         "serve": "node dist/server.js",
         "watch-frontend": "webpack-dev-server --open --stack=frontend --config=webpack.config.dev.js",
-        "watch-backend": "nodemon --config=nodemon.json",
+        "watch-backend": "nodemon --config \"./nodemon.json\"",
         "watch": "concurrently -k -p \"[{name}]\" -n \"React,Node\" -c \"yellow.bold,cyan.bold\" \"npm run watch-frontend\" \"npm run watch-backend\"",
         "test": "jest --forceExit --coverage --verbose",
         "watch-test": "npm run test -- --watchAll",
