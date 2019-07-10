@@ -5,14 +5,17 @@ shell.rm("-rf", "./frontend/");
 shell.rm("-rf", "./src/");
 shell.rm("./README.md");
 shell.rm("./.gitignore");
-shell.rm("copyFrontend.ts");
-glob("./ts*.json", (err: Error, files: string[]) => {
-    if (err) {
-        console.log("No files matching './*.json' pattern");
-    }
-    else {
-        for (const file of files) {
-            shell.rm(file);
+shell.rm("./nodemon.json");
+const patterns = ["./ts*.json", "./webpack*.js"];
+for (const pattern of patterns) {
+    glob(pattern, (err: Error, files: string[]) => {
+        if (err) {
+            console.log("No files matching pattern");
         }
-    }
-});
+        else {
+            for (const file of files) {
+                shell.rm(file);
+            }
+        }
+    });
+}

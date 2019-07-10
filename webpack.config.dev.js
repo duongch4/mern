@@ -1,4 +1,4 @@
-// const webpack = require("webpack"); // access built-in plugins
+const webpack = require("webpack"); // access built-in plugins
 const glob = require("glob"); // sync all css files, no need to import css
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin"); // to minize js file
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html template
@@ -36,32 +36,55 @@ const commonModuleRules = [
     }
 ];
 
-const commonOptMinimizer = [
-    new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true
-    })
-];
+const commonOptMinimizer = () => {
+    return [
+        new UglifyJsPlugin({
+            cache: true,
+            parallel: true,
+            sourceMap: true
+        })
+    ];
+};
+
+const commonPlugins = () => {
+    return [
+        new ForkTsCheckerWebpackPlugin({
+            tslint: true,
+            useTypescriptIncrementalApi: true
+        }),
+        new ForkTsCheckerNotifierWebpackPlugin({
+            title: 'TypeScript',
+            excludeWarnings: false
+        })
+    ];
+};
 
 const frontend = {
     entry: ["./frontend/index.tsx"].concat(glob.sync("./frontend/**/*.scss")),
     output: {
         filename: "[name].js",
-        path: `${__dirname}/distDev/frontend`
+        path: `${__dirname}/dist/frontend`
     },
     devServer: {
-        clientLogLevel: "warning",
         open: true,
-        contentBase: "./distDev/frontend",
+        contentBase: "./dist/frontend",
+        compress: true,
         historyApiFallback: true,
-        stats: "errors-only"
+        hot: true,
+        clientLogLevel: "warn",
+        stats: "errors-only",
+        proxy: [
+            {
+                context: ["/auth", "/api"],
+                target: "http://localhost:3000"
+            }
+        ]
     },
     module: {
         rules: [
             ...commonModuleRules,
             {
-                test: /\.scss$/,
+                test: /\.s?css$/,
                 use: [
                     MiniCssExtractPlugin.loader,
                     {
@@ -75,7 +98,7 @@ const frontend = {
                         options: {
                             sourceMap: true
                         }
-                    }
+                    },
                 ]
             },
             {
@@ -94,11 +117,12 @@ const frontend = {
     },
     optimization: {
         minimizer: [
-            ...commonOptMinimizer,
+            ...commonOptMinimizer(),
             new OptimizeCSSAssetsPlugin({})
         ]
     },
     plugins: [
+        new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
             inject: true,
             template: "./frontend/index.html"
@@ -108,14 +132,7 @@ const frontend = {
             chunkfilename: "[id].css"
         }),
         new ImageminPlugin({}),
-        new ForkTsCheckerWebpackPlugin({
-            tslint: true,
-            useTypescriptIncrementalApi: true
-        }),
-        new ForkTsCheckerNotifierWebpackPlugin({
-            title: 'TypeScript',
-            excludeWarnings: false
-        })
+        ...commonPlugins()
     ]
 };
 
@@ -123,31 +140,15 @@ const backend = {
     entry: ["./src/server.ts"],
     output: {
         filename: "server.js",
-        path: `${__dirname}/distDev`
+        path: `${__dirname}/dist`
     },
     module: {
         rules: commonModuleRules
     },
     optimization: {
-        minimizer: [
-            // new UglifyJsPlugin({
-            //     cache: true,
-            //     parallel: true,
-            //     sourceMap: true
-            // })
-            ...commonOptMinimizer
-        ]
+        minimizer: commonOptMinimizer()
     },
-    plugins: [
-        new ForkTsCheckerWebpackPlugin({
-            tslint: true,
-            useTypescriptIncrementalApi: true
-        }),
-        new ForkTsCheckerNotifierWebpackPlugin({
-            title: 'TypeScript',
-            excludeWarnings: false
-        })
-    ],
+    plugins: commonPlugins(),
     target: "node",
     externals: [nodeExternals()],
     node: {
@@ -155,9 +156,12 @@ const backend = {
     }
 };
 
-module.exports = stack => {
-    if (stack === "frontend") {
+module.exports = (env, argv) => {
+    if (argv["stack"] === "frontend") {
         return Object.assign({}, common, frontend);
+    }
+    else if (argv["stack"] === "backend") {
+        return Object.assign({}, common, backend);
     }
     else {
         return [

@@ -36,13 +36,25 @@ const commonModuleRules = [
     }
 ];
 
-const commonOptMinimizer = [
-    new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true
-    })
-];
+const commonOptMinimizer = () => {
+    return [
+        new UglifyJsPlugin({
+            cache: true,
+            parallel: true,
+            sourceMap: true
+        })
+    ];
+};
+
+const commonPlugins = () => {
+    return [
+        new ForkTsCheckerWebpackPlugin({
+            async: false, // check Typing first then build
+            useTypescriptIncrementalApi: true,
+            memoryLimit: 4096
+        }),
+    ];
+};
 
 const frontend = {
     entry: ["./frontend/index.tsx"].concat(glob.sync("./frontend/**/*.scss")),
@@ -94,7 +106,7 @@ const frontend = {
     },
     optimization: {
         minimizer: [
-            ...commonOptMinimizer,
+            ...commonOptMinimizer(),
             new OptimizeCSSAssetsPlugin({})
         ]
     },
@@ -121,11 +133,7 @@ const frontend = {
             chunkfilename: "[id].[hash].css"
         }),
         new ImageminPlugin({}),
-        new ForkTsCheckerWebpackPlugin({
-            async: false, // check Typing first then build
-            useTypescriptIncrementalApi: true,
-            memoryLimit: 4096
-        }),
+        ...commonPlugins()
     ]
 };
 
@@ -139,22 +147,9 @@ const backend = {
         rules: commonModuleRules
     },
     optimization: {
-        minimizer: [
-            // new UglifyJsPlugin({
-            //     cache: true,
-            //     parallel: true,
-            //     sourceMap: true
-            // })
-            ...commonOptMinimizer
-        ]
+        minimizer: commonOptMinimizer()
     },
-    plugins: [
-        new ForkTsCheckerWebpackPlugin({
-            async: false, // check Typing first then build
-            useTypescriptIncrementalApi: true,
-            memoryLimit: 4096
-        }),
-    ],
+    plugins: commonPlugins(),
     target: "node",
     externals: [nodeExternals()],
     node: {
@@ -162,7 +157,17 @@ const backend = {
     }
 };
 
-module.exports = [
-    Object.assign({}, common, frontend),
-    Object.assign({}, common, backend),
-];
+module.exports = (env, argv) => {
+    if (argv["stack"] === "frontend") {
+        return Object.assign({}, common, frontend);
+    }
+    else if (argv["stack"] === "backend") {
+        return Object.assign({}, common, backend);
+    }
+    else {
+        return [
+            Object.assign({}, common, frontend),
+            Object.assign({}, common, backend),
+        ];
+    }
+};

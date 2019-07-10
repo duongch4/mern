@@ -7,15 +7,13 @@
         "build-prod": "npm install && npm run build && ts-node deleteDev.ts && rimraf deleteDev.ts && npm prune --production",
         "heroku-postbuild": "npm run build-prod",
         "prebuild": "rimraf ./dist/*",
-        "build": "webpack --config=webpack.config.prod.js",
-        "build-dev": "npm run prebuild && webpack --config=webpack.config.dev.js",
+        "build": "webpack --progress --config=webpack.config.prod.js",
+        "build-dev": "webpack --progress --config=webpack.config.dev.js",
         "start": "npm run serve",
         "serve": "node dist/server.js",
         "watch-frontend": "webpack-dev-server --open --stack=frontend --config=webpack.config.dev.js",
-        "watch-backend": "nodemon dist/server.js",
+        "watch-backend": "nodemon --config=nodemon.json",
         "watch": "concurrently -k -p \"[{name}]\" -n \"React,Node\" -c \"yellow.bold,cyan.bold\" \"npm run watch-frontend\" \"npm run watch-backend\"",
-        "build-ts": "tsc",
-        "tslint": "tslint -c tslint.json -p tsconfig.json",
         "test": "jest --forceExit --coverage --verbose",
         "watch-test": "npm run test -- --watchAll",
         "watch-ts": "tsc -w",
@@ -23,7 +21,13 @@
         "serve-debug": "nodemon --inspect dist/server.js",
         "watch-debug": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run serve-debug\""
     },
-    "keywords": ["Typescript", "MongoDB", "ExpressJS", "React", "NodeJS"],
+    "keywords": [
+        "Typescript",
+        "MongoDB",
+        "ExpressJS",
+        "React",
+        "NodeJS"
+    ],
     "author": "DBC",
     "license": "ISC",
     "dependencies": {

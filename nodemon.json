@@ -1,0 +1,7 @@
+{
+    "watch": [
+        "src"
+    ],
+    "ext": "ts",
+    "exec": "rimraf ./dist/server.* && webpack --stack=backend --config=webpack.config.prod.js && npm run serve"
+}

@@ -47,7 +47,14 @@ export default class App extends Server {
         const MongoStore = mongo(session);
         (mongoose as any).Promise = bluebird;
         mongoose.connect(MONGODB_URI, { useNewUrlParser: true }).then(
-            () => { console.log(`========== MongoDB is connected at: ${MONGODB_URI} ==========`); },
+            () => {
+                if (this.app.get("env") !== "production") {
+                    console.log(`========== MongoDB is connected at: ${MONGODB_URI} ==========`);
+                }
+                else {
+                    console.log(`========== MongoDB is connected successfully ==========`);
+                }
+            },
         ).catch(
             (err) => { console.log(`!!! MongoDB connection error. Please make sure MongoDB is running:: ${err}`); }
         );
@@ -146,11 +153,11 @@ export default class App extends Server {
     private setStaticFrontend(): void {
         // Set Static Assets On Frontend: ABSOLUTELY REQUIRED!!!
         this.app.use(
-            express.static(path.join(__dirname, "frontend"), { maxAge: 31557600000 })
+            express.static(path.resolve(__dirname, "frontend"), { maxAge: 31557600000 })
         );
         // If request doesn't match api => return the main index.html => react-router render the route in the client
         this.app.get("*", (req, res) => {
-            res.sendFile(path.join(__dirname, "frontend", "index.html"));
+            res.sendFile(path.resolve(__dirname, "frontend", "index.html"));
         });
     }
 
