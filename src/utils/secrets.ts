@@ -2,13 +2,19 @@ import logger from "./logger";
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 
-// Setup multiple .*.env files
-if (fs.existsSync(".env")) {
-    logger.debug("Using .env file to supply config environment variables");
-    dotenv.config({ path: ".env" });
-} else {
-    logger.debug("Using .env.example file to supply config environment variables");
-    dotenv.config({ path: ".env.example" });
+if (process.env.NODE_ENV !== "production") {
+    // Setup multiple .*.env files in dev/debug mode
+    if (fs.existsSync(".env")) {
+        setEnv(".env");
+    }
+    else if (fs.existsSync(".env.whatever")) {
+        setEnv(".env.whatever");
+    }
+}
+
+function setEnv(envFile: string) {
+    logger.debug(`Using ${envFile} file to supply config environment variables`);
+    dotenv.config({ path: envFile });
 }
 
 export const SESSION_SECRET = process.env["SESSION_SECRET"];

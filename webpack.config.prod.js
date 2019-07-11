@@ -4,14 +4,14 @@ const UglifyJsPlugin = require("uglifyjs-webpack-plugin"); // to minize js file
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html template
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // to extract css into it own file
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const ImageminPlugin = require("imagemin-webpack-plugin").default
+const ImageminPlugin = require("imagemin-webpack-plugin").default;
+const MomentLocalesPlugin = require("moment-locales-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin"); // to use with transpileOnly in ts-loader
 const nodeExternals = require("webpack-node-externals"); // for backend
 
 
 const common = {
     mode: "production",
-    // devtool: "source-map",
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"]
     },
@@ -49,6 +49,10 @@ const commonOptMinimizer = () => {
 const commonPlugins = () => {
     return [
         new webpack.optimize.OccurrenceOrderPlugin(),
+        new webpack.HashedModuleIdsPlugin(), // so that file hashes dont change unexpectedly
+        new MomentLocalesPlugin({
+            localesToKeep: ["en", "en-ca"],
+        }),
         new ForkTsCheckerWebpackPlugin({
             async: false, // check Typing first then build
             useTypescriptIncrementalApi: true,
@@ -58,17 +62,13 @@ const commonPlugins = () => {
 };
 
 const frontend = {
-    entry: ["./frontend/index.tsx"].concat(glob.sync("./frontend/**/*.scss")),
-    output: {
-        filename: "[name].[contenthash].js",
-        path: `${__dirname}/dist/frontend`
+    entry: {
+        main: ["./frontend/index.tsx"].concat(glob.sync("./frontend/**/*.scss")),
+        pageIntro: "./frontend/pages/intro/IntroPage.tsx"
     },
-    devServer: {
-        clientLogLevel: "warning",
-        open: true,
-        contentBase: "./dist/frontend",
-        historyApiFallback: true,
-        stats: "errors-only"
+    output: {
+        filename: "[name].[contenthash:8].js",
+        path: `${__dirname}/dist/frontend`
     },
     module: {
         rules: [
@@ -102,6 +102,11 @@ const frontend = {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.(jpe?g|png|gif|svg)$/,
+                loader: "image-webpack-loader",
+                enforce: "pre"
             }
         ]
     },
@@ -109,7 +114,25 @@ const frontend = {
         minimizer: [
             ...commonOptMinimizer(),
             new OptimizeCSSAssetsPlugin({})
-        ]
+        ],
+        runtimeChunk: "single",
+        splitChunks: {
+            chunks: "all",
+            maxInitialRequests: Infinity,
+            minSize: 0,
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name(module) {
+                        // get the name. E.g. node_modules/packageName/not/this/part.js
+                        // or node_modules/packageName
+                        const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+                        // npm package names are URL-safe, but some servers don"t like @ symbols
+                        return `npm.${packageName.replace("@", "")}`;
+                    }
+                }
+            }
+        }
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -126,7 +149,7 @@ const frontend = {
                 keepClosingSlash: true,
                 minifyJS: true,
                 minifyCSS: true,
-                minifyURLs: true,   
+                minifyURLs: true,
             }
         }),
         new MiniCssExtractPlugin({

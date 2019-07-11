@@ -4,7 +4,8 @@ const UglifyJsPlugin = require("uglifyjs-webpack-plugin"); // to minize js file
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html template
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // to extract css into it own file
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const ImageminPlugin = require("imagemin-webpack-plugin").default
+const ImageminPlugin = require("imagemin-webpack-plugin").default;
+const MomentLocalesPlugin = require("moment-locales-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin"); // to use with transpileOnly in ts-loader
 const ForkTsCheckerNotifierWebpackPlugin = require("fork-ts-checker-notifier-webpack-plugin");
 const nodeExternals = require("webpack-node-externals"); // for backend
@@ -49,6 +50,9 @@ const commonOptMinimizer = () => {
 const commonPlugins = () => {
     return [
         new webpack.optimize.OccurrenceOrderPlugin(),
+        new MomentLocalesPlugin({
+            localesToKeep: ["en", "en-ca"],
+        }),
         new ForkTsCheckerWebpackPlugin({
             tslint: true,
             useTypescriptIncrementalApi: true
@@ -113,6 +117,11 @@ const frontend = {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.(jpe?g|png|gif|svg)$/,
+                loader: "image-webpack-loader",
+                enforce: "pre"
             }
         ]
     },
