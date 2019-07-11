@@ -137,7 +137,8 @@ const frontend = {
     ],
     externals: {
         "react": "React",
-        "react-dom": "ReactDOM"
+        "react-dom": "ReactDOM",
+        "lodash": "_"
     },
 };
 

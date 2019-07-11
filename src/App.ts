@@ -61,6 +61,7 @@ export default class App extends Server {
         this.app.use(compression());
         this.setBodyParser();
         this.setSession(MongoStore);
+        this.setPassportSession();
         this.setFlash();
         this.setLusca();
         this.setCORS();
@@ -100,6 +101,11 @@ export default class App extends Server {
                 autoReconnect: true
             })
         }));
+    }
+
+    private setPassportSession(): void {
+        this.app.use(passport.initialize());
+        this.app.use(passport.session());
     }
 
     private setFlash(): void {
