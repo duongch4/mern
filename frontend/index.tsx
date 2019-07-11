@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import {
     BrowserRouter as Router,
     Route,
@@ -7,17 +8,17 @@ import {
     withRouter,
 } from "react-router-dom";
 
-// import { ScrollToTop } from "./components/scrollToTop";
+import { ScrollToTop } from "./components/scrollToTop";
 import { MainRoutes } from "./pages/MainRoutes";
 
 ReactDOM.render(
-        <Router>
-            {/* <ScrollToTop> */}
+    <Router>
+        <ScrollToTop>
             <Switch>
                 <Route path="/" component={MainRoutes} />
             </Switch>
-            {/* </ScrollToTop> */}
-        </Router>
+        </ScrollToTop>
+    </Router>
     ,
     document.getElementById("root"),
 );

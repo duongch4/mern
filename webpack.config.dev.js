@@ -5,8 +5,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // to extract css into it own file
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const ImageminPlugin = require("imagemin-webpack-plugin").default
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin'); // to use with transpileOnly in ts-loader
-const ForkTsCheckerNotifierWebpackPlugin = require('fork-ts-checker-notifier-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin"); // to use with transpileOnly in ts-loader
+const ForkTsCheckerNotifierWebpackPlugin = require("fork-ts-checker-notifier-webpack-plugin");
 const nodeExternals = require("webpack-node-externals"); // for backend
 
 const common = {
@@ -48,12 +48,13 @@ const commonOptMinimizer = () => {
 
 const commonPlugins = () => {
     return [
+        new webpack.optimize.OccurrenceOrderPlugin(),
         new ForkTsCheckerWebpackPlugin({
             tslint: true,
             useTypescriptIncrementalApi: true
         }),
         new ForkTsCheckerNotifierWebpackPlugin({
-            title: 'TypeScript',
+            title: "TypeScript",
             excludeWarnings: false
         })
     ];
@@ -133,7 +134,11 @@ const frontend = {
         }),
         new ImageminPlugin({}),
         ...commonPlugins()
-    ]
+    ],
+    externals: {
+        "react": "React",
+        "react-dom": "ReactDOM"
+    },
 };
 
 const backend = {
