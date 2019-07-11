@@ -33,15 +33,20 @@ import * as controllers from "./controllers";
 // import * as passportConfig from "./auth/passport";
 
 // Create Express server
-export default class App extends Server {
+export default class ExpressServer extends Server {
     // private app: express.Application;
 
     constructor() {
         // this.app = express();
         super(true);
+        this.config();
     }
 
-    public config(): void {
+    public getApp(): express.Application {
+        return this.app;
+    }
+
+    private config(): void {
         const MongoStore = mongo(session);
         (mongoose as any).Promise = bluebird;
         mongoose.connect(MONGODB_URI, { useNewUrlParser: true }).then(
@@ -57,7 +62,6 @@ export default class App extends Server {
             (err) => { console.log(`!!! MongoDB connection error. Please make sure MongoDB is running:: ${err}`); }
         );
 
-        this.app.set("port", process.env.PORT || 3000);
         this.app.use(compression());
         this.setBodyParser();
         this.setSession(MongoStore);
@@ -71,11 +75,11 @@ export default class App extends Server {
         this.handleError();
     }
 
-    public listen(): void {
-        this.app.listen(this.app.get("port"), () => {
+    public listen(port: string): void {
+        this.app.listen(port, () => {
             console.log(
                 "\n========== App is running at PORT %d in %s mode ==========",
-                this.app.get("port"),
+                port,
                 this.app.get("env")
             );
             if (process.env.NODE_ENV !== "production") {

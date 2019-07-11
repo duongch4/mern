@@ -1,6 +1,5 @@
-import App from "./App";
+import ExpressServer from "./ExpressServer";
 
-const app = new App();
-app.config();
-const server = app.listen();
-export default server;
+const port = process.env.PORT || "3000";
+export default new ExpressServer().listen(port);
+// export default server;
