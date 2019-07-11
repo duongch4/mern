@@ -8,7 +8,7 @@ import {
     withRouter,
 } from "react-router-dom";
 
-import { ScrollToTop } from "./components/scrollToTop";
+import { ScrollToTop } from "./components/ScrollToTop";
 import { MainRoutes } from "./pages/MainRoutes";
 
 ReactDOM.render(
