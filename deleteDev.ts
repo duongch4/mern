@@ -6,7 +6,7 @@ shell.rm("-rf", "./src/");
 shell.rm("./README.md");
 shell.rm("./.gitignore");
 shell.rm("./nodemon.json");
-const patterns = ["./ts*.json", "./webpack*.js"];
+const patterns = ["./ts*.json", "./*config*.js"];
 for (const pattern of patterns) {
     glob(pattern, (err: Error, files: string[]) => {
         if (err) {
