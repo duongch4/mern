@@ -34,6 +34,41 @@ const commonModuleRules = [
         enforce: "pre",
         test: /\.js$/,
         loader: "source-map-loader"
+    },
+    {
+        test: /\.s?css$/,
+        use: [
+            MiniCssExtractPlugin.loader,
+            {
+                loader: "css-loader",
+                options: {
+                    sourceMap: true
+                }
+            },
+            {
+                loader: "sass-loader",
+                options: {
+                    sourceMap: true
+                }
+            },
+        ]
+    },
+    {
+        test: /\.(jpe?g|png|gif|svg|pdf)$/,
+        use: [
+            {
+                loader: "file-loader",
+                options: {
+                    name: "[name].[ext]",
+                    outputPath: "assets"
+                }
+            }
+        ]
+    },
+    {
+        test: /\.(jpe?g|png|gif|svg)$/,
+        loader: "image-webpack-loader",
+        enforce: "pre"
     }
 ];
 
@@ -86,44 +121,7 @@ const frontend = {
         ]
     },
     module: {
-        rules: [
-            ...commonModuleRules,
-            {
-                test: /\.s?css$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    {
-                        loader: "css-loader",
-                        options: {
-                            sourceMap: true
-                        }
-                    },
-                    {
-                        loader: "sass-loader",
-                        options: {
-                            sourceMap: true
-                        }
-                    },
-                ]
-            },
-            {
-                test: /\.(png|jpg|gif|pdf|svg)$/,
-                use: [
-                    {
-                        loader: "file-loader",
-                        options: {
-                            name: "[name].[ext]",
-                            outputPath: "assets"
-                        }
-                    }
-                ]
-            },
-            {
-                test: /\.(jpe?g|png|gif|svg)$/,
-                loader: "image-webpack-loader",
-                enforce: "pre"
-            }
-        ]
+        rules: commonModuleRules
     },
     optimization: {
         minimizer: [
@@ -147,6 +145,7 @@ const frontend = {
     externals: {
         "react": "React",
         "react-dom": "ReactDOM",
+        "react-dom/server": "ReactDOMServer",
         "lodash": "_"
     },
 };

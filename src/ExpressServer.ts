@@ -23,6 +23,11 @@ import { Server } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import * as controllers from "./controllers";
 
+import * as React from "react";
+import * as ReactDOMServer from "react-dom/server";
+import { IntroPage } from "../frontend/pages/intro/IntroPage";
+import * as fs from "fs";
+
 // Controllers (route handlers)
 // import * as homeController from "./controllers/home";
 // import * as userController from "./controllers/user";
@@ -34,10 +39,8 @@ import * as controllers from "./controllers";
 
 // Create Express server
 export default class ExpressServer extends Server {
-    // private app: express.Application;
 
     constructor() {
-        // this.app = express();
         super(true);
         this.config();
     }
@@ -164,8 +167,22 @@ export default class ExpressServer extends Server {
             express.static(path.resolve(__dirname, "frontend"), { maxAge: 31557600000 })
         );
         // If request doesn't match api => return the main index.html => react-router render the route in the client
-        this.app.get("*", (req, res) => {
-            res.sendFile(path.resolve(__dirname, "frontend", "index.html"));
+        // this.app.get("/*", (req, res) => {
+        //     res.sendFile(path.resolve(__dirname, "frontend", "index.html"));
+        // });
+
+        this.app.get("/*", (req, res) => {
+            const markup = ReactDOMServer.renderToString(React.createElement(IntroPage));
+            const staticHtml = path.resolve(__dirname, "frontend", "index.html");
+            fs.readFile(staticHtml, "utf8", (err, data) => {
+                if (err) {
+                    console.error("Something went wrong:", err);
+                    return res.status(500).send("Oops, better luck next time!");
+                }
+                return res.send(
+                    data.replace(`<div id="root"></div>`, `<div id="root">${markup}</div>`)
+                );
+            });
         });
     }
 

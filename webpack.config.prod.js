@@ -33,7 +33,42 @@ const commonModuleRules = [
         enforce: "pre",
         test: /\.js$/,
         loader: "source-map-loader"
-    }
+    },
+    // {
+    //     test: /\.s?css$/,
+    //     use: [
+    //         MiniCssExtractPlugin.loader,
+    //         {
+    //             loader: "css-loader",
+    //             options: {
+    //                 sourceMap: true
+    //             }
+    //         },
+    //         {
+    //             loader: "sass-loader",
+    //             options: {
+    //                 sourceMap: true
+    //             }
+    //         },
+    //     ]
+    // },
+    // {
+    //     test: /\.(png|jpg|gif|pdf|svg)$/,
+    //     use: [
+    //         {
+    //             loader: "file-loader",
+    //             options: {
+    //                 name: "[name].[ext]",
+    //                 outputPath: "assets"
+    //             }
+    //         }
+    //     ]
+    // },
+    // {
+    //     test: /\.(jpe?g|png|gif|svg)$/,
+    //     loader: "image-webpack-loader",
+    //     enforce: "pre"
+    // }
 ];
 
 const commonOptMinimizer = () => {
@@ -92,7 +127,7 @@ const frontend = {
                 ]
             },
             {
-                test: /\.(png|jpg|gif|pdf|svg)$/,
+                test: /\.(jpe?g|png|gif|svg|pdf)$/,
                 use: [
                     {
                         loader: "file-loader",
@@ -162,6 +197,7 @@ const frontend = {
     externals: {
         "react": "React",
         "react-dom": "ReactDOM",
+        "react-dom/server": "ReactDOMServer",
         "lodash": "_"
     },
 };
@@ -173,7 +209,21 @@ const backend = {
         path: `${__dirname}/dist`
     },
     module: {
-        rules: commonModuleRules
+        rules: [
+            ...commonModuleRules,
+            {
+                test: /\.(jpe?g|png|gif|svg|pdf)$/,
+                use: [
+                    {
+                        loader: "file-loader",
+                        options: {
+                            name: "[hash]/[name].[ext]",
+                            outputPath: "assets"
+                        }
+                    }
+                ]
+            },
+        ]
     },
     optimization: {
         minimizer: commonOptMinimizer()

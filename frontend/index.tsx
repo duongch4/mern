@@ -11,7 +11,7 @@ import {
 import { ScrollToTop } from "./components/ScrollToTop";
 import { MainRoutes } from "./pages/MainRoutes";
 
-ReactDOM.render(
+ReactDOM.hydrate(
     <Router>
         <ScrollToTop>
             <Switch>
@@ -22,3 +22,15 @@ ReactDOM.render(
     ,
     document.getElementById("root"),
 );
+
+// ReactDOM.render(
+//     <Router>
+//         <ScrollToTop>
+//             <Switch>
+//                 <Route path="/" component={MainRoutes} />
+//             </Switch>
+//         </ScrollToTop>
+//     </Router>
+//     ,
+//     document.getElementById("root"),
+// );
