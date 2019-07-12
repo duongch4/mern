@@ -8,10 +8,10 @@ import {
     withRouter,
 } from "react-router-dom";
 
-import { ScrollToTop } from "./components/ScrollToTop";
+import { ScrollToTop } from "./components/utils/ScrollToTop";
 import { MainRoutes } from "./pages/MainRoutes";
 
-ReactDOM.hydrate(
+ReactDOM.render(
     <Router>
         <ScrollToTop>
             <Switch>
@@ -22,15 +22,3 @@ ReactDOM.hydrate(
     ,
     document.getElementById("root"),
 );
-
-// ReactDOM.render(
-//     <Router>
-//         <ScrollToTop>
-//             <Switch>
-//                 <Route path="/" component={MainRoutes} />
-//             </Switch>
-//         </ScrollToTop>
-//     </Router>
-//     ,
-//     document.getElementById("root"),
-// );

@@ -23,11 +23,6 @@ import { Server } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import * as controllers from "./controllers";
 
-import * as React from "react";
-import * as ReactDOMServer from "react-dom/server";
-import { IntroPage } from "../frontend/pages/intro/IntroPage";
-import * as fs from "fs";
-
 // Controllers (route handlers)
 // import * as homeController from "./controllers/home";
 // import * as userController from "./controllers/user";
@@ -55,14 +50,14 @@ export default class ExpressServer extends Server {
         mongoose.connect(MONGODB_URI, { useNewUrlParser: true }).then(
             () => {
                 if (this.app.get("env") !== "production") {
-                    console.log(`========== MongoDB is connected at: ${MONGODB_URI} ==========`);
+                    Logger.Info(`MongoDB is connected at: ${MONGODB_URI}`);
                 }
                 else {
-                    console.log(`========== MongoDB is connected successfully ==========`);
+                    Logger.Info(`MongoDB is connected successfully`);
                 }
             },
         ).catch(
-            (err) => { console.log(`!!! MongoDB connection error. Please make sure MongoDB is running:: ${err}`); }
+            (err) => { Logger.Info(`!!! MongoDB connection error. Please make sure MongoDB is running:: ${err}`); }
         );
 
         this.app.use(compression());
@@ -80,13 +75,9 @@ export default class ExpressServer extends Server {
 
     public listen(port: string): void {
         this.app.listen(port, () => {
-            console.log(
-                "\n========== App is running at PORT %d in %s mode ==========",
-                port,
-                this.app.get("env")
-            );
+            Logger.Info(`App is running at PORT ${port} in ${this.app.get("env")} mode`);
             if (process.env.NODE_ENV !== "production") {
-                console.log("========== Press CTRL-C to stop ==========\n");
+                Logger.Info("Press CTRL-C to stop");
             }
         });
     }
@@ -167,22 +158,8 @@ export default class ExpressServer extends Server {
             express.static(path.resolve(__dirname, "frontend"), { maxAge: 31557600000 })
         );
         // If request doesn't match api => return the main index.html => react-router render the route in the client
-        // this.app.get("/*", (req, res) => {
-        //     res.sendFile(path.resolve(__dirname, "frontend", "index.html"));
-        // });
-
         this.app.get("/*", (req, res) => {
-            const markup = ReactDOMServer.renderToString(React.createElement(IntroPage));
-            const staticHtml = path.resolve(__dirname, "frontend", "index.html");
-            fs.readFile(staticHtml, "utf8", (err, data) => {
-                if (err) {
-                    console.error("Something went wrong:", err);
-                    return res.status(500).send("Oops, better luck next time!");
-                }
-                return res.send(
-                    data.replace(`<div id="root"></div>`, `<div id="root">${markup}</div>`)
-                );
-            });
+            res.sendFile(path.resolve(__dirname, "frontend", "index.html"));
         });
     }
 

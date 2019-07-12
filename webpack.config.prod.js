@@ -34,41 +34,6 @@ const commonModuleRules = [
         test: /\.js$/,
         loader: "source-map-loader"
     },
-    // {
-    //     test: /\.s?css$/,
-    //     use: [
-    //         MiniCssExtractPlugin.loader,
-    //         {
-    //             loader: "css-loader",
-    //             options: {
-    //                 sourceMap: true
-    //             }
-    //         },
-    //         {
-    //             loader: "sass-loader",
-    //             options: {
-    //                 sourceMap: true
-    //             }
-    //         },
-    //     ]
-    // },
-    // {
-    //     test: /\.(png|jpg|gif|pdf|svg)$/,
-    //     use: [
-    //         {
-    //             loader: "file-loader",
-    //             options: {
-    //                 name: "[name].[ext]",
-    //                 outputPath: "assets"
-    //             }
-    //         }
-    //     ]
-    // },
-    // {
-    //     test: /\.(jpe?g|png|gif|svg)$/,
-    //     loader: "image-webpack-loader",
-    //     enforce: "pre"
-    // }
 ];
 
 const commonOptMinimizer = () => {
@@ -217,8 +182,7 @@ const backend = {
                     {
                         loader: "file-loader",
                         options: {
-                            name: "[hash]/[name].[ext]",
-                            outputPath: "assets"
+                            emitFile: false
                         }
                     }
                 ]
@@ -238,15 +202,15 @@ const backend = {
 
 module.exports = (env, argv) => {
     if (argv["stack"] === "frontend") {
-        return Object.assign({}, common, frontend);
+        return { ...common, ...frontend };
     }
     else if (argv["stack"] === "backend") {
-        return Object.assign({}, common, backend);
+        return { ...common, ...backend };
     }
     else {
         return [
-            Object.assign({}, common, frontend),
-            Object.assign({}, common, backend),
+            { ...common, ...frontend },
+            { ...common, ...backend },
         ];
     }
 };
