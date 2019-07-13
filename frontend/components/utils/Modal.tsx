@@ -7,11 +7,14 @@ export interface IModalProps {
     closeTitle?: string;
 }
 
-export const Modal: React.FunctionComponent<IModalProps> = ({ id, title, body, closeTitle }) => {
-    title = typeof title !== "undefined" ? title : "Title";
-    body = typeof body !== "undefined" ? body : (<span>Put Your Body Here</span>);
-    closeTitle = typeof closeTitle !== "undefined" ? closeTitle : "Close";
-    id = typeof id !== "undefined" ? id : "exampleModal";
+export const Modal: React.FunctionComponent<IModalProps> = (
+    {
+        id = "exampleModal",
+        title = "Title",
+        body = (<span>Put Your Body Here</span>),
+        closeTitle = "Close"
+    }
+) => {
     return (
         <div
             className="modal fade" id={id} tabIndex={-1} role="dialog"

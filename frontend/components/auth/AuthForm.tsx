@@ -1,4 +1,5 @@
 import * as React from "react";
+import { AjaxHandler } from "../utils/AjaxHandler";
 
 export interface IAuthFormProps {
     idEmail?: string;
@@ -67,22 +68,19 @@ export class AuthForm extends React.Component<IAuthFormProps, IAuthFormStates> {
             };
 
             try {
-                const response = await fetch(this.props.postToUrl, {
-                    method: "post",
-                    body: JSON.stringify(data)
-                });
-                console.log(`YAY: ${response}`);
+                const result = await AjaxHandler.postRequest(this.props.postToUrl, data);
+                console.log(`YAY: ${result}`);
                 // Redirect or something here!!!
                 // window.location = response.;
             }
-            catch (err) {
-                console.log(`NAY: ${err}`);
-                this.setState({
-                    message: "Some error! Need to figure out how to get proper error message",
-                    valEmail: "",
-                    valPassword: "",
-                    valConfirmPassword: ""
-                });
+            catch (error) {
+                console.log(`NAY: ${error}`);
+                // this.setState({
+                //     message: "Some error! Need to figure out how to get proper error message",
+                //     valEmail: "",
+                //     valPassword: "",
+                //     valConfirmPassword: ""
+                // });
             }
 
             // this.setState({
