@@ -80,3 +80,21 @@ body a {
     font-family: var(--link-font-family);
     font-weight: var(--link-font-weight);
 }
+
+body .btn {
+    $color: #DCAF68;
+    background-color: var(--main-color);
+    border-color: var(--main-color);
+    color: white;
+    margin: 5px;
+    &:hover {
+        background-color: darken($color, 10%);
+        border-color: lighten($color, 10%);
+        color: white;
+    }
+    &:focus {
+        outline: 0;
+        -webkit-box-shadow: 0 0 0 0.2rem darken($color, 20%);
+        box-shadow: 0 0 0 0.2rem darken($color, 20%);
+    }
+}

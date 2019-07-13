@@ -10,7 +10,7 @@ interface IPrivateRouteProps extends RouteProps {
     isLoggedIn: boolean;
 }
 
-const PrivateRoute = (props: IPrivateRouteProps) => {
+export const PrivateRoute = (props: IPrivateRouteProps) => {
     const { component: Component, isLoggedIn, ...rest } = props;
 
     return (
@@ -31,5 +31,3 @@ const PrivateRoute = (props: IPrivateRouteProps) => {
         />
     );
 };
-
-export default PrivateRoute;
