@@ -5,9 +5,6 @@
         "noImplicitAny": true,
         "removeComments": true,
         "module": "commonjs",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "moduleResolution": "node",
         "jsx": "react",
         "target": "es5",
         "lib": [
@@ -23,7 +20,6 @@
         }
     },
     "include": [
-        "./frontend/**/*",
-        "./src/**/*",
+        "./client/**/*"
     ],
 }

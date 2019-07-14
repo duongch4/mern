@@ -31,9 +31,19 @@ export class Navbar extends React.Component {
                                 type="button" className="btn"
                                 data-toggle="modal" data-target="#exampleModal"
                             >
-                                Login/Register
+                                Login
                             </button>
                             <AuthModal id="exampleModal" />
+                        </div>
+                        {/* <!-- Button trigger modal --> */}
+                        <div>
+                            <button
+                                type="button" className="btn"
+                                data-toggle="modal" data-target="#exampleModal2"
+                            >
+                                Register
+                            </button>
+                            <AuthModal id="exampleModal2" />
                         </div>
                     </div>
                 </nav>

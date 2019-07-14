@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Modal, IModalProps } from "../utils/Modal";
-import { AuthForm } from "./AuthForm";
+import { LoginForm } from "./LoginForm";
+import { RegisterForm } from "./RegisterForm";
 
 export const AuthModal: React.FunctionComponent<IModalProps> = ({ id }) => {
     return (
@@ -14,11 +15,11 @@ const getBody = (): JSX.Element => {
             <p className="text-left">
                 <strong>Sign in with your email</strong>
             </p>
-            <AuthForm textButton="Login" postToUrl="/auth/login" />
+            <LoginForm textButton="Login" postToUrl="/auth/login" />
             <p className="text-left">
                 <strong>Register</strong>
             </p>
-            <AuthForm textButton="Register" postToUrl="/auth/register" />
+            <RegisterForm textButton="Register" postToUrl="/auth/register" />
         </div>
     );
 };

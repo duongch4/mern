@@ -8,209 +8,248 @@ const ImageminPlugin = require("imagemin-webpack-plugin").default;
 const MomentLocalesPlugin = require("moment-locales-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin"); // to use with transpileOnly in ts-loader
 const nodeExternals = require("webpack-node-externals"); // for backend
+const path = require("path");
 
+class WebpackConfig {
 
-const common = {
-    mode: "production",
-    resolve: {
-        extensions: [".ts", ".tsx", ".js", ".json"]
-    },
-};
+    setModeResolve() {
+        return {
+            mode: "production",
+            resolve: {
+                extensions: [".ts", ".tsx", ".js", ".json"]
+            },
+        };
+    }
 
-const commonModuleRules = [
-    {
-        test: /\.tsx?$/,
-        use: [
+    setModuleRulesTypescript(instanceName, tsconfigPath) {
+        return [
             {
-                loader: "ts-loader",
-                options: {
-                    transpileOnly: true
-                }
-            }
-        ]
-    },
-    {
-        enforce: "pre",
-        test: /\.js$/,
-        loader: "source-map-loader"
-    },
-];
-
-const commonOptMinimizer = () => {
-    return [
-        new UglifyJsPlugin({
-            cache: true,
-            parallel: true,
-            sourceMap: true
-        })
-    ];
-};
-
-const commonPlugins = () => {
-    return [
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.HashedModuleIdsPlugin(), // so that file hashes dont change unexpectedly
-        new MomentLocalesPlugin({
-            localesToKeep: ["en", "en-ca"],
-        }),
-        new ForkTsCheckerWebpackPlugin({
-            async: false, // check Typing first then build
-            useTypescriptIncrementalApi: true,
-            memoryLimit: 4096
-        }),
-    ];
-};
-
-const frontend = {
-    entry: {
-        main: ["./frontend/index.tsx"].concat(glob.sync("./frontend/**/*.scss")),
-        pageIntro: "./frontend/pages/intro/IntroPage.tsx"
-    },
-    output: {
-        filename: "[name].[contenthash:8].js",
-        path: `${__dirname}/dist/frontend`
-    },
-    module: {
-        rules: [
-            ...commonModuleRules,
+                enforce: "pre",
+                test: /\.js$/,
+                loader: "source-map-loader"
+            },
             {
-                test: /\.scss$/,
+                test: /\.tsx?$/,
                 use: [
-                    MiniCssExtractPlugin.loader,
                     {
-                        loader: "css-loader",
+                        loader: "ts-loader",
                         options: {
-                            sourceMap: true
+                            transpileOnly: true,
+                            instance: instanceName,
+                            configFile: tsconfigPath
                         }
+                    }
+                ]
+            },
+        ];
+    }
+
+    setOptMinimizerUglifyJs() {
+        return [
+            new UglifyJsPlugin({
+                cache: true,
+                parallel: true,
+                sourceMap: true
+            })
+        ];
+    }
+
+    setCommonPlugins(tsconfigPath) {
+        return [
+            new webpack.optimize.OccurrenceOrderPlugin(),
+            new webpack.HashedModuleIdsPlugin(), // so that file hashes dont change unexpectedly
+            new MomentLocalesPlugin({
+                localesToKeep: ["en", "en-ca"],
+            }),
+            new ForkTsCheckerWebpackPlugin({
+                tsconfig: tsconfigPath,
+                async: false, // check Typing first then build
+                useTypescriptIncrementalApi: true,
+                memoryLimit: 4096
+            })
+        ];
+    }
+
+    setClientConfig(
+        fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html", toDir = "./dist/client",
+        instanceName = "client", tsconfigDir = ".", tsconfigFile = "tsconfig.client.json"
+    ) {
+        const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
+        const entryHtmlPath = path.resolve(__dirname, fromDir, entryHtml);
+        const allStyles = path.resolve(__dirname, fromDir, "**", "*.scss");
+        const outPath = path.resolve(__dirname, toDir);
+        const tsconfigPath = path.resolve(__dirname, tsconfigDir, tsconfigFile);
+
+        return {
+            ...this.setModeResolve(),
+            entry: {
+                main: [entryTsPath].concat(glob.sync(allStyles)),
+                pageIntro: path.resolve(__dirname, fromDir, "./pages/intro/IntroPage.tsx")
+            },
+            output: {
+                filename: "[name].[contenthash:8].js",
+                path: outPath
+            },
+            module: {
+                rules: [
+                    ...this.setModuleRulesTypescript(instanceName, tsconfigPath),
+                    {
+                        test: /\.scss$/,
+                        use: [
+                            MiniCssExtractPlugin.loader,
+                            {
+                                loader: "css-loader",
+                                options: {
+                                    sourceMap: true
+                                }
+                            },
+                            {
+                                loader: "sass-loader",
+                                options: {
+                                    sourceMap: true
+                                }
+                            }
+                        ]
                     },
                     {
-                        loader: "sass-loader",
-                        options: {
-                            sourceMap: true
-                        }
-                    }
-                ]
-            },
-            {
-                test: /\.(jpe?g|png|gif|svg|pdf)$/,
-                use: [
+                        test: /\.(jpe?g|png|gif|svg|pdf)$/,
+                        use: [
+                            {
+                                loader: "file-loader",
+                                options: {
+                                    name: "[hash]/[name].[ext]",
+                                    outputPath: "assets"
+                                }
+                            }
+                        ]
+                    },
                     {
-                        loader: "file-loader",
-                        options: {
-                            name: "[hash]/[name].[ext]",
-                            outputPath: "assets"
-                        }
+                        test: /\.(jpe?g|png|gif|svg)$/,
+                        loader: "image-webpack-loader",
+                        enforce: "pre"
                     }
                 ]
             },
-            {
-                test: /\.(jpe?g|png|gif|svg)$/,
-                loader: "image-webpack-loader",
-                enforce: "pre"
-            }
-        ]
-    },
-    optimization: {
-        minimizer: [
-            ...commonOptMinimizer(),
-            new OptimizeCSSAssetsPlugin({})
-        ],
-        runtimeChunk: "single",
-        splitChunks: {
-            chunks: "all",
-            maxInitialRequests: Infinity,
-            minSize: 0,
-            cacheGroups: {
-                vendor: {
-                    test: /[\\/]node_modules[\\/]/,
-                    name(module) {
-                        // get the name. E.g. node_modules/packageName/not/this/part.js
-                        // or node_modules/packageName
-                        const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-                        // npm package names are URL-safe, but some servers don"t like @ symbols
-                        return `npm.${packageName.replace("@", "")}`;
+            optimization: {
+                minimizer: [
+                    ...this.setOptMinimizerUglifyJs(),
+                    new OptimizeCSSAssetsPlugin({})
+                ],
+                runtimeChunk: "single",
+                splitChunks: {
+                    chunks: "all",
+                    maxInitialRequests: Infinity,
+                    minSize: 0,
+                    cacheGroups: {
+                        vendor: {
+                            test: /[\\/]node_modules[\\/]/,
+                            name(module) {
+                                // get the name. E.g. node_modules/packageName/not/this/part.js
+                                // or node_modules/packageName
+                                const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+                                // npm package names are URL-safe, but some servers don"t like @ symbols
+                                return `npm.${packageName.replace("@", "")}`;
+                            }
+                        }
                     }
                 }
-            }
-        }
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: "./frontend/index.html",
-            hash: true,
-            inject: true,
-            minify: {
-                removeComments: true,
-                collapseWhitespace: true,
-                removeRedundantAttributes: true,
-                useShortDoctype: true,
-                removeEmptyAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                keepClosingSlash: true,
-                minifyJS: true,
-                minifyCSS: true,
-                minifyURLs: true,
-            }
-        }),
-        new MiniCssExtractPlugin({
-            filename: "[name].[hash].css",
-            chunkfilename: "[id].[hash].css"
-        }),
-        new ImageminPlugin({}),
-        ...commonPlugins()
-    ],
-    externals: {
-        "react": "React",
-        "react-dom": "ReactDOM",
-        "react-dom/server": "ReactDOMServer",
-        "lodash": "_"
-    },
-};
-
-const backend = {
-    entry: ["./src/server.ts"],
-    output: {
-        filename: "server.js",
-        path: `${__dirname}/dist`
-    },
-    module: {
-        rules: [
-            ...commonModuleRules,
-            {
-                test: /\.(jpe?g|png|gif|svg|pdf)$/,
-                use: [
-                    {
-                        loader: "file-loader",
-                        options: {
-                            emitFile: false
-                        }
+            },
+            plugins: [
+                ...this.setCommonPlugins(tsconfigPath),
+                new HtmlWebpackPlugin({
+                    template: entryHtmlPath,
+                    hash: true,
+                    inject: true,
+                    minify: {
+                        removeComments: true,
+                        collapseWhitespace: true,
+                        removeRedundantAttributes: true,
+                        useShortDoctype: true,
+                        removeEmptyAttributes: true,
+                        removeStyleLinkTypeAttributes: true,
+                        keepClosingSlash: true,
+                        minifyJS: true,
+                        minifyCSS: true,
+                        minifyURLs: true,
                     }
+                }),
+                new MiniCssExtractPlugin({
+                    filename: "[name].[hash].css",
+                    chunkfilename: "[id].[hash].css"
+                }),
+                new ImageminPlugin({}),
+            ],
+            externals: {
+                "react": "React",
+                "react-dom": "ReactDOM",
+                "react-dom/server": "ReactDOMServer",
+                "lodash": "_"
+            },
+        };
+    }
+
+    setServerConfig(
+        fromDir = "./server", entryTs = "server.ts", toDir = "./dist", toServerFile = "server.js",
+        instanceName = "server", tsconfigDir = ".", tsconfigFile = "tsconfig.server.json"
+    ) {
+        const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
+        const outPath = path.resolve(__dirname, toDir);
+        const tsconfigPath = path.resolve(__dirname, tsconfigDir, tsconfigFile);
+
+        return {
+            ...this.setModeResolve(),
+            entry: entryTsPath,
+            output: {
+                filename: toServerFile,
+                path: outPath
+            },
+            module: {
+                rules: [
+                    ...this.setModuleRulesTypescript(instanceName, tsconfigPath),
+                    {
+                        test: /\.(jpe?g|png|gif|svg|pdf)$/,
+                        use: [
+                            {
+                                loader: "file-loader",
+                                options: {
+                                    emitFile: false
+                                }
+                            }
+                        ]
+                    },
                 ]
             },
-        ]
-    },
-    optimization: {
-        minimizer: commonOptMinimizer()
-    },
-    plugins: commonPlugins(),
-    target: "node",
-    externals: [nodeExternals()],
-    node: {
-        __dirname: false
+            optimization: {
+                minimizer: this.setOptMinimizerUglifyJs()
+            },
+            plugins: this.setCommonPlugins(tsconfigPath),
+            target: "node",
+            externals: [nodeExternals()],
+            node: {
+                __dirname: false
+            }
+        };
     }
-};
+}
 
 module.exports = (env, argv) => {
-    if (argv["stack"] === "frontend") {
-        return { ...common, ...frontend };
+    const webpackConfig = new WebpackConfig();
+    const client = webpackConfig.setClientConfig(
+        fromDir = "./client", entryTsx = "index.tsx", entryHtml = "index.html", toDir = "./dist/client",
+        instanceName = "client", tsconfigDir = ".", tsconfigFile = "tsconfig.client.json"
+    );
+    const server = webpackConfig.setServerConfig(
+        fromDir = "./server", entryTs = "server.ts", toDir = "./dist", toServerFile = "server.js",
+        instanceName = "server", tsconfigDir = ".", tsconfigFile = "tsconfig.server.json"
+    );
+
+    if (argv["stack"] === "client") {
+        return client;
     }
-    else if (argv["stack"] === "backend") {
-        return { ...common, ...backend };
+    else if (argv["stack"] === "server") {
+        return server;
     }
     else {
-        return [
-            { ...common, ...frontend },
-            { ...common, ...backend },
-        ];
+        return [client, server];
     }
 };

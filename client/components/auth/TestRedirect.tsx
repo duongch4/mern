@@ -7,7 +7,7 @@ import {
     withRouter
 } from "react-router-dom";
 
-import PrivateRoute from "./PrivateRoute";
+import { PrivateRoute } from "./PrivateRoute";
 
 const fakeAuth = {
     isAuthenticated: false,
