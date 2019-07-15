@@ -1,6 +1,6 @@
 const webpack = require("webpack"); // access built-in plugins
 const glob = require("glob"); // sync all css files, no need to import css
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin"); // to minize js file
+const TerserPlugin = require("terser-webpack-plugin"); // minify js: ES6
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html template
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // to extract css into it own file
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -49,7 +49,7 @@ class WebpackConfig {
 
     setOptMinimizerUglifyJs() {
         return [
-            new UglifyJsPlugin({
+            new TerserPlugin({
                 cache: true,
                 parallel: true,
                 sourceMap: true
@@ -57,7 +57,7 @@ class WebpackConfig {
         ];
     }
 
-    setCommonPlugins(tsconfigPath) {
+    setCommonPlugins(tsconfigPath, tslintPath) {
         return [
             new webpack.optimize.OccurrenceOrderPlugin(),
             new MomentLocalesPlugin({
@@ -65,7 +65,11 @@ class WebpackConfig {
             }),
             new ForkTsCheckerWebpackPlugin({
                 tsconfig: tsconfigPath,
-                tslint: true,
+                tslint: tslintPath,
+                // eslint: true,
+                // eslintOptions: {
+                //     configFile: eslintrcPath
+                // },
                 useTypescriptIncrementalApi: true
             }),
             new ForkTsCheckerNotifierWebpackPlugin({
@@ -77,13 +81,15 @@ class WebpackConfig {
 
     setClientConfig(
         fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html", toDir = "./dist/client",
-        instanceName = "client", tsconfigDir = ".", tsconfigFile = "tsconfig.client.json"
+        instanceName = "client", tsconfigDir = "./client", tsconfigFile = "tsconfig.client.json",
+        tslintDir = ".", tslintFile = "tslint.json"
     ) {
         const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
         const entryHtmlPath = path.resolve(__dirname, fromDir, entryHtml);
         const allStyles = path.resolve(__dirname, fromDir, "**", "*.scss");
         const outPath = path.resolve(__dirname, toDir);
         const tsconfigPath = path.resolve(__dirname, tsconfigDir, tsconfigFile);
+        const tslintPath = path.resolve(__dirname, tslintDir, tslintFile);
 
         return {
             ...this.setModeResolve(),
@@ -154,7 +160,7 @@ class WebpackConfig {
                 ]
             },
             plugins: [
-                ...this.setCommonPlugins(tsconfigPath),
+                ...this.setCommonPlugins(tsconfigPath, tslintPath),
                 new webpack.HotModuleReplacementPlugin(),
                 new HtmlWebpackPlugin({
                     inject: true,
@@ -177,11 +183,13 @@ class WebpackConfig {
 
     setServerConfig(
         fromDir = "./server", entryTs = "server.ts", toDir = "./dist", toServerFile = "server.js",
-        instanceName = "server", tsconfigDir = ".", tsconfigFile = "tsconfig.server.json"
+        instanceName = "server", tsconfigDir = "./server", tsconfigFile = "tsconfig.server.json",
+        tslintDir = "./server", tslintFile = ".eslintrc.js"
     ) {
         const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
         const outPath = path.resolve(__dirname, toDir);
         const tsconfigPath = path.resolve(__dirname, tsconfigDir, tsconfigFile);
+        const tslintPath = path.resolve(__dirname, tslintDir, tslintFile);
 
         return {
             ...this.setModeResolve(),
@@ -209,7 +217,7 @@ class WebpackConfig {
             optimization: {
                 minimizer: this.setOptMinimizerUglifyJs()
             },
-            plugins: this.setCommonPlugins(tsconfigPath),
+            plugins: this.setCommonPlugins(tsconfigPath, tslintPath),
             target: "node",
             externals: [nodeExternals()],
             node: {
@@ -223,11 +231,13 @@ module.exports = (env, argv) => {
     const webpackConfig = new WebpackConfig();
     const client = webpackConfig.setClientConfig(
         fromDir = "./client", entryTsx = "index.tsx", entryHtml = "index.html", toDir = "./dist/client",
-        instanceName = "client", tsconfigDir = ".", tsconfigFile = "tsconfig.client.json"
+        instanceName = "client", tsconfigDir = "./client", tsconfigFile = "tsconfig.json",
+        tslintDir = ".", tslintFile = "tslint.json"
     );
     const server = webpackConfig.setServerConfig(
         fromDir = "./server", entryTs = "server.ts", toDir = "./dist", toFile = "server.js",
-        instanceName = "server", tsconfigDir = ".", tsconfigFile = "tsconfig.server.json"
+        instanceName = "server", tsconfigDir = "./server", tsconfigFile = "tsconfig.json",
+        tslintDir = ".", tslintFile = "tslint.json"
     );
 
     if (argv["stack"] === "client") {

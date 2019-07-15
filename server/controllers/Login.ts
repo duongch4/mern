@@ -29,10 +29,18 @@ export class Login {
 
     @Post()
     private postLogin(req: Request, res: Response, next: NextFunction) {
+        console.log(req);
+        console.log(res);
         check("email", "Email is not valid").isEmail();
         check("password", "Password cannot be blank").isLength({ min: 1 });
-        sanitize("email").normalizeEmail({gmail_remove_dots: false});
+        sanitize("email").normalizeEmail({ gmail_remove_dots: false });
 
+        try {
+            validationResult(req).throw();
+        }
+        catch (error) {
+            console.log(error.mapped());
+        }
         Logger.Info(req.params.msg);
         return res.status(400).json({
             error: req.params.msg,
@@ -43,7 +51,6 @@ export class Login {
     //     check("email", "Email is not valid").isEmail();
     //     check("password", "Password cannot be blank").isLength({min: 1});
     //     sanitize("email").normalizeEmail({ gmail_remove_dots: false });
-      
     //     const errors = validationResult(req);
     //     if (!errors.isEmpty()) {
     //       req.flash("errors", errors.array());

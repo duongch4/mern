@@ -1,28 +1,45 @@
 import * as React from "react";
 import { AjaxHandler } from "../utils/AjaxHandler";
+import { EmptyException, InvalidLengthException } from "./Exception";
 
-export interface IAuthFormProps {
+export interface ILoginFormProps {
+    isClicked: boolean;
     idEmail?: string;
     idPassword?: string;
-    idConfirmPassword?: string;
     textButton: string;
     postToUrl: string;
 }
 
-export interface IAuthFormStates {
+export interface ILoginFormStates {
+    isClicked: false;
     message: string;
     valEmail: string;
     valPassword: string;
-    valConfirmPassword: string;
 }
 
-export class LoginForm extends React.Component<IAuthFormProps, IAuthFormStates> {
-    public readonly state: IAuthFormStates = {
+export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends ILoginFormStates = ILoginFormStates>
+    extends React.Component<T, S> {
+
+    public readonly state: Readonly<ILoginFormStates | any> = {
+        isClicked: false,
         message: "",
         valEmail: "",
-        valPassword: "",
-        valConfirmPassword: ""
+        valPassword: ""
     };
+
+    public static getDerivedStateFromProps(nextProps: ILoginFormProps, prevState: ILoginFormStates) {
+        if (nextProps.isClicked !== prevState.isClicked) {
+            return {
+                isClicked: nextProps.isClicked,
+                message: "",
+                valEmail: "",
+                valPassword: ""
+            };
+        }
+        else {
+            return undefined; // Triggers no change in the state
+        }
+    }
 
     public render() {
         return (
@@ -38,37 +55,47 @@ export class LoginForm extends React.Component<IAuthFormProps, IAuthFormStates> 
     protected onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             [field]: event.target.value
-        } as Pick<IAuthFormStates, any>);
+        } as Pick<ILoginFormStates, any>);
     }
 
     protected onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        console.log("submit");
         event.preventDefault();
-        this.checkEmptyFields();
-        this.checkPasswordLength();
+        try {
+            this.checkEmptyFields();
+            this.checkPasswordLength();
+        }
+        catch (error) {
+            switch (true) {
+                case error instanceof EmptyException:
+                    this.setState({ message: error.message });
+                    return;
+                case error instanceof InvalidLengthException:
+                    this.setState({
+                        valPassword: "",
+                        message: error.message
+                    });
+                    return;
+                default:
+                    this.setState({});
+                    return;
+            }
+        }
         this.submit();
     }
 
     protected checkEmptyFields(): void {
+        console.log(this.state.valEmail);
         if (this.state.valEmail === "") {
-            this.setState({
-                message: "Please enter an email address!"
-            });
+            throw new EmptyException("Please enter an email address!");
         }
         if (this.state.valPassword === "") {
-            this.setState({
-                message: "Please enter a password!"
-            });
+            throw new EmptyException("Please enter a password!");
         }
     }
 
     protected checkPasswordLength(): void {
         if (this.state.valPassword.length < 9) {
-            this.setState({
-                valPassword: "",
-                valConfirmPassword: "",
-                message: "Password must be longer than 8 characters"
-            });
+            throw new InvalidLengthException("Password must be longer than 8 characters");
         }
     }
 
@@ -87,12 +114,11 @@ export class LoginForm extends React.Component<IAuthFormProps, IAuthFormStates> 
         }
         catch (error) {
             console.log(`NAY: ${error}`);
-            // this.setState({
-            //     message: "Some error! Need to figure out how to get proper error message",
-            //     valEmail: "",
-            //     valPassword: "",
-            //     valConfirmPassword: ""
-            // });
+            this.setState({
+                message: error.message,
+                valEmail: "",
+                valPassword: ""
+            });
         }
 
         // this.setState({
@@ -112,6 +138,7 @@ export class LoginForm extends React.Component<IAuthFormProps, IAuthFormStates> 
     }
 
     protected getFormGroupEmail(): JSX.Element {
+        const emailHelp = "We'll never share your email with anyone else. LIES!!";
         return (
             <div className="form-group">
                 <input
@@ -119,9 +146,7 @@ export class LoginForm extends React.Component<IAuthFormProps, IAuthFormStates> 
                     id={this.props.idEmail} value={this.state.valEmail}
                     aria-describedby="emailHelp" placeholder="Enter email" onChange={this.onInputChange("valEmail")}
                 />
-                <small id="emailHelp" className="form-text text-muted">
-                    We'll never share your email with anyone else. LIES!!
-                </small>
+                <small id="emailHelp" className="form-text text-muted">{emailHelp}</small>
             </div>
         );
     }

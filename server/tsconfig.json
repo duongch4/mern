@@ -5,13 +5,16 @@
         "noImplicitAny": true,
         "removeComments": true,
         "module": "commonjs",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
         "jsx": "react",
-        "target": "es5",
+        "target": "es6",
         "lib": [
             "dom",
             "es7"
         ],
-        "baseUrl": ".",
+        "baseUrl": "..",
         "paths": {
             "*": [
                 "node_modules/@types/*",
@@ -20,6 +23,7 @@
         }
     },
     "include": [
-        "./client/**/*"
-    ],
+        "./**/*"
+        // "./server/**/*"
+    ]
 }

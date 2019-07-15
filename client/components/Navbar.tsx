@@ -1,8 +1,22 @@
 import * as React from "react";
 import { withRouter } from "react-router-dom";
-import { AuthModal } from "../components/auth/AuthModal";
+import { LoginModal, RegisterModal } from "../components/auth/AuthModal";
 
-export class Navbar extends React.Component {
+export interface INavbarStates {
+    isOpen: boolean;
+}
+
+export class Navbar extends React.Component<any, INavbarStates> {
+    public readonly state: Readonly<INavbarStates> = {
+        isOpen: false
+    };
+
+    private toggleModal = () => {
+        this.setState(
+            { isOpen: !this.state.isOpen }
+        );
+    }
+
     public render() {
         return (
             <div id="navigation">
@@ -28,22 +42,22 @@ export class Navbar extends React.Component {
                         {/* <!-- Button trigger modal --> */}
                         <div>
                             <button
-                                type="button" className="btn"
-                                data-toggle="modal" data-target="#exampleModal"
+                                type="button" className="btn" onClick={this.toggleModal}
+                                data-toggle="modal" data-target="#loginModal"
                             >
-                                Login
+                                Log In
                             </button>
-                            <AuthModal id="exampleModal" />
+                            <LoginModal id="loginModal" isOpen={this.state.isOpen} toggle={this.toggleModal} />
                         </div>
                         {/* <!-- Button trigger modal --> */}
                         <div>
                             <button
-                                type="button" className="btn"
-                                data-toggle="modal" data-target="#exampleModal2"
+                                type="button" className="btn" onClick={this.toggleModal}
+                                data-toggle="modal" data-target="#registerModal"
                             >
                                 Register
                             </button>
-                            <AuthModal id="exampleModal2" />
+                            <RegisterModal id="registerModal" isOpen={this.state.isOpen} toggle={this.toggleModal} />
                         </div>
                     </div>
                 </nav>

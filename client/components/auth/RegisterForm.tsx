@@ -1,23 +1,39 @@
 import * as React from "react";
 import { AjaxHandler } from "../utils/AjaxHandler";
-import { LoginForm } from "./LoginForm";
+import { LoginForm, ILoginFormProps, ILoginFormStates } from "./LoginForm";
+import { EmptyException, InvalidLengthException, NotMatchException } from "./Exception";
 
-// export interface IAuthFormProps {
-//     idEmail?: string;
-//     idPassword?: string;
-//     idConfirmPassword?: string;
-//     textButton: string;
-//     postToUrl: string;
-// }
+export interface IRegisterFormProps extends ILoginFormProps {
+    idConfirmPassword?: string;
+}
 
-// export interface IAuthFormStates {
-//     message: string;
-//     valEmail: string;
-//     valPassword: string;
-//     valConfirmPassword: string;
-// }
+export interface IRegisterFormStates extends ILoginFormStates {
+    valConfirmPassword: string;
+}
 
-export class RegisterForm extends LoginForm {
+export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormStates> {
+    public readonly state: Readonly<IRegisterFormStates> = {
+        isClicked: false,
+        message: "",
+        valEmail: "",
+        valPassword: "",
+        valConfirmPassword: ""
+    };
+
+    public static getDerivedStateFromProps(nextProps: ILoginFormProps, prevState: ILoginFormStates) {
+        if (nextProps.isClicked !== prevState.isClicked) {
+            return {
+                isClicked: nextProps.isClicked,
+                message: "",
+                valEmail: "",
+                valPassword: "",
+                valConfirmPassword: ""
+            };
+        }
+        else {
+            return undefined; // Triggers no change in the state
+        }
+    }
 
     public render() {
         return (
@@ -34,9 +50,33 @@ export class RegisterForm extends LoginForm {
     protected onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         console.log("submit");
         event.preventDefault();
-        this.checkEmptyFields();
-        this.checkPasswordLength();
-        this.checkConfirmPassword();
+        try {
+            this.checkEmptyFields();
+            this.checkPasswordLength();
+            this.checkConfirmPassword();
+        }
+        catch (error) {
+            switch (true) {
+                case error instanceof EmptyException:
+                    this.setState({ message: error.message });
+                    return;
+                case error instanceof InvalidLengthException:
+                    this.setState({
+                        valPassword: "",
+                        message: error.message
+                    });
+                    return;
+                case error instanceof NotMatchException:
+                    this.setState({
+                        valPassword: "",
+                        valConfirmPassword: "",
+                        message: error.message
+                    });
+                default:
+                    this.setState({});
+                    return;
+            }
+        }
         this.submit();
     }
 
@@ -44,11 +84,7 @@ export class RegisterForm extends LoginForm {
         if (
             (this.state.valConfirmPassword === "") || (this.state.valPassword !== this.state.valConfirmPassword)
         ) {
-            this.setState({
-                valPassword: "",
-                valConfirmPassword: "",
-                message: "Password fields do not match. Please try again!"
-            });
+            throw new NotMatchException("Password fields do not match. Please try again!");
         }
     }
 
