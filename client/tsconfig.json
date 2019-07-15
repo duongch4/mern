@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./dist",
+        "outDir": "../dist", // for tsc cmd
         "sourceMap": true,
         "noImplicitAny": true,
         "removeComments": true,

@@ -1,5 +1,5 @@
 import * as supertest from "supertest";
-import ExpressServer from "../ExpressServer";
+import { ExpressServer } from "../ExpressServer";
 
 describe(
     "GET /api",

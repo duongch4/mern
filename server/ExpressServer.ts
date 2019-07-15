@@ -22,6 +22,7 @@ import * as errorHandler from "errorhandler";
 import { Server } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import * as controllers from "./controllers";
+import { Login } from "./controllers";
 
 // Controllers (route handlers)
 // import * as homeController from "./controllers/home";
@@ -33,7 +34,7 @@ import * as controllers from "./controllers";
 // import * as passportConfig from "./auth/passport";
 
 // Create Express server
-export default class ExpressServer extends Server {
+export class ExpressServer extends Server {
 
     constructor() {
         super(true);
@@ -47,7 +48,7 @@ export default class ExpressServer extends Server {
     private config(): void {
         const MongoStore = mongo(session);
         (mongoose as any).Promise = bluebird;
-        mongoose.connect(MONGODB_URI, { useNewUrlParser: true }).then(
+        mongoose.connect(MONGODB_URI, { useCreateIndex: true, useNewUrlParser: true }).then(
             () => {
                 if (this.app.get("env") !== "production") {
                     Logger.Info(`MongoDB is connected at: ${MONGODB_URI}`);
@@ -68,6 +69,7 @@ export default class ExpressServer extends Server {
         this.setLusca();
         this.setCORS();
         this.setCurrUser();
+        /** No leading slashes for @overnightjs: @Controller("api"), not @Controller("/api") */
         this.setRoutes();
         this.setStaticFrontend();
         this.handleError();
@@ -143,9 +145,9 @@ export default class ExpressServer extends Server {
 
     private setRoutes(): void {
         const controllerInstances = [];
-        for (const name in controllers) {
-            if (controllers.hasOwnProperty(name)) {
-                const controller = (controllers as any)[name];
+        for (const name of Object.keys(controllers)) {
+            const controller = (controllers as any)[name];
+            if (typeof controller === "function") {
                 controllerInstances.push(new controller());
             }
         }
@@ -155,11 +157,11 @@ export default class ExpressServer extends Server {
     private setStaticFrontend(): void {
         // Set Static Assets On Frontend: ABSOLUTELY REQUIRED!!!
         this.app.use(
-            express.static(path.resolve(__dirname, "frontend"), { maxAge: 31557600000 })
+            express.static(path.resolve(__dirname, "client"), { maxAge: 31557600000 })
         );
         // If request doesn't match api => return the main index.html => react-router render the route in the client
         this.app.get("/*", (req, res) => {
-            res.sendFile(path.resolve(__dirname, "frontend", "index.html"));
+            res.sendFile(path.resolve(__dirname, "client", "index.html"));
         });
     }
 

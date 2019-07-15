@@ -19,25 +19,26 @@ passport.deserializeUser((id, done) => {
 });
 
 /** Sign in with Email and Password */
-passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-    User.findOne({ email: email.toLowerCase() }, (errEmail: Error, user: IUser) => {
-        if (errEmail) {
-            return done(errEmail);
-        }
-        if (!user) {
-            return done(undefined, false, { message: `Email ${email} not found` });
-        }
-        Auth.compare(password, user.password, (errPassword: Error, isMatch: boolean) => {
-            if (errPassword) {
-                return done(errPassword);
+passport.use("local",
+    new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+        User.findOne({ email: email.toLowerCase() }, (errEmail: Error, user: IUser) => {
+            if (errEmail) {
+                return done(errEmail);
             }
-            if (isMatch) {
-                return done(undefined, user);
+            if (!user) {
+                return done(undefined, false, { message: `Email ${email} not found` });
             }
-            return done(undefined, false, { message: "Invalid Password" });
+            Auth.compare(password, user.password, (errPassword: Error, isMatch: boolean) => {
+                if (errPassword) {
+                    return done(errPassword);
+                }
+                if (isMatch) {
+                    return done(undefined, user);
+                }
+                return done(undefined, false, { message: "Invalid Password" });
+            });
         });
-    });
-}));
+    }));
 
 /** Login middleware - Required  */
 export const authenticate = (req: Request, res: Response, next: NextFunction): void => {

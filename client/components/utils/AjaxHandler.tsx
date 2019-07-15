@@ -58,13 +58,14 @@ export class AjaxHandler {
     }
 
     public static postRequest(url: string, data: IGenericObject<any> = {}): Promise<any> {
+        console.log(JSON.stringify(data));
         return new Promise(async (resolve, reject) => {
             try {
                 const response: Response = await fetch(url, {
                     method: "POST",
                     mode: "cors",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json; charset=utf-8"
                     },
                     body: JSON.stringify(data)
                 });
@@ -72,11 +73,14 @@ export class AjaxHandler {
                     resolve(response);
                 }
                 else {
+                    console.log("a");
                     const result = await response.json();
+                    console.log(result);
                     throw new Error(result.error.message);
                 }
             }
             catch (error) {
+                console.log("b");
                 reject(error);
             }
         });

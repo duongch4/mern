@@ -3,5 +3,5 @@
         "server"
     ],
     "ext": "ts",
-    "exec": "rimraf ./dist/server.* && webpack --stack=server --config=webpack.config.dev.js && npm run serve"
+    "exec": "tsc --project ./server/tsconfig.json && tslint -c tslint.json -p ./server/tsconfig.json && npm run serve"
 }

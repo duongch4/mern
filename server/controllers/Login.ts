@@ -12,25 +12,28 @@ import * as crypto from "crypto";
 import { Controller, Middleware, Get, Put, Post, Delete } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 
-@Controller("/login")
+@Controller("auth/login")
 export class Login {
 
     // @Get()
     // private getLogin(req: Request, res: Response) {
-    //     if (req.user) {
-    //         Logger.Info(`User "${req.user}": to be logged in`);
-    //         return res.redirect("/");
-    //     }
+    //     // if (req.user) {
+    //     //     Logger.Info(`User "${req.user}": to be logged in`);
+    //     //     return res.redirect("/");
+    //     // }
     //     // Should render stuffs here!!
-    //     res.status(200).json({
+    //     res.status(400).json({
     //         user: req.user,
     //     });
     // }
 
     @Post()
     private postLogin(req: Request, res: Response, next: NextFunction) {
-        console.log(req);
-        console.log(res);
+        Logger.Info(req.body, true);
+        // return res.status(300).json({
+        //     message: "yooyoyo"
+        // });
+
         check("email", "Email is not valid").isEmail();
         check("password", "Password cannot be blank").isLength({ min: 1 });
         sanitize("email").normalizeEmail({ gmail_remove_dots: false });
@@ -38,13 +41,33 @@ export class Login {
         try {
             validationResult(req).throw();
         }
-        catch (error) {
-            console.log(error.mapped());
+        catch (errors) {
+            console.log(errors.mapped());
+            return res.status(400).json({
+                error: errors.mapped(),
+            });
         }
-        Logger.Info(req.params.msg);
-        return res.status(400).json({
-            error: req.params.msg,
-        });
+
+        // passport.authenticate("local", (err: Error, user: IUser, info: IVerifyOptions) => {
+        //     if (err) { return next(err); }
+        //     if (!user) {
+        //         // req.flash("errors", { msg: info.message });
+        //         return res.status(300).json({
+        //             msg: "yeah yeah"
+        //         });
+        //     }
+        //     req.logIn(user, (error: Error) => {
+        //         if (error) { return next(error); }
+        //         // req.flash("success", { msg: "Success! You are logged in." });
+        //         // res.redirect(req.session.returnTo || "/");
+        //         return res.status(200).json({
+        //             msg: "eh ehe h"
+        //         });
+        //     });
+        // })(req, res, next);
+        // return res.status(400).json({
+        //     error: req.params.msg,
+        // });
     }
 
     // export const postLogin = (req: Request, res: Response, next: NextFunction) => {
@@ -70,15 +93,15 @@ export class Login {
     //     })(req, res, next);
     //   };
 
-    @Delete()
-    private delMessage(req: Request, res: Response) {
-        try {
-            throw new Error(req.params.msg);
-        } catch (err) {
-            Logger.Err(err, true);
-            return res.status(400).json({
-                error: req.params.msg,
-            });
-        }
-    }
+    // @Delete()
+    // private delMessage(req: Request, res: Response) {
+    //     try {
+    //         throw new Error(req.params.msg);
+    //     } catch (err) {
+    //         Logger.Err(err, true);
+    //         return res.status(400).json({
+    //             error: req.params.msg,
+    //         });
+    //     }
+    // }
 }

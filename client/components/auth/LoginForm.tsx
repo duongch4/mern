@@ -80,11 +80,11 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
                     return;
             }
         }
+        console.log(this.state);
         this.submit();
     }
 
     protected checkEmptyFields(): void {
-        console.log(this.state.valEmail);
         if (this.state.valEmail === "") {
             throw new EmptyException("Please enter an email address!");
         }

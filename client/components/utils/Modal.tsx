@@ -45,7 +45,7 @@ export class Modal extends React.Component<IModalProps, IModalStates> {
     }
 
     public render() {
-        console.log(this.state);
+        // console.log(this.state);
 
         return (
             <div
