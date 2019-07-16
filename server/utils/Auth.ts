@@ -1,8 +1,8 @@
-import * as bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 
 export default class Auth {
 
-    public static hashPassword(
+     static hashPassword(
         password: string, saltRounds: number, callback: (error: Error, hash: string) => void
     ): void {
         bcrypt.hash(password, saltRounds, (error, hash) => {
@@ -10,7 +10,7 @@ export default class Auth {
         });
     }
 
-    public static compare(
+     static compare(
         password: string, dbHash: string, callback: (error: Error, isMatch: boolean) => void
     ): void {
         bcrypt.compare(password, dbHash, (error, isMatch) => {

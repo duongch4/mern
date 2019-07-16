@@ -1,24 +1,24 @@
-import * as React from "react";
+import React, { Component } from "react";
 
-export interface IModalProps {
+export type ModalProps = {
     id: string;
     isOpen?: boolean;
     toggle?: () => void;
     title?: string;
-    body?: JSX.Element;
+    body?: React.ReactElement;
     closeTitle?: string;
-}
+};
 
-export interface IModalStates {
+export type ModalStates = {
     isOpen: boolean;
-}
+};
 
-export class Modal extends React.Component<IModalProps, IModalStates> {
-    public readonly state: Readonly<IModalStates> = {
+export class Modal extends Component<ModalProps, ModalStates> {
+    readonly state: Readonly<ModalStates> = {
         isOpen: this.props.isOpen
     };
 
-    public static getDerivedStateFromProps(nextProps: IModalProps, prevState: IModalStates) {
+    static getDerivedStateFromProps(nextProps: ModalProps, prevState: ModalStates) {
         if (nextProps.isOpen !== prevState.isOpen) {
             return { isOpen: nextProps.isOpen };
         }
@@ -27,24 +27,24 @@ export class Modal extends React.Component<IModalProps, IModalStates> {
         }
     }
 
-    public listenKeyboard = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    listenKeyboard = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === "Escape" || event.keyCode === 27) {
             this.toggle();
         }
     }
 
-    public onDialogClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    onDialogClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation();
     }
 
-    public toggle = () => {
+    toggle = () => {
         this.setState({
             isOpen: !this.state.isOpen
         });
         this.props.toggle();
     }
 
-    public render() {
+    render() {
         // console.log(this.state);
 
         return (

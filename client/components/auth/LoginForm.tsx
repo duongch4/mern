@@ -1,33 +1,32 @@
-import * as React from "react";
+import React, { Component, ReactElement } from "react";
 import { AjaxHandler } from "../utils/AjaxHandler";
 import { EmptyException, InvalidLengthException } from "./Exception";
 
-export interface ILoginFormProps {
-    isClicked: boolean;
+export type LoginFormProps = {
     idEmail?: string;
     idPassword?: string;
+    isClicked: boolean;
     textButton: string;
     postToUrl: string;
-}
+};
 
-export interface ILoginFormStates {
-    isClicked: false;
+export type LoginFormStates = {
+    isClicked: boolean;
     message: string;
     valEmail: string;
     valPassword: string;
-}
+};
 
-export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends ILoginFormStates = ILoginFormStates>
-    extends React.Component<T, S> {
+export class LoginForm<T extends LoginFormProps, S extends LoginFormStates> extends Component<T, S> {
 
-    public readonly state: Readonly<ILoginFormStates | any> = {
+    readonly state: Readonly<LoginFormStates | any> = {
         isClicked: false,
         message: "",
         valEmail: "",
         valPassword: ""
     };
 
-    public static getDerivedStateFromProps(nextProps: ILoginFormProps, prevState: ILoginFormStates) {
+    static getDerivedStateFromProps(nextProps: LoginFormProps, prevState: LoginFormStates) {
         if (nextProps.isClicked !== prevState.isClicked) {
             return {
                 isClicked: nextProps.isClicked,
@@ -41,7 +40,7 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
         }
     }
 
-    public render() {
+    render() {
         return (
             <form onSubmit={this.onSubmit}>
                 {this.displayMessage()}
@@ -52,13 +51,13 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
         );
     }
 
-    protected onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             [field]: event.target.value
-        } as Pick<ILoginFormStates, any>);
+        } as Pick<LoginFormStates, any>);
     }
 
-    protected onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
             this.checkEmptyFields();
@@ -67,6 +66,7 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
         catch (error) {
             switch (true) {
                 case error instanceof EmptyException:
+                    console.log(error);
                     this.setState({ message: error.message });
                     return;
                 case error instanceof InvalidLengthException:
@@ -76,7 +76,11 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
                     });
                     return;
                 default:
-                    this.setState({});
+                    this.setState({
+                        valEmail: "",
+                        valPassword: "",
+                        message: error.message
+                    });
                     return;
             }
         }
@@ -84,7 +88,7 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
         this.submit();
     }
 
-    protected checkEmptyFields(): void {
+    checkEmptyFields(): void {
         if (this.state.valEmail === "") {
             throw new EmptyException("Please enter an email address!");
         }
@@ -93,13 +97,13 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
         }
     }
 
-    protected checkPasswordLength(): void {
-        if (this.state.valPassword.length < 9) {
-            throw new InvalidLengthException("Password must be longer than 8 characters");
+    checkPasswordLength(): void {
+        if (this.state.valPassword.length < 5) {
+            throw new InvalidLengthException("Password must be longer than 4 characters");
         }
     }
 
-    protected async submit(): Promise<any> {
+    async submit(): Promise<any> {
         console.log("Submitting form to: ", this.props.postToUrl);
         const data = {
             email: this.state.valEmail,
@@ -107,10 +111,11 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
         };
 
         try {
-            const result = await AjaxHandler.postRequest(this.props.postToUrl, data);
-            console.log(`YAY: ${result}`);
-            // Redirect or something here!!!
-            // window.location = response.;
+            const response = await AjaxHandler.postRequest(this.props.postToUrl, data);
+            console.log("YAY!!!");
+            console.log(response);
+            this.setState({ message: response.message });
+            window.location = response.payload.redirect;
         }
         catch (error) {
             console.log(`NAY: ${error}`);
@@ -120,14 +125,10 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
                 valPassword: ""
             });
         }
-
-        // this.setState({
-        //     message: ""
-        // });
     }
 
-    protected displayMessage(): JSX.Element {
-        let message: JSX.Element;
+    displayMessage(): ReactElement {
+        let message: ReactElement;
         if (this.state.message) {
             message = <div className="alert alert-warning">{this.state.message}</div>;
         }
@@ -137,7 +138,7 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
         return message;
     }
 
-    protected getFormGroupEmail(): JSX.Element {
+    getFormGroupEmail(): ReactElement {
         const emailHelp = "We'll never share your email with anyone else. LIES!!";
         return (
             <div className="form-group">
@@ -151,7 +152,7 @@ export class LoginForm<T extends ILoginFormProps = ILoginFormProps, S extends IL
         );
     }
 
-    protected getFormGroupPassword(): JSX.Element {
+    getFormGroupPassword(): ReactElement {
         return (
             <div className="form-group">
                 <input

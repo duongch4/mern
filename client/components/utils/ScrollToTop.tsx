@@ -1,17 +1,17 @@
-import * as React from "react";
+import React, { Component } from "react";
 import {
     withRouter,
 } from "react-router-dom";
 
-class ScrollToTopComponent extends React.Component<any, any> {
+class ScrollToTopComponent extends Component<any, any> {
 
-    public componentWillReceiveProps(prevProps: any) {
+    componentWillReceiveProps(prevProps: any) {
         if (this.props.location !== prevProps.location) {
             window.scrollTo(0, 0);
         }
     }
 
-    public render() {
+    render() {
         return (
             <div>
                 {this.props.children}

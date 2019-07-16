@@ -1,7 +1,7 @@
-import * as React from "react";
+import React, { Component } from "react";
 
-export class Footer extends React.Component<any, any> {
-    public render() {
+export class Footer extends Component<any, any> {
+    render() {
         return (
             <nav className="footer navbar-dark bg-dark static-bottom text-center">
                 <div className="social-icons">

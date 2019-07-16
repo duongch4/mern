@@ -1,26 +1,26 @@
-import * as React from "react";
+import React, { ReactElement } from "react";
 import { AjaxHandler } from "../utils/AjaxHandler";
-import { LoginForm, ILoginFormProps, ILoginFormStates } from "./LoginForm";
+import { LoginForm, LoginFormProps, LoginFormStates } from "./LoginForm";
 import { EmptyException, InvalidLengthException, NotMatchException } from "./Exception";
 
-export interface IRegisterFormProps extends ILoginFormProps {
+export type IRegisterFormProps = {
     idConfirmPassword?: string;
-}
+} & LoginFormProps;
 
-export interface IRegisterFormStates extends ILoginFormStates {
+export type IRegisterFormStates = {
     valConfirmPassword: string;
-}
+} & LoginFormStates;
 
 export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormStates> {
-    public readonly state: Readonly<IRegisterFormStates> = {
+    readonly state: Readonly<IRegisterFormStates> = {
         isClicked: false,
         message: "",
         valEmail: "",
         valPassword: "",
-        valConfirmPassword: ""
+        valConfirmPassword: "",
     };
 
-    public static getDerivedStateFromProps(nextProps: ILoginFormProps, prevState: ILoginFormStates) {
+    static getDerivedStateFromProps(nextProps: LoginFormProps, prevState: LoginFormStates) {
         if (nextProps.isClicked !== prevState.isClicked) {
             return {
                 isClicked: nextProps.isClicked,
@@ -35,7 +35,7 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
         }
     }
 
-    public render() {
+    render() {
         return (
             <form onSubmit={this.onSubmit}>
                 {this.displayMessage()}
@@ -47,7 +47,7 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
         );
     }
 
-    protected onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         console.log("submit");
         event.preventDefault();
         try {
@@ -63,6 +63,7 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
                 case error instanceof InvalidLengthException:
                     this.setState({
                         valPassword: "",
+                        valConfirmPassword: "",
                         message: error.message
                     });
                     return;
@@ -73,14 +74,45 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
                         message: error.message
                     });
                 default:
-                    this.setState({});
+                    this.setState({
+                        valEmail: "",
+                        valPassword: "",
+                        valConfirmPassword: "",
+                        message: error.message
+                    });
                     return;
             }
         }
         this.submit();
     }
 
-    private checkConfirmPassword(): void {
+    async submit(): Promise<any> {
+        console.log("Submitting form to: ", this.props.postToUrl);
+        const data = {
+            email: this.state.valEmail,
+            password: this.state.valPassword,
+            confirmPassword: this.state.valConfirmPassword
+        };
+
+        try {
+            const response = await AjaxHandler.postRequest(this.props.postToUrl, data);
+            console.log("YAY!!!");
+            console.log(response);
+            this.setState({ message: response.message });
+            window.location = response.payload.redirect;
+        }
+        catch (error) {
+            console.log(`NAY: ${error}`);
+            this.setState({
+                message: error.message,
+                valEmail: "",
+                valPassword: "",
+                valConfirmPassword: "",
+            });
+        }
+    }
+
+    checkConfirmPassword(): void {
         if (
             (this.state.valConfirmPassword === "") || (this.state.valPassword !== this.state.valConfirmPassword)
         ) {
@@ -88,7 +120,7 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
         }
     }
 
-    private getFormGroupConfirmPassword(): JSX.Element {
+    getFormGroupConfirmPassword(): ReactElement {
         return (
             <div className="form-group">
                 <input

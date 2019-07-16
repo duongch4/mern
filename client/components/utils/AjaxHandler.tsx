@@ -1,15 +1,15 @@
-export interface IGenericObject<TValue> {
+export type IGenericObject<TValue> = {
     [key: string]: TValue;
-}
+};
 
 export class AjaxHandler {
 
-    public static getRequest(url: string): Promise<any> {
+    static getRequest(url: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const response: Response = await fetch(url);
                 if (response.ok) {
-                    resolve(response.json());
+                    return resolve(response.json());
                 }
                 else {
                     const error = await response.json();
@@ -17,12 +17,12 @@ export class AjaxHandler {
                 }
             }
             catch (error) {
-                reject(error);
+                return reject(error);
             }
         });
     }
 
-    public static putRequest(url: string, data: IGenericObject<any> = {}): Promise<any> {
+    static putRequest(url: string, data: IGenericObject<any> = {}): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const dataFormated = {};
@@ -44,20 +44,20 @@ export class AjaxHandler {
                 });
                 // console.log(response);
                 if (response.ok) {
-                    resolve(response);
+                    return resolve(response.json());
                 }
                 else {
-                    const result = await response.json();
-                    throw new Error(result.error.message);
+                    const error = await response.json();
+                    throw new Error(error.error.message);
                 }
             }
             catch (error) {
-                reject(error);
+                return reject(error);
             }
         });
     }
 
-    public static postRequest(url: string, data: IGenericObject<any> = {}): Promise<any> {
+    static postRequest(url: string, data: IGenericObject<any> = {}): Promise<any> {
         console.log(JSON.stringify(data));
         return new Promise(async (resolve, reject) => {
             try {
@@ -69,24 +69,31 @@ export class AjaxHandler {
                     },
                     body: JSON.stringify(data)
                 });
+
                 if (response.ok) {
-                    resolve(response);
+                    return resolve(response.json());
                 }
                 else {
                     console.log("a");
-                    const result = await response.json();
-                    console.log(result);
-                    throw new Error(result.error.message);
+                    const error = await response.json();
+                    console.log(error);
+                    if (error instanceof Array) {
+                        throw new Error(error[0].msg); // Get only the first express-validator result
+                    }
+                    else {
+                        throw new Error(error.message);
+                    }
                 }
             }
             catch (error) {
                 console.log("b");
-                reject(error);
+                console.log(error);
+                return reject(error);
             }
         });
     }
 
-    private static assign(obj: IGenericObject<any>, keyArray: string[], value: string) {
+    static assign(obj: IGenericObject<any>, keyArray: string[], value: string) {
         const lastKeyIndex = keyArray.length - 1;
         for (let i = 0; i < lastKeyIndex; i++) {
             const key = keyArray[i];

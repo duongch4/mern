@@ -1,6 +1,6 @@
 import logger from "./logger";
-import * as dotenv from "dotenv";
-import * as fs from "fs";
+import dotenv from "dotenv";
+import fs from "fs";
 
 if (process.env.NODE_ENV !== "production") {
     // Setup multiple .*.env files in dev/debug mode

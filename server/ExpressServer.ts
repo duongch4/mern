@@ -1,23 +1,23 @@
-import * as express from "express";
-import * as session from "express-session";
-import * as cookieParser from "cookie-parser";
-import * as flash from "express-flash";
+import express from "express";
+import session from "express-session";
+import cookieParser from "cookie-parser";
+import flash from "express-flash";
 
-import * as compression from "compression";  // compresses requests
-import * as bodyParser from "body-parser";
-import * as lusca from "lusca";
+import compression from "compression";  // compresses requests
+import bodyParser from "body-parser";
+import lusca from "lusca";
 
-import * as mongo from "connect-mongo";
-import * as mongoose from "mongoose";
-import * as bluebird from "bluebird";
+import mongo from "connect-mongo";
+import mongoose from "mongoose";
+import bluebird from "bluebird";
 
-import * as path from "path";
+import path from "path";
 
-import * as passport from "passport";
+import passport from "passport";
 
 import { MONGODB_URI, SESSION_SECRET } from "./utils/secrets";
 
-import * as errorHandler from "errorhandler";
+import errorHandler from "errorhandler";
 
 import { Server } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
@@ -25,13 +25,13 @@ import * as controllers from "./controllers";
 import { Login } from "./controllers";
 
 // Controllers (route handlers)
-// import * as homeController from "./controllers/home";
-// import * as userController from "./controllers/user";
-// import * as apiController from "./controllers/api";
-// import * as contactController from "./controllers/contact";
+// import homeController from "./controllers/home";
+// import userController from "./controllers/user";
+// import apiController from "./controllers/api";
+// import contactController from "./controllers/contact";
 
 // API keys and Passport configuration
-// import * as passportConfig from "./auth/passport";
+// import passportConfig from "./auth/passport";
 
 // Create Express server
 export class ExpressServer extends Server {
@@ -41,11 +41,11 @@ export class ExpressServer extends Server {
         this.config();
     }
 
-    public getApp(): express.Application {
+    getApp(): express.Application {
         return this.app;
     }
 
-    private config(): void {
+    config(): void {
         const MongoStore = mongo(session);
         (mongoose as any).Promise = bluebird;
         mongoose.connect(MONGODB_URI, { useCreateIndex: true, useNewUrlParser: true }).then(
@@ -75,7 +75,7 @@ export class ExpressServer extends Server {
         this.handleError();
     }
 
-    public listen(port: string): void {
+    listen(port: string): void {
         this.app.listen(port, () => {
             Logger.Info(`App is running at PORT ${port} in ${this.app.get("env")} mode`);
             if (process.env.NODE_ENV !== "production") {
@@ -84,12 +84,12 @@ export class ExpressServer extends Server {
         });
     }
 
-    private setBodyParser() {
+    setBodyParser() {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: true }));
     }
 
-    private setSession(MongoStore: mongo.MongoStoreFactory): void {
+    setSession(MongoStore: mongo.MongoStoreFactory): void {
         this.app.use(cookieParser(SESSION_SECRET));
         this.app.use(session({
             cookie: { maxAge: 60000 },
@@ -103,12 +103,12 @@ export class ExpressServer extends Server {
         }));
     }
 
-    private setPassportSession(): void {
+    setPassportSession(): void {
         this.app.use(passport.initialize());
         this.app.use(passport.session());
     }
 
-    private setFlash(): void {
+    setFlash(): void {
         this.app.use(flash());
         // Custom flash middleware -- from Ethan Brown's book, 'Web Development with Node & Express'
         this.app.use((req, res, next) => {
@@ -119,12 +119,12 @@ export class ExpressServer extends Server {
         });
     }
 
-    private setLusca(): void {
+    setLusca(): void {
         this.app.use(lusca.xframe("SAMEORIGIN"));
         this.app.use(lusca.xssProtection(true));
     }
 
-    private setCORS(): void {
+    setCORS(): void {
         this.app.use((req, res, next) => {
             res.setHeader("Access-Control-Allow-Origin", "*");
             res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -136,14 +136,14 @@ export class ExpressServer extends Server {
         });
     }
 
-    private setCurrUser(): void {
+    setCurrUser(): void {
         this.app.use((req, res, next) => {
             res.locals.user = req.user;
             next();
         });
     }
 
-    private setRoutes(): void {
+    setRoutes(): void {
         const controllerInstances = [];
         for (const name of Object.keys(controllers)) {
             const controller = (controllers as any)[name];
@@ -154,7 +154,7 @@ export class ExpressServer extends Server {
         super.addControllers(controllerInstances);
     }
 
-    private setStaticFrontend(): void {
+    setStaticFrontend(): void {
         // Set Static Assets On Frontend: ABSOLUTELY REQUIRED!!!
         this.app.use(
             express.static(path.resolve(__dirname, "client"), { maxAge: 31557600000 })
@@ -165,7 +165,7 @@ export class ExpressServer extends Server {
         });
     }
 
-    private handleError(): void {
+    handleError(): void {
         // Error Handler. Provides full stack - remove for production
         if (process.env.NODE_ENV !== "production") {
             this.app.use(errorHandler());

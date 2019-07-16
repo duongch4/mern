@@ -1,23 +1,23 @@
-import * as React from "react";
+import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { LoginModal, RegisterModal } from "../components/auth/AuthModal";
 
-export interface INavbarStates {
+export type NavbarStates = {
     isOpen: boolean;
-}
+};
 
-export class Navbar extends React.Component<any, INavbarStates> {
-    public readonly state: Readonly<INavbarStates> = {
+export class Navbar extends Component<any, NavbarStates> {
+    readonly state: Readonly<NavbarStates> = {
         isOpen: false
     };
 
-    private toggleModal = () => {
+    _toggleModal = () => {
         this.setState(
             { isOpen: !this.state.isOpen }
         );
     }
 
-    public render() {
+    render() {
         return (
             <div id="navigation">
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -42,22 +42,22 @@ export class Navbar extends React.Component<any, INavbarStates> {
                         {/* <!-- Button trigger modal --> */}
                         <div>
                             <button
-                                type="button" className="btn" onClick={this.toggleModal}
+                                type="button" className="btn" onClick={this._toggleModal}
                                 data-toggle="modal" data-target="#loginModal"
                             >
                                 Log In
                             </button>
-                            <LoginModal id="loginModal" isOpen={this.state.isOpen} toggle={this.toggleModal} />
+                            <LoginModal id="loginModal" isOpen={this.state.isOpen} toggle={this._toggleModal} />
                         </div>
                         {/* <!-- Button trigger modal --> */}
                         <div>
                             <button
-                                type="button" className="btn" onClick={this.toggleModal}
+                                type="button" className="btn" onClick={this._toggleModal}
                                 data-toggle="modal" data-target="#registerModal"
                             >
                                 Register
                             </button>
-                            <RegisterModal id="registerModal" isOpen={this.state.isOpen} toggle={this.toggleModal} />
+                            <RegisterModal id="registerModal" isOpen={this.state.isOpen} toggle={this._toggleModal} />
                         </div>
                     </div>
                 </nav>

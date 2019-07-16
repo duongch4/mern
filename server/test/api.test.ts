@@ -1,4 +1,4 @@
-import * as supertest from "supertest";
+import supertest from "supertest";
 import { ExpressServer } from "../ExpressServer";
 
 describe(

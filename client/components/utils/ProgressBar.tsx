@@ -1,14 +1,14 @@
-import * as React from "react";
+import React, { Component } from "react";
 
-export class ProgressBar extends React.Component<any, any> {
-    public render() {
+export class ProgressBar extends Component<any, any> {
+    render() {
         const progressBarStyle = {
             width: "100%",
         };
 
         return (
             <div className="progress">
-                <div className="progress-bar progress-bar-striped active" style={progressBarStyle}/>
+                <div className="progress-bar progress-bar-striped active" style={progressBarStyle} />
             </div>
         );
     }

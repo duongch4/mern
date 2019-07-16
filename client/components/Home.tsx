@@ -1,9 +1,9 @@
-import * as React from "react";
+import React, { Component } from "react";
 
-import * as homeImg from "../assets/png/titleImg.png";
+import homeImg from "../assets/png/titleImg.png";
 
-export class Home extends React.Component<any, any> {
-    public render() {
+export class Home extends Component<any, any> {
+    render() {
         return (
             <div id="home" className="container-fluid">
                 <div className="row">

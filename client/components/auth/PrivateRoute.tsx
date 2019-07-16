@@ -1,16 +1,16 @@
-import * as React from "react";
+import React from "react";
 import {
     Route,
     Redirect,
     RouteProps,
 } from "react-router-dom";
 
-interface IPrivateRouteProps extends RouteProps {
+type PrivateRouteProps = {
     component: any;
     isLoggedIn: boolean;
-}
+} & RouteProps;
 
-export const PrivateRoute = (props: IPrivateRouteProps) => {
+export const PrivateRoute = (props: PrivateRouteProps) => {
     const { component: Component, isLoggedIn, ...rest } = props;
 
     return (
@@ -20,13 +20,13 @@ export const PrivateRoute = (props: IPrivateRouteProps) => {
                 isLoggedIn ? (
                     <Component {...routeProps} />
                 ) : (
-                    <Redirect
-                        to={{
-                            pathname: "/login",
-                            state: { from: routeProps.location }
-                        }}
-                    />
-                )
+                        <Redirect
+                            to={{
+                                pathname: "/login",
+                                state: { from: routeProps.location }
+                            }}
+                        />
+                    )
             }
         />
     );

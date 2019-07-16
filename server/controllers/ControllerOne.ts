@@ -6,7 +6,7 @@ import { Logger } from "@overnightjs/logger";
 export class ControllerOne {
 
     @Get(":msg")
-    private getMessage(req: Request, res: Response) {
+    getMessage(req: Request, res: Response) {
         Logger.Info(req.params.msg);
         res.status(200).json({
             message: req.params.msg,
@@ -14,7 +14,7 @@ export class ControllerOne {
     }
 
     @Put(":msg")
-    private putMessage(req: Request, res: Response) {
+    putMessage(req: Request, res: Response) {
         Logger.Info(req.params.msg);
         return res.status(400).json({
             error: req.params.msg,
@@ -22,7 +22,7 @@ export class ControllerOne {
     }
 
     @Post(":msg")
-    private postMessage(req: Request, res: Response) {
+    postMessage(req: Request, res: Response) {
         Logger.Info(req.params.msg);
         return res.status(400).json({
             error: req.params.msg,
@@ -30,7 +30,7 @@ export class ControllerOne {
     }
 
     @Delete(":msg")
-    private delMessage(req: Request, res: Response) {
+    delMessage(req: Request, res: Response) {
         try {
             throw new Error(req.params.msg);
         } catch (err) {

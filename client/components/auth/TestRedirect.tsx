@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { Component } from "react";
 import {
     BrowserRouter as Router,
     Route,
@@ -24,18 +24,18 @@ const fakeAuth = {
 const Public = () => <h3>Public</h3>;
 const Protected = () => <h3>Protected</h3>;
 
-class Login extends React.Component<any, any> {
-    public state = {
+class Login extends Component<any, any> {
+    state = {
         redirectToReferrer: false
     };
-    private login = () => {
+    login = () => {
         fakeAuth.authenticate(() => {
             this.setState(() => ({
                 redirectToReferrer: true
             }));
         });
     }
-    public render() {
+    render() {
         const { from } = this.props.location.state || { from: { pathname: "/" } };
         const { redirectToReferrer } = this.state;
 
@@ -70,10 +70,10 @@ export default function AuthExample() {
             <div>
                 <AuthButton />
                 <ul>
-                    <li><Link to="/public">Public Page</Link></li>
+                    <li><Link to="/">Public Page</Link></li>
                     <li><Link to="/protected">Protected Page</Link></li>
                 </ul>
-                <Route path="/public" component={Public} />
+                <Route path="/" component={Public} />
                 <Route path="/login" component={Login} />
                 <PrivateRoute isLoggedIn={fakeAuth.isAuthenticated} path="/protected" component={Protected} />
             </div>

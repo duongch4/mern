@@ -4,6 +4,7 @@
         "sourceMap": true,
         "noImplicitAny": true,
         "removeComments": true,
+        "esModuleInterop": true,
         "module": "commonjs",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,

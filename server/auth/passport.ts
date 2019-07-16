@@ -1,6 +1,6 @@
-import * as passport from "passport";
-import * as passportLocal from "passport-local";
-import * as _ from "lodash";
+import passport from "passport";
+import passportLocal from "passport-local";
+import _ from "lodash";
 
 import { Request, Response, NextFunction } from "express";
 import { User, IUser } from "../models/User";
@@ -26,7 +26,7 @@ passport.use("local",
                 return done(errEmail);
             }
             if (!user) {
-                return done(undefined, false, { message: `Email ${email} not found` });
+                return done(undefined, false, { message: `Email "${email}" not found` });
             }
             Auth.compare(password, user.password, (errPassword: Error, isMatch: boolean) => {
                 if (errPassword) {
@@ -38,7 +38,8 @@ passport.use("local",
                 return done(undefined, false, { message: "Invalid Password" });
             });
         });
-    }));
+    })
+);
 
 /** Login middleware - Required  */
 export const authenticate = (req: Request, res: Response, next: NextFunction): void => {

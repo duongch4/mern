@@ -1,27 +1,30 @@
-import * as React from "react";
-import { Modal, IModalProps } from "../utils/Modal";
+import React, { ReactElement } from "react";
+import { Modal, ModalProps } from "../utils/Modal";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 
-export const LoginModal: React.FunctionComponent<IModalProps> = ({ id, isOpen, toggle }) => {
+export const LoginModal = (props: ModalProps) => {
     const title: string = "Log In to Access Site";
-    const form: JSX.Element = <LoginForm isClicked={isOpen} textButton="Login" postToUrl="/auth/login" />;
+    const form = <LoginForm isClicked={props.isOpen} textButton="Login" postToUrl="/auth/login" />;
     return (
-        <Modal id={id} isOpen={isOpen} toggle={toggle} title="Log In" body={getBody(title, form)} closeTitle="Close" />
+        <Modal
+            id={props.id} isOpen={props.isOpen} toggle={props.toggle}
+            title="Log In" body={getBody(title, form)} closeTitle="Close"
+        />
     );
 };
 
-export const RegisterModal: React.FunctionComponent<IModalProps> = ({ id, isOpen, toggle }) => {
+export const RegisterModal = (props: ModalProps) => {
     const title: string = "Create an account";
-    const form: JSX.Element = <RegisterForm isClicked={isOpen} textButton="Register" postToUrl="/auth/register" />;
+    const form = <RegisterForm isClicked={props.isOpen} textButton="Register" postToUrl="/auth/register" />;
     return (
-        <Modal id={id} isOpen={isOpen} toggle={toggle}
+        <Modal id={props.id} isOpen={props.isOpen} toggle={props.toggle}
             title="Register" body={getBody(title, form)} closeTitle="Close"
         />
     );
 };
 
-const getBody = (title: string, form: JSX.Element): JSX.Element => {
+const getBody = (title: string, form: ReactElement): ReactElement => {
     return (
         <div>
             <p className="text-left">

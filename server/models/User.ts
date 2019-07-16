@@ -1,6 +1,6 @@
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import Auth from "../utils/Auth";
-import * as crypto from "crypto";
+import crypto from "crypto";
 
 export interface IAuthToken {
     accessToken: string;
@@ -104,7 +104,7 @@ export const User: mongoose.Model<IUser> = mongoose.model<IUser>("User", UserSch
 //  * @param res {Response} The express response object.
 //  * @param next {NextFunction} The next function to continue.
 //  */
-// public get(req: Request, res: Response, next: NextFunction) {
+//  get(req: Request, res: Response, next: NextFunction) {
 //     //verify the id parameter exists
 //     const PARAM_ID: string = "id";
 //     if (typeof req.params[PARAM_ID] === "undefined" || req.params[PARAM_ID] === null) {
