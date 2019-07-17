@@ -1,7 +1,7 @@
-import { IResponse } from "./InterfaceResponse";
+import { TResponse } from "./TypeResponse";
 
 class BaseCustomException extends Error {
-     readonly response: IResponse;
+     readonly response: TResponse;
 
     constructor(
         message: string, status: string = "Known Exception", code: number = 400, payload: object = {}

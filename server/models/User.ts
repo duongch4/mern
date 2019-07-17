@@ -2,19 +2,19 @@ import mongoose from "mongoose";
 import Auth from "../utils/Auth";
 import crypto from "crypto";
 
-export interface IAuthToken {
+export type AuthToken = {
     accessToken: string;
     kind: string;
-}
+};
 
-export interface IUser extends mongoose.Document {
+export type UserDoc = mongoose.Document & {
     email: string;
     password: string;
     passwordResetToken: string;
     passwordResetExpires: Date;
 
     facebook: string;
-    tokens: IAuthToken;
+    tokens: AuthToken;
 
     profile: {
         firstName: string;
@@ -27,7 +27,7 @@ export interface IUser extends mongoose.Document {
 
     getGravatar: (size: number) => string;
     getFullName: () => string;
-}
+};
 
 const UserSchema: mongoose.Schema = new mongoose.Schema(
     {
@@ -58,7 +58,7 @@ const UserSchema: mongoose.Schema = new mongoose.Schema(
     }
 );
 
-UserSchema.pre<IUser>("save", function save(next) {
+UserSchema.pre<UserDoc>("save", function save(next) {
     const user = this;
 
     if (!user.isModified("password")) {
@@ -93,7 +93,7 @@ UserSchema.methods.getGravatar = function (size: number = 200): string {
     return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
 };
 
-export const User: mongoose.Model<IUser> = mongoose.model<IUser>("User", UserSchema);
+export const User: mongoose.Model<UserDoc> = mongoose.model<UserDoc>("User", UserSchema);
 
 // /**
 //  * Get a user

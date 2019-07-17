@@ -1,18 +1,17 @@
+import "../auth/passport"; // passport config
 import passport from "passport";
 import { IVerifyOptions } from "passport-local";
 
 import { Request, Response, NextFunction } from "express";
 import { check, sanitize, validationResult } from "express-validator";
 
-import { WriteError } from "mongodb";
-import { User, IUser, IAuthToken } from "../models/User";
-import "../auth/passport";
+import { UserDoc } from "../models/User";
 
 import crypto from "crypto";
 import { Controller, Middleware, Get, Put, Post, Delete } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import { NotFoundException } from "./Exception";
-import { IResponse } from "./InterfaceResponse";
+import { TResponse } from "./TypeResponse";
 
 @Controller("auth/login")
 export class Login {
@@ -32,9 +31,6 @@ export class Login {
     @Post()
     postLogin(req: Request, res: Response, next: NextFunction) {
         Logger.Info(req.body, true);
-        // return res.status(300).json({
-        //     message: "yooyoyo"
-        // });
 
         check("email", "Email cannot be empty").exists({ checkNull: true, checkFalsy: true });
         check("password", "Password cannot be empty").exists({ checkNull: true, checkFalsy: true });
@@ -50,7 +46,7 @@ export class Login {
             return res.status(422).json(errors.array());
         }
 
-        passport.authenticate("local", (errorOne: Error, user: IUser, info: IVerifyOptions) => {
+        passport.authenticate("local", (errorOne, user: UserDoc, info: IVerifyOptions) => {
             console.log("\na");
             if (errorOne) { return next(errorOne); }
             console.log("\nb");
@@ -58,11 +54,11 @@ export class Login {
                 console.log("\nc");
                 return res.status(404).json(new NotFoundException(info.message).response);
             }
-            req.logIn(user, (errorTwo: Error) => {
+            req.logIn(user, (errorTwo) => {
                 if (errorTwo) { return next(errorTwo); }
                 // req.flash("success", { msg: "Success! You are logged in." });
                 // res.redirect(req.session.returnTo || "/");
-                const response: IResponse = {
+                const response: TResponse = {
                     status: "OK",
                     code: 200,
                     payload: {
@@ -74,16 +70,4 @@ export class Login {
             });
         })(req, res, next);
     }
-
-    // @Delete()
-    //  delMessage(req: Request, res: Response) {
-    //     try {
-    //         throw new Error(req.params.msg);
-    //     } catch (err) {
-    //         Logger.Err(err, true);
-    //         return res.status(400).json({
-    //             error: req.params.msg,
-    //         });
-    //     }
-    // }
 }

@@ -3,7 +3,7 @@ import passportLocal from "passport-local";
 import _ from "lodash";
 
 import { Request, Response, NextFunction } from "express";
-import { User, IUser } from "../models/User";
+import { User, UserDoc } from "../models/User";
 import Auth from "../utils/Auth";
 
 const LocalStrategy = passportLocal.Strategy;
@@ -21,7 +21,7 @@ passport.deserializeUser((id, done) => {
 /** Sign in with Email and Password */
 passport.use("local",
     new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-        User.findOne({ email: email.toLowerCase() }, (errEmail: Error, user: IUser) => {
+        User.findOne({ email: email.toLowerCase() }, (errEmail, user: UserDoc) => {
             if (errEmail) {
                 return done(errEmail);
             }

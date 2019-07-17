@@ -1,18 +1,14 @@
-import passport from "passport";
-import { IVerifyOptions } from "passport-local";
+import "../auth/passport";
 
 import { Request, Response, NextFunction } from "express";
 import { check, sanitize, validationResult } from "express-validator";
 
-import { WriteError } from "mongodb";
-import { User, IUser, IAuthToken } from "../models/User";
-import "../auth/passport";
+import { User } from "../models/User";
 
-import crypto from "crypto";
 import { Controller, Middleware, Get, Put, Post, Delete } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import { NotFoundException, ConflictException } from "./Exception";
-import { IResponse } from "./InterfaceResponse";
+import { TResponse } from "./TypeResponse";
 
 @Controller("auth/register")
 export class Register {
@@ -61,7 +57,7 @@ export class Register {
                     if (errorThree) {
                         return next(errorThree);
                     }
-                    const response: IResponse = {
+                    const response: TResponse = {
                         status: "OK",
                         code: 200,
                         payload: {
