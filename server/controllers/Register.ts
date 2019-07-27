@@ -1,5 +1,3 @@
-import "../auth/passport";
-
 import { Request, Response, NextFunction } from "express";
 import { check, sanitize, validationResult } from "express-validator";
 
@@ -7,23 +5,11 @@ import { User } from "../models/User";
 
 import { Controller, Middleware, Get, Put, Post, Delete } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
-import { NotFoundException, ConflictException } from "./Exception";
+import { ConflictException } from "./Exception";
 import { TResponse } from "./TypeResponse";
 
 @Controller("auth/register")
 export class Register {
-
-    // @Get()
-    //  getLogin(req: Request, res: Response) {
-    //     // if (req.user) {
-    //     //     Logger.Info(`User "${req.user}": to be logged in`);
-    //     //     return res.redirect("/");
-    //     // }
-    //     // Should render stuffs here!!
-    //     res.status(400).json({
-    //         user: req.user,
-    //     });
-    // }
 
     @Post()
     postRegister(req: Request, res: Response, next: NextFunction) {
@@ -35,9 +21,9 @@ export class Register {
         try {
             validationResult(req).throw();
         }
-        catch (errors) {
-            console.log(errors.array());
-            return res.status(422).json(errors.array());
+        catch (errs) {
+            console.log(errs.array());
+            return res.status(422).json(errs.array());
         }
 
         const user = new User({
@@ -45,17 +31,21 @@ export class Register {
             password: req.body.password
         });
 
-        User.findOne({ email: req.body.email }, (errorOne, existingUser) => {
-            if (errorOne) { return next(errorOne); }
+        User.findOne({ email: req.body.email }, (errFind, existingUser) => {
+            if (errFind) {
+                return next(errFind);
+            }
             if (existingUser) {
                 const response = new ConflictException("Account with that email address already exists!").response;
                 return res.status(409).json(response);
             }
-            user.save((errorTwo) => {
-                if (errorTwo) { return next(errorTwo); }
-                req.logIn(user, (errorThree) => {
-                    if (errorThree) {
-                        return next(errorThree);
+            user.save((errSaveUser) => {
+                if (errSaveUser) {
+                    return next(errSaveUser);
+                }
+                req.logIn(user, (errLogin) => {
+                    if (errLogin) {
+                        return next(errLogin);
                     }
                     const response: TResponse = {
                         status: "OK",
@@ -63,9 +53,9 @@ export class Register {
                         payload: {
                             redirect: "/"
                         },
-                        message: "Registration is successful. You"
+                        message: "Registration is successful."
                     };
-                    res.status(200).json(response);
+                    return res.status(200).json(response);
                 });
             });
         });

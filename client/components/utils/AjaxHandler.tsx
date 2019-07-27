@@ -12,12 +12,12 @@ export class AjaxHandler {
                     return resolve(response.json());
                 }
                 else {
-                    const error = await response.json();
-                    throw new Error(error.message);
+                    const err = await response.json();
+                    throw new Error(err.message);
                 }
             }
-            catch (error) {
-                return reject(error);
+            catch (err) {
+                return reject(err);
             }
         });
     }
@@ -47,12 +47,12 @@ export class AjaxHandler {
                     return resolve(response.json());
                 }
                 else {
-                    const error = await response.json();
-                    throw new Error(error.error.message);
+                    const err = await response.json();
+                    throw new Error(err.message);
                 }
             }
-            catch (error) {
-                return reject(error);
+            catch (err) {
+                return reject(err);
             }
         });
     }
@@ -75,20 +75,20 @@ export class AjaxHandler {
                 }
                 else {
                     console.log("a");
-                    const error = await response.json();
-                    console.log(error);
-                    if (error instanceof Array) {
-                        throw new Error(error[0].msg); // Get only the first express-validator result
+                    const err = await response.json();
+                    console.log(err);
+                    if (err instanceof Array) {
+                        throw new Error(err[0].msg); // Get only the first express-validator result
                     }
                     else {
-                        throw new Error(error.message);
+                        throw new Error(err.message);
                     }
                 }
             }
-            catch (error) {
+            catch (err) {
                 console.log("b");
-                console.log(error);
-                return reject(error);
+                console.log(err);
+                return reject(err);
             }
         });
     }

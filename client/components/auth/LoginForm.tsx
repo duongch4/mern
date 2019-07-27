@@ -63,23 +63,23 @@ export class LoginForm<T extends LoginFormProps, S extends LoginFormStates> exte
             this.checkEmptyFields();
             this.checkPasswordLength();
         }
-        catch (error) {
+        catch (err) {
             switch (true) {
-                case error instanceof EmptyException:
-                    console.log(error);
-                    this.setState({ message: error.message });
+                case err instanceof EmptyException:
+                    console.log(err);
+                    this.setState({ message: err.message });
                     return;
-                case error instanceof InvalidLengthException:
+                case err instanceof InvalidLengthException:
                     this.setState({
                         valPassword: "",
-                        message: error.message
+                        message: err.message
                     });
                     return;
                 default:
                     this.setState({
                         valEmail: "",
                         valPassword: "",
-                        message: error.message
+                        message: err.message
                     });
                     return;
             }
@@ -117,10 +117,10 @@ export class LoginForm<T extends LoginFormProps, S extends LoginFormStates> exte
             this.setState({ message: response.message });
             window.location = response.payload.redirect;
         }
-        catch (error) {
-            console.log(`NAY: ${error}`);
+        catch (err) {
+            console.log(`NAY: ${err}`);
             this.setState({
-                message: error.message,
+                message: err.message,
                 valEmail: "",
                 valPassword: ""
             });

@@ -1,113 +1,121 @@
-import "../auth/passport"; // passport config
-import passport from "passport";
-import { IVerifyOptions } from "passport-local";
-
 import { Request, Response, NextFunction } from "express";
 import { check, sanitize, validationResult } from "express-validator";
 
 import { User, UserDoc } from "../models/User";
 
-import crypto from "crypto";
 import { Controller, Middleware, Get, Put, Post, Delete } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
-import { NotFoundException } from "./Exception";
+import { NotFoundException, ConflictException } from "./Exception";
 import { TResponse } from "./TypeResponse";
+import { WriteError } from "mongodb";
 
 @Controller("account")
 export class Account {
 
     @Get(":id")
     getAccount(req: Request, res: Response) {
-        User.findById(req.params.id, (error, user: UserDoc) => {
-            if (error) {
-                res.send(error);
+        User.findById(req.params.id, (err, user: UserDoc) => {
+            if (err) {
+                return res.status(404).json(new NotFoundException(err).response);
             }
             else {
-                res.json(user);
+                const response: TResponse = {
+                    status: "OK",
+                    code: 200,
+                    payload: user,
+                    message: "Account info found"
+                };
+                return res.status(200).json(response);
             }
         });
     }
 
     @Put(":id")
-    putAccount(req: Request, res: Response) {
+    putAccount(req: Request, res: Response, next: NextFunction) {
         Logger.Info(req.body, true);
 
-        User.findById(req.params.id, (error, user: UserDoc) => {
-            if (error) {
-                return res.send(error);
+        check("email", "Email cannot be empty").exists({ checkNull: true, checkFalsy: true });
+        check("email", "Email is not valid").isEmail();
+        sanitize("email").normalizeEmail({ gmail_remove_dots: false });
+        try {
+            validationResult(req).throw();
+        }
+        catch (errs) {
+            console.log(errs.array());
+            return res.status(422).json(errs.array());
+        }
+
+        User.findById(req.params.id, (errFind, user: UserDoc) => {
+            if (errFind) {
+                return next(errFind);
             }
             if (!user) {
-                return res.json({ message: "User not found by id... no action performed" });
+                const message = "User not found by id";
+                return res.status(404).json(new NotFoundException(message).response);
             }
-            // if (!user._id.equals(req.user._id)) return res.json({message: 'User details do not match.'})
-            if (user) {
-                this.checkUsername(req.body, function (err, existingUser) {
-                    if (err) {
-                        return res.json(err);
+
+            user.email = req.body.email || "";
+            this.updateProfile(user, req);
+
+            user.save((err: WriteError) => {
+                if (err) {
+                    if (err.code === 11000) {
+                        const message = "The email address you have entered is already associated with an account.";
+                        const payload = { redirect: "/account" };
+                        return res.status(409).json(new ConflictException(message, payload).response);
                     }
-                    // username or displayname exist
-                    if (existingUser) {
-                        return res.json(existingUser);
+                    return next(err);
+                }
+                const response: TResponse = {
+                    status: "OK",
+                    code: 200,
+                    message: "Profile information has been updated.",
+                    payload: {
+                        data: user,
+                        redirect: "/account"
                     }
-                    // update user
-                    user.update(req.body)
-                        .exec((errorUpdate) => {
-                            if (errorUpdate) { res.send(err); }
-                            return res.json({ message: "User has been updated" });
-                        });
-                });
-            }
+                };
+                res.status(200).json(response);
+            });
         });
     }
 
-    @Delete(":id")
-    deleteAccount(req: Request, res: Response) {
-        User.findById(req.user._id)
-            .exec(function (err, user) {
-                if (!user._id.equals(req.user._id)) {
-                    return res.json({ message: "Users do not match" });
-                }
-                // selects the user by its ID, then removes it.
-                User.remove({ _id: req.params.user_id }, (error) => {
-                    if (error) { res.send(error); }
-                    return res.json({ message: "User has been deleted" });
-                });
-            });
+    updateProfile(user: UserDoc, req: Request) {
+        user.profile.firstName = req.body.firstName || "";
+        user.profile.lastName = req.body.lastName || "";
+        user.profile.gender = req.body.gender || "";
+        user.profile.location = req.body.location || "";
+        user.profile.website = req.body.website || "";
     }
 
-    checkUsername = (body: any, cb: (error: any, existingUser: UserDoc | boolean | {}) => void) => {
-        const {
-            _id: userId,
-            username,
-            displayName
-        } = body;
-
-        User.find({ username })
-            .where("_id").ne(userId)
-            .exec((errUsername, user) => {
-                if (errUsername) {
-                    return cb(errUsername, false);
+    @Delete(":id")
+    deleteAccount(req: Request, res: Response, next: NextFunction) {
+        User.findById(req.params.id).exec((errFind, user) => {
+            if (errFind) {
+                return next(errFind);
+            }
+            if (!user) {
+                const message = "User ID does not match database record";
+                return res.status(404).json(new NotFoundException(message).response);
+            }
+            // selects the user by its ID, then removes it.
+            User.deleteOne({ _id: req.params.id }, (errRemove) => {
+                if (errRemove) {
+                    return next(errRemove);
                 }
-                // User exists
-                if (user.length !== 0) {
-                    return cb(undefined, { message: "Username currently exists." });
+                else {
+                    const response: TResponse = {
+                        status: "OK",
+                        code: 200,
+                        payload: {
+                            redirect: "/"
+                        },
+                        message: "User has been deleted"
+                    };
+                    req.logout();
+                    return res.status(200).json(response);
                 }
-
-                User.find({ displayName })
-                    .where("_id").ne(userId)
-                    .exec((errDisplayname, name) => {
-                        if (errDisplayname) {
-                            return cb(errDisplayname, false);
-                        }
-
-                        // displayName exists
-                        if (name.length !== 0) {
-                            return cb(undefined, { message: "DisplayName currently exists" });
-                        }
-
-                        // neither username or displayName exists
-                        return cb(undefined, false);
-                    });
             });
+        });
     }
 }

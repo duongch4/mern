@@ -3,18 +3,18 @@ import bcrypt from "bcryptjs";
 export default class Auth {
 
      static hashPassword(
-        password: string, saltRounds: number, callback: (error: Error, hash: string) => void
+        password: string, saltRounds: number, callback: (err: Error, hash: string) => void
     ): void {
-        bcrypt.hash(password, saltRounds, (error, hash) => {
-            callback(error, hash);
+        bcrypt.hash(password, saltRounds, (err, hash) => {
+            callback(err, hash);
         });
     }
 
      static compare(
-        password: string, dbHash: string, callback: (error: Error, isMatch: boolean) => void
+        password: string, dbHash: string, callback: (err: Error, isMatch: boolean) => void
     ): void {
-        bcrypt.compare(password, dbHash, (error, isMatch) => {
-            callback(error, isMatch);
+        bcrypt.compare(password, dbHash, (err, isMatch) => {
+            callback(err, isMatch);
         });
     }
 }

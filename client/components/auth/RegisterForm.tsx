@@ -55,30 +55,30 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
             this.checkPasswordLength();
             this.checkConfirmPassword();
         }
-        catch (error) {
+        catch (err) {
             switch (true) {
-                case error instanceof EmptyException:
-                    this.setState({ message: error.message });
+                case err instanceof EmptyException:
+                    this.setState({ message: err.message });
                     return;
-                case error instanceof InvalidLengthException:
+                case err instanceof InvalidLengthException:
                     this.setState({
                         valPassword: "",
                         valConfirmPassword: "",
-                        message: error.message
+                        message: err.message
                     });
                     return;
-                case error instanceof NotMatchException:
+                case err instanceof NotMatchException:
                     this.setState({
                         valPassword: "",
                         valConfirmPassword: "",
-                        message: error.message
+                        message: err.message
                     });
                 default:
                     this.setState({
                         valEmail: "",
                         valPassword: "",
                         valConfirmPassword: "",
-                        message: error.message
+                        message: err.message
                     });
                     return;
             }
@@ -101,10 +101,10 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
             this.setState({ message: response.message });
             window.location = response.payload.redirect;
         }
-        catch (error) {
-            console.log(`NAY: ${error}`);
+        catch (err) {
+            console.log(`NAY: ${err}`);
             this.setState({
-                message: error.message,
+                message: err.message,
                 valEmail: "",
                 valPassword: "",
                 valConfirmPassword: "",
