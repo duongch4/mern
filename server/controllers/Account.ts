@@ -30,8 +30,8 @@ export class Account {
         });
     }
 
-    @Put(":id")
-    putAccount(req: Request, res: Response, next: NextFunction) {
+    @Put("profile/:id")
+    putAccountProfile(req: Request, res: Response, next: NextFunction) {
         Logger.Info(req.body, true);
 
         check("email", "Email cannot be empty").exists({ checkNull: true, checkFalsy: true });
@@ -115,6 +115,50 @@ export class Account {
                     req.logout();
                     return res.status(200).json(response);
                 }
+            });
+        });
+    }
+
+    @Put("password/:id")
+    putAccountPassword(req: Request, res: Response, next: NextFunction) {
+        Logger.Info(req.body, true);
+
+        check("password", "Password cannot be empty").exists({ checkNull: true, checkFalsy: true });
+        check("password", "Password must be at least 4 characters long").isLength({ min: 4 });
+        check("confirmPassword", "Passwords do not match").equals(req.body.password);
+        try {
+            validationResult(req).throw();
+        }
+        catch (errs) {
+            console.log(errs.array());
+            return res.status(422).json(errs.array());
+        }
+
+        User.findById(req.params.id, (errFind, user: UserDoc) => {
+            if (errFind) {
+                return next(errFind);
+            }
+            if (!user) {
+                const message = "User not found by id";
+                return res.status(404).json(new NotFoundException(message).response);
+            }
+
+            user.password = req.body.password;
+
+            user.save((err: WriteError) => {
+                if (err) {
+                    return next(err);
+                }
+                const response: TResponse = {
+                    status: "OK",
+                    code: 200,
+                    message: "Password has been updated.",
+                    payload: {
+                        data: user,
+                        redirect: "/account"
+                    }
+                };
+                res.status(200).json(response);
             });
         });
     }

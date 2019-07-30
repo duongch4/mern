@@ -22,7 +22,7 @@ export class Login {
         check("email", "Email cannot be empty").exists({ checkNull: true, checkFalsy: true });
         check("password", "Password cannot be empty").exists({ checkNull: true, checkFalsy: true });
         check("email", "Email is not valid").isEmail();
-        check("password", "Password must be longer than 4 characters").isLength({ min: 4 });
+        check("password", "Password must be at least 4 characters long").isLength({ min: 4 });
         sanitize("email").normalizeEmail({ gmail_remove_dots: false });
 
         try {

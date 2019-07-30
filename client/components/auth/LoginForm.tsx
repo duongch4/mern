@@ -98,8 +98,8 @@ export class LoginForm<T extends LoginFormProps, S extends LoginFormStates> exte
     }
 
     checkPasswordLength(): void {
-        if (this.state.valPassword.length < 5) {
-            throw new InvalidLengthException("Password must be longer than 4 characters");
+        if (this.state.valPassword.length < 4) {
+            throw new InvalidLengthException("Password must be at least 4 characters long");
         }
     }
 
