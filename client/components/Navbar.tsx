@@ -2,11 +2,15 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { LoginModal, RegisterModal } from "../components/auth/AuthModal";
 
+export type NavbarProps = {
+    user: any;
+};
+
 export type NavbarStates = {
     isOpen: boolean;
 };
 
-export class Navbar extends Component<any, NavbarStates> {
+export class Navbar extends Component<NavbarProps, NavbarStates> {
     readonly state: Readonly<NavbarStates> = {
         isOpen: false
     };

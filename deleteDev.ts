@@ -1,5 +1,5 @@
-import shell from "shelljs";
-import glob from "glob";
+import * as shell from "shelljs";
+import * as glob from "glob";
 
 shell.rm("-rf", "./frontend/");
 shell.rm("-rf", "./src/");
