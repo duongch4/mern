@@ -24,7 +24,7 @@ export class MainRoutes extends Component<MainProps, MainStates> {
     render() {
         return (
             <div>
-                <Navbar />
+                <Navbar user={this.props.user} />
                 <Switch>
                     <Route
                         path={`/`}
