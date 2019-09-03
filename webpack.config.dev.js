@@ -97,7 +97,7 @@ class WebpackConfig {
             output: {
                 filename: "[name].js",
                 path: outPath,
-                publicPath: "/" // this fixes nested routes in react
+                publicPath: "/" // (this + historyApiFallBack) fix client-side routing in dev mode
             },
             devServer: {
                 open: true,
