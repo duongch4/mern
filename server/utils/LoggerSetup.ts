@@ -19,7 +19,7 @@ export function setLogger() {
         })();
     }
     else if (process.env.NODE_ENV === "production") {
-        process.env.OVERNIGHT_LOGGER_MODE = LoggerModes.Off;
+        process.env.OVERNIGHT_LOGGER_MODE = "OFF";
     }
     else {
         process.env.OVERNIGHT_LOGGER_MODE = LoggerModes.Console;
