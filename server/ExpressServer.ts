@@ -155,7 +155,8 @@ export class ExpressServer extends Server {
         this.app.use(
             express.static(path.resolve(__dirname, "client"), { maxAge: 31557600000 })
         );
-        // If request doesn't match api => return the main index.html => react-router render the route in the client
+        // React Router: client-side routing: ABSOLUTELY REQUIRED!!!
+        // If request doesn't match api => return the main index.html
         this.app.get("/*", (req, res) => {
             res.sendFile(path.resolve(__dirname, "client", "index.html"), (err) => {
                 if (err) {

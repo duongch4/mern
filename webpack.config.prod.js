@@ -92,7 +92,7 @@ class WebpackConfig {
             output: {
                 filename: "[name].[contenthash:8].js",
                 path: outPath,
-                publicPath: "/"
+                publicPath: "/" // (this + app.get("/*", ...)) fix client-side routing in prod mode
             },
             module: {
                 rules: [
