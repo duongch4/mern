@@ -15,7 +15,7 @@ ReactDOM.render(
     <Router>
         <ScrollToTop>
             <Switch>
-                <Route path="/" component={MainRoutes} />
+                <Route path={"/"} component={MainRoutes} />
             </Switch>
         </ScrollToTop>
     </Router>

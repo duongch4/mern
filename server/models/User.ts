@@ -8,6 +8,7 @@ export type AuthToken = {
 };
 
 export type UserDoc = mongoose.Document & {
+    _id: string;
     email: string;
     password: string;
     passwordResetToken: string;

@@ -91,7 +91,8 @@ class WebpackConfig {
             },
             output: {
                 filename: "[name].[contenthash:8].js",
-                path: outPath
+                path: outPath,
+                publicPath: "/"
             },
             module: {
                 rules: [

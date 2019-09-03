@@ -96,7 +96,8 @@ class WebpackConfig {
             entry: [entryTsPath].concat(glob.sync(allStyles)),
             output: {
                 filename: "[name].js",
-                path: outPath
+                path: outPath,
+                publicPath: "/" // this fixes nested routes in react
             },
             devServer: {
                 open: true,
@@ -108,7 +109,7 @@ class WebpackConfig {
                 stats: "errors-only",
                 proxy: [
                     {
-                        context: ["/auth", "/api"],
+                        context: ["/auth", "/api", "/account"],
                         target: "http://localhost:3000"
                     }
                 ]

@@ -1,15 +1,12 @@
 import passport from "passport";
-import passportLocal from "passport-local";
 import _ from "lodash";
 
 import { Request, Response, NextFunction } from "express";
-import { User, UserDoc } from "../models/User";
-import Auth from "../utils/Auth";
-
-const LocalStrategy = passportLocal.Strategy;
+import { User } from "../models/User";
+import { LocalStrategy } from "./LocalStrategy";
 
 passport.serializeUser<any, any>((user, done) => {
-    done(undefined, user.id);
+    done(undefined, user._id);
 });
 
 passport.deserializeUser((id, done) => {
@@ -19,34 +16,15 @@ passport.deserializeUser((id, done) => {
 });
 
 /** Sign in with Email and Password */
-passport.use("local",
-    new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-        User.findOne({ email: email.toLowerCase() }, (errEmail, user: UserDoc) => {
-            if (errEmail) {
-                return done(errEmail);
-            }
-            if (!user) {
-                return done(undefined, false, { message: `Email "${email}" not found` });
-            }
-            Auth.compare(password, user.password, (errPassword: Error, isMatch: boolean) => {
-                if (errPassword) {
-                    return done(errPassword);
-                }
-                if (isMatch) {
-                    return done(undefined, user);
-                }
-                return done(undefined, false, { message: "Invalid Password" });
-            });
-        });
-    })
-);
+passport.use("local", LocalStrategy);
 
 /** Login middleware - Required  */
 export const authenticate = (req: Request, res: Response, next: NextFunction): void => {
     if (req.isAuthenticated()) {
         return next();
     }
-    return res.redirect("/login");
+    return res.redirect("/");
+    // return res.redirect("/login");
 };
 
 /** Authorisation middleware - Required */

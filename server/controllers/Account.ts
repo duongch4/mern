@@ -12,6 +12,22 @@ import { WriteError } from "mongodb";
 @Controller("account")
 export class Account {
 
+    @Get()
+    getSessionCurrentUser(req: Request, res: Response) {
+        if (req.user) {
+            const response: TResponse = {
+                status: "OK",
+                code: 200,
+                payload: req.user,
+                message: "Session has a current user"
+            };
+            return res.status(200).json(response);
+        }
+        else {
+            return res.status(404).json(new NotFoundException("Session has no user").response);
+        }
+    }
+
     @Get(":id")
     getAccount(req: Request, res: Response) {
         User.findById(req.params.id, (err, user: UserDoc) => {

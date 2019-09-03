@@ -34,20 +34,16 @@ export class Login {
         }
 
         passport.authenticate("local", (errAuth, user: UserDoc, info: IVerifyOptions) => {
-            console.log("\na");
             if (errAuth) {
                 return next(errAuth);
             }
-            console.log("\nb");
             if (!user) {
-                console.log("\nc");
                 return res.status(404).json(new NotFoundException(info.message).response);
             }
             req.logIn(user, (errLogin) => {
                 if (errLogin) {
                     return next(errLogin);
                 }
-                // res.redirect(req.session.returnTo || "/");
                 const response: TResponse = {
                     status: "OK",
                     code: 200,

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
 import { LoginModal, RegisterModal } from "../components/auth/AuthModal";
+import { UserDoc } from "../../server/models/User";
 
 export type NavbarProps = {
-    user: any;
+    currUser: UserDoc;
 };
 
 export type NavbarStates = {
@@ -21,6 +21,24 @@ export class Navbar extends Component<NavbarProps, NavbarStates> {
         );
     }
 
+    // componentDidMount = () => {
+    //     console.log(this.props);
+    // }
+
+    // _handleClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    //     console.log("handleclick: ", (e.target as HTMLLIElement).id);
+    //     switch ((e.target as HTMLLIElement).id) {
+    //         case "account":
+    //             this.props.history.push("/user/view/" + this.props.user._id);
+    //             break;
+    //         case "logout":
+    //             this.props.history.push("/");
+    //             this.props.logoutUser();
+    //             break;
+    //         default:
+    //     }
+    // };
+
     render() {
         return (
             <div id="navigation">
@@ -37,34 +55,56 @@ export class Navbar extends Component<NavbarProps, NavbarStates> {
                         </button>
 
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul className="navbar-nav ml-auto">
+                            <ul className="navbar-nav mr-auto">
                                 <li className="nav-item"><a className="nav-link" href="#profile">Profile</a></li>
                                 <li className="nav-item"><a className="nav-link" href="#projects">Projects</a></li>
                                 <li className="nav-item"><a className="nav-link" href="#contact">Contact</a></li>
                             </ul>
-                        </div>
-                        {/* <!-- Button trigger modal --> */}
-                        <div>
-                            <button
-                                type="button" className="btn" onClick={this._toggleModal}
-                                data-toggle="modal" data-target="#loginModal"
-                            >
-                                Log In
-                            </button>
-                            <LoginModal id="loginModal" isOpen={this.state.isOpen} toggle={this._toggleModal} />
-                        </div>
-                        {/* <!-- Button trigger modal --> */}
-                        <div>
-                            <button
-                                type="button" className="btn" onClick={this._toggleModal}
-                                data-toggle="modal" data-target="#registerModal"
-                            >
-                                Register
-                            </button>
-                            <RegisterModal id="registerModal" isOpen={this.state.isOpen} toggle={this._toggleModal} />
+                            <div className="dropdown-divider"></div>
+                            {this._renderTopRightCorner()}
                         </div>
                     </div>
                 </nav>
+            </div>
+        );
+    }
+
+    _renderTopRightCorner = (): React.ReactNode => {
+        if (!this.props.currUser) {
+            return this._renderNotLoggedIn();
+        }
+        else {
+            return this._renderLoggedIn();
+        }
+    }
+
+    _renderNotLoggedIn = (): React.ReactNode => {
+        return (
+            <div className="navbar-nav">
+                <div>
+                    <button
+                        type="button" className="btn" onClick={this._toggleModal}
+                        data-toggle="modal" data-target="#loginModal"
+                    >Log In</button>
+                    <LoginModal id="loginModal" isOpen={this.state.isOpen} toggle={this._toggleModal} />
+                </div>
+                <div>
+                    <button
+                        type="button" className="btn" onClick={this._toggleModal}
+                        data-toggle="modal" data-target="#registerModal"
+                    >Register</button>
+                    <RegisterModal id="registerModal" isOpen={this.state.isOpen} toggle={this._toggleModal} />
+                </div>
+            </div>
+        );
+    }
+
+    _renderLoggedIn = (): React.ReactNode => {
+        return (
+            <div className="navbar-nav">
+                <li id="account" className="nav-dropdown-item">Account</li>
+                <li id="logout" className="nav-dropdown-item">
+                    <a className="nav-link" href="/auth/logout">Logout</a></li>
             </div>
         );
     }

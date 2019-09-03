@@ -99,7 +99,7 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
             console.log("YAY!!!");
             console.log(response);
             this.setState({ message: response.message });
-            window.location = response.payload.redirect;
+            window.location = window.location;
         }
         catch (err) {
             console.log(`NAY: ${err}`);

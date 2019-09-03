@@ -15,20 +15,13 @@ import path from "path";
 
 import passport from "passport";
 
-import { MONGODB_URI, SESSION_SECRET } from "./utils/secrets";
+import { MONGODB_URI, SESSION_SECRET } from "./utils/SecretsSetup";
 
 import errorHandler from "errorhandler";
 
 import { Server } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import * as controllers from "./controllers";
-import { Login } from "./controllers";
-
-// Controllers (route handlers)
-// import homeController from "./controllers/home";
-// import userController from "./controllers/user";
-// import apiController from "./controllers/api";
-// import contactController from "./controllers/contact";
 
 // API keys and Passport configuration
 // import passportConfig from "./auth/passport";
@@ -46,38 +39,41 @@ export class ExpressServer extends Server {
     }
 
     config(): void {
-        const MongoStore = mongo(session);
-        (mongoose as any).Promise = bluebird;
-        mongoose.connect(MONGODB_URI, { useCreateIndex: true, useNewUrlParser: true }).then(
-            () => {
-                if (this.app.get("env") !== "production") {
-                    Logger.Info(`MongoDB is connected at: ${MONGODB_URI}`);
-                }
-                else {
-                    Logger.Info(`MongoDB is connected successfully`);
-                }
-            },
-        ).catch(
-            (err) => { Logger.Info(`!!! MongoDB connection error. Please make sure MongoDB is running:: ${err}`); }
-        );
-
+        const MongoStore = this.setMongoStore();
         this.app.use(compression());
         this.setBodyParser();
         this.setSession(MongoStore);
         this.setPassportSession();
-        this.setFlash();
+        this.logSession();
+        // this.setFlash();
         this.setLusca();
         this.setCORS();
-        this.setCurrUser();
+        // this.setCurrUser();
         /** No leading slashes for @overnightjs: @Controller("api"), not @Controller("/api") */
         this.setRoutes();
         this.setStaticFrontend();
         this.handleError();
     }
 
+    setMongoStore(): mongo.MongoStoreFactory {
+        const MongoStore = mongo(session);
+        (mongoose as any).Promise = bluebird;
+        mongoose.connect(MONGODB_URI, { useCreateIndex: true, useNewUrlParser: true }).then(() => {
+            if (this.app.get("env") !== "production") {
+                Logger.Info(`MongoDB is connected at: ${MONGODB_URI}`);
+            }
+            else {
+                Logger.Info(`MongoDB is connected successfully`);
+            }
+        }).catch((err) => {
+            Logger.Info(`!!! MongoDB connection error. Please make sure MongoDB is running:: ${err}`);
+        });
+        return MongoStore;
+    }
+
     listen(port: string): void {
         this.app.listen(port, () => {
-            Logger.Info(`App is running at PORT ${port} in ${this.app.get("env")} mode`);
+            Logger.Info(`App is running at PORT ${port} in "${this.app.get("env")}" mode`);
             if (process.env.NODE_ENV !== "production") {
                 Logger.Info("Press CTRL-C to stop");
             }
@@ -160,9 +156,19 @@ export class ExpressServer extends Server {
             express.static(path.resolve(__dirname, "client"), { maxAge: 31557600000 })
         );
         // If request doesn't match api => return the main index.html => react-router render the route in the client
-        this.app.get("/*", (req, res) => {
+        this.app.get("/", (req, res) => {
             res.sendFile(path.resolve(__dirname, "client", "index.html"));
         });
+    }
+
+    logSession(): void {
+        if (process.env.NODE_ENV !== "production") {
+            this.app.use((req, res, next) => {
+                Logger.Info(req.session, true);
+                Logger.Info(req.user, true);
+                next();
+            });
+        }
     }
 
     handleError(): void {
