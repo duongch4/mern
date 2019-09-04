@@ -1,0 +1,7 @@
+{
+    "watch": [
+        "server"
+    ],
+    "ext": "ts",
+    "exec": "tsc --project ./server/tsconfig.json && tslint -c tslint.json -p ./server/tsconfig.json && npm run serve"
+}

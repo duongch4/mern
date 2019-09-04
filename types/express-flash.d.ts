@@ -5,10 +5,10 @@
 // tslint:disable-next-line: no-namespace
 declare namespace Express {
 // tslint:disable-next-line: no-empty-interface
-    interface IRequest extends IFlash {}
+    interface Request extends Flash {}
 }
 
-interface IFlash {
+interface Flash {
     flash(type: string, message: any): void;
 }
 
