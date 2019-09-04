@@ -8,12 +8,17 @@ type FormGroupProps = {
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     smallHelpId?: string;
     smallHelp?: string;
-
+    label?: string;
 };
 
 export const FormGroup = (props: FormGroupProps): React.ReactElement => {
     return (
         <div className="form-group">
+            {
+                props.label ?
+                    <label htmlFor={props.id}>{props.label}</label> :
+                    <div>{undefined}</div>
+            }
             <input
                 className="form-control"
                 type={props.type}
@@ -22,6 +27,7 @@ export const FormGroup = (props: FormGroupProps): React.ReactElement => {
                 aria-describedby={props.smallHelpId}
                 placeholder={props.placeholder}
                 onChange={props.onChange}
+                required
             />
             {
                 props.smallHelp ?
