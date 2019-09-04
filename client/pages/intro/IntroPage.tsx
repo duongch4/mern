@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Home } from "../../components/Home";
+import { Home } from "../../components/home/Home";
 
 export class IntroPage extends Component<any, any> {
     render() {

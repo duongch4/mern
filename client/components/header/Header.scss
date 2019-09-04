@@ -1,5 +1,5 @@
 .navbar {
-    text-transform: uppercase;
+    // text-transform: uppercase;
     padding: var(--padding-navbar);
 }
 
@@ -34,4 +34,13 @@
 
 .navbar .navbar-toggler .burger-icon {
     color: var(--main-color);
+}
+
+#account .avatar {
+    width: 30px;
+    // border-radius: 50%;
+}
+
+.navbar-nav .dropdown-menu {
+    background-color: #414346!important;
 }

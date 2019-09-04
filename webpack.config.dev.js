@@ -109,7 +109,7 @@ class WebpackConfig {
                 stats: "errors-only",
                 proxy: [
                     {
-                        context: ["/auth", "/api", "/account"],
+                        context: ["/api"],
                         target: "http://localhost:3000"
                     }
                 ]

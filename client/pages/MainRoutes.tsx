@@ -6,13 +6,13 @@ import {
 } from "react-router-dom";
 
 import { IntroPage } from "./intro/IntroPage";
-import { Navbar } from "../components/Navbar";
-import { Footer } from "../components/Footer";
-import { AjaxHandler } from "../components/utils/AjaxHandler";
+import { Header } from "../components/header/Header";
+import { Footer } from "../components/footer/Footer";
+import { AjaxHandler } from "../utils/AjaxHandler";
 import { AuthPage } from "./auth/AuthPage";
 import { PropsRoute } from "../utils/CustomRoute";
 import { UserDoc } from "../../server/models/User";
-import { AuthPage2 } from "./auth/AuthPage2";
+import { AccountPage } from "./auth/AccountPage";
 import { NotFoundPage } from "./404/NotFoundPage";
 
 type MainStates = {
@@ -34,7 +34,7 @@ export class MainRoutes extends Component<any, MainStates> {
 
     getUser = async () => {
         try {
-            const response = await AjaxHandler.getRequest("/account");
+            const response = await AjaxHandler.getRequest("/api/account");
             this.setState({
                 currUser: response.payload
             });
@@ -60,7 +60,7 @@ export class MainRoutes extends Component<any, MainStates> {
     _renderNotLoggedIn = (): React.ReactNode => {
         return (
             <div id="main-routes">
-                <Navbar currUser={this.state.currUser} />
+                <Header currUser={this.state.currUser} />
                 <Switch>
                     <Route exact path={`/`} component={IntroPage} />
                     <Route component={NotFoundPage} />
@@ -73,10 +73,10 @@ export class MainRoutes extends Component<any, MainStates> {
     _renderLoggedIn = (): React.ReactNode => {
         return (
             <div id="main-routes">
-                <Navbar currUser={this.state.currUser} />
+                <Header currUser={this.state.currUser} />
                 <Switch>
                     <PropsRoute exact path={`/`} component={AuthPage} currUser={this.state.currUser} />
-                    <Route path={`/aa/bb`} component={AuthPage2} />
+                    <Route path={`/account`} component={AccountPage} />
                     {/* <Redirect to={"/"} /> */}
                     <Route component={NotFoundPage} />
                 </Switch>

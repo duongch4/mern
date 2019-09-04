@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import homeImg from "../assets/png/titleImg.png";
+import homeImg from "../../assets/png/titleImg.png";
 
 export class Home extends Component<any, any> {
     render() {

@@ -1,6 +1,8 @@
-import React, { Component, ReactElement } from "react";
-import { AjaxHandler } from "../utils/AjaxHandler";
-import { EmptyException, InvalidLengthException } from "./Exception";
+import React, { Component } from "react";
+import { AjaxHandler } from "../../utils/AjaxHandler";
+import { EmptyException, InvalidLengthException } from "../../utils/Exception";
+import { AlertMessage } from "../utils/AlertMessage";
+import { FormGroup } from "../utils/FormGroup";
 
 export type LoginFormProps = {
     idEmail?: string;
@@ -17,9 +19,9 @@ export type LoginFormStates = {
     valPassword: string;
 };
 
-export class LoginForm<T extends LoginFormProps, S extends LoginFormStates> extends Component<T, S> {
+export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
 
-    readonly state: Readonly<LoginFormStates | any> = {
+    readonly state: Readonly<LoginFormStates> = {
         isClicked: false,
         message: "",
         valEmail: "",
@@ -43,9 +45,17 @@ export class LoginForm<T extends LoginFormProps, S extends LoginFormStates> exte
     render() {
         return (
             <form onSubmit={this.onSubmit}>
-                {this.displayMessage()}
-                {this.getFormGroupEmail()}
-                {this.getFormGroupPassword()}
+                <AlertMessage message={this.state.message} />
+                <FormGroup
+                    type={"email"} id={this.props.idEmail} value={this.state.valEmail}
+                    placeholder={"Enter Email"} onChange={this.onInputChange("valEmail")}
+                    smallHelpId={"email-small-help"}
+                    smallHelp={"We'll never share your email with anyone else. LIES!!"}
+                />
+                <FormGroup
+                    type={"password"} id={this.props.idPassword} value={this.state.valPassword}
+                    placeholder={"Password"} onChange={this.onInputChange("valPassword")}
+                />
                 <button type="submit" className="btn">{this.props.textButton}</button>
             </form>
         );
@@ -88,21 +98,6 @@ export class LoginForm<T extends LoginFormProps, S extends LoginFormStates> exte
         this.submit();
     }
 
-    checkEmptyFields(): void {
-        if (this.state.valEmail === "") {
-            throw new EmptyException("Please enter an email address!");
-        }
-        if (this.state.valPassword === "") {
-            throw new EmptyException("Please enter a password!");
-        }
-    }
-
-    checkPasswordLength(): void {
-        if (this.state.valPassword.length < 4) {
-            throw new InvalidLengthException("Password must be at least 4 characters long");
-        }
-    }
-
     async submit(): Promise<any> {
         console.log("Submitting form to: ", this.props.postToUrl);
         const data = {
@@ -127,40 +122,18 @@ export class LoginForm<T extends LoginFormProps, S extends LoginFormStates> exte
         }
     }
 
-    displayMessage(): ReactElement {
-        let message: ReactElement;
-        if (this.state.message) {
-            message = <div className="alert alert-warning">{this.state.message}</div>;
+    checkEmptyFields(): void {
+        if (this.state.valEmail === "") {
+            throw new EmptyException("Please enter an email address!");
         }
-        else {
-            message = undefined;
+        if (this.state.valPassword === "") {
+            throw new EmptyException("Please enter a password!");
         }
-        return message;
     }
 
-    getFormGroupEmail(): ReactElement {
-        const emailHelp = "We'll never share your email with anyone else. LIES!!";
-        return (
-            <div className="form-group">
-                <input
-                    type="email" className="form-control"
-                    id={this.props.idEmail} value={this.state.valEmail}
-                    aria-describedby="emailHelp" placeholder="Enter email" onChange={this.onInputChange("valEmail")}
-                />
-                <small id="emailHelp" className="form-text text-muted">{emailHelp}</small>
-            </div>
-        );
-    }
-
-    getFormGroupPassword(): ReactElement {
-        return (
-            <div className="form-group">
-                <input
-                    type="password" className="form-control"
-                    id={this.props.idPassword} value={this.state.valPassword}
-                    placeholder="Password" onChange={this.onInputChange("valPassword")}
-                />
-            </div>
-        );
+    checkPasswordLength(): void {
+        if (this.state.valPassword.length < 4) {
+            throw new InvalidLengthException("Password must be at least 4 characters long");
+        }
     }
 }

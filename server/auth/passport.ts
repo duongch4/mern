@@ -24,7 +24,6 @@ export const authenticate = (req: Request, res: Response, next: NextFunction): v
         return next();
     }
     return res.redirect("/");
-    // return res.redirect("/login");
 };
 
 /** Authorisation middleware - Required */
@@ -33,5 +32,5 @@ export const authorise = (req: Request, res: Response, next: NextFunction) => {
     if (_.find(req.user.tokens, { kind: provider })) {
         return next();
     }
-    return res.redirect(`/auth/${provider}`);
+    return res.redirect(`/api/${provider}`);
 };

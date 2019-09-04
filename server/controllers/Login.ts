@@ -12,7 +12,7 @@ import { Logger } from "@overnightjs/logger";
 import { NotFoundException } from "./Exception";
 import { TResponse } from "./TypeResponse";
 
-@Controller("auth/login")
+@Controller("api/login")
 export class Login {
 
     @Post()

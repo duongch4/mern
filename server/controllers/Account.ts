@@ -9,7 +9,7 @@ import { NotFoundException, ConflictException } from "./Exception";
 import { TResponse } from "./TypeResponse";
 import { WriteError } from "mongodb";
 
-@Controller("account")
+@Controller("api/account")
 export class Account {
 
     @Get()

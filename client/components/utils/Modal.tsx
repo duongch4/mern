@@ -5,7 +5,7 @@ export type ModalProps = {
     isOpen?: boolean;
     toggle?: () => void;
     title?: string;
-    body?: React.ReactElement;
+    body?: React.ReactNode;
     closeTitle?: string;
 };
 
@@ -46,7 +46,6 @@ export class Modal extends Component<ModalProps, ModalStates> {
 
     render() {
         // console.log(this.state);
-
         return (
             <div
                 className="modal fade"
@@ -56,24 +55,36 @@ export class Modal extends Component<ModalProps, ModalStates> {
             >
                 <div className="modal-dialog modal-dialog-centered" role="document" onClick={this.onDialogClick}>
                     <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">{this.props.title}</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close"
-                                onClick={this.toggle}
-                            >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
+                        {this._renderModalHead()}
                         <div className="modal-body">{this.props.body}</div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal"
-                                onClick={this.toggle}
-                            >
-                                {this.props.closeTitle}
-                            </button>
-                        </div>
+                        {this._renderModalFoot()}
                     </div>
                 </div>
+            </div>
+        );
+    }
+
+    _renderModalHead = (): React.ReactNode => {
+        return (
+            <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">{this.props.title}</h5>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close"
+                    onClick={this.toggle}
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        );
+    }
+
+    _renderModalFoot = (): React.ReactNode => {
+        return (
+            <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-dismiss="modal"
+                    onClick={this.toggle}
+                >
+                    {this.props.closeTitle}
+                </button>
             </div>
         );
     }

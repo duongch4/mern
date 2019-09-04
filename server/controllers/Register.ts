@@ -1,15 +1,30 @@
 import { Request, Response, NextFunction } from "express";
 import { check, sanitize, validationResult } from "express-validator";
 
-import { User } from "../models/User";
+import { User, UserDoc } from "../models/User";
 
 import { Controller, Middleware, Get, Put, Post, Delete } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import { ConflictException } from "./Exception";
 import { TResponse } from "./TypeResponse";
 
-@Controller("auth/register")
+@Controller("api/register")
 export class Register {
+
+    _makeUser(req: Request): UserDoc {
+        return new User({
+            email: req.body.email,
+            password: req.body.password,
+            profile: {
+                firstName: "",
+                lastName: "",
+                gender: "",
+                location: "",
+                website: "",
+                picture: ""
+            }
+        });
+    }
 
     @Post()
     postRegister(req: Request, res: Response, next: NextFunction) {
@@ -26,10 +41,8 @@ export class Register {
             return res.status(422).json(errs.array());
         }
 
-        const user = new User({
-            email: req.body.email,
-            password: req.body.password
-        });
+        const user = this._makeUser(req);
+        user.profile.picture = user.getGravatar(60);
 
         User.findOne({ email: req.body.email }, (errFind, existingUser) => {
             if (errFind) {

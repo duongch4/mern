@@ -1,11 +1,11 @@
-import React, { ReactElement } from "react";
+import React from "react";
 import { Modal, ModalProps } from "../utils/Modal";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 
-export const LoginModal = (props: ModalProps) => {
+export const LoginModal = (props: ModalProps): React.ReactElement => {
     const title: string = "Log In to Access Site";
-    const form = <LoginForm isClicked={props.isOpen} textButton="Login" postToUrl="/auth/login" />;
+    const form = <LoginForm isClicked={props.isOpen} textButton="Login" postToUrl="/api/login" />;
     return (
         <Modal
             id={props.id} isOpen={props.isOpen} toggle={props.toggle}
@@ -14,9 +14,9 @@ export const LoginModal = (props: ModalProps) => {
     );
 };
 
-export const RegisterModal = (props: ModalProps) => {
+export const RegisterModal = (props: ModalProps): React.ReactElement => {
     const title: string = "Create an account";
-    const form = <RegisterForm isClicked={props.isOpen} textButton="Register" postToUrl="/auth/register" />;
+    const form = <RegisterForm isClicked={props.isOpen} textButton="Register" postToUrl="/api/register" />;
     return (
         <Modal id={props.id} isOpen={props.isOpen} toggle={props.toggle}
             title="Register" body={getBody(title, form)} closeTitle="Close"
@@ -24,7 +24,7 @@ export const RegisterModal = (props: ModalProps) => {
     );
 };
 
-const getBody = (title: string, form: ReactElement): ReactElement => {
+const getBody = (title: string, form: React.ReactNode): React.ReactNode => {
     return (
         <div>
             <p className="text-left">

@@ -1,17 +1,17 @@
 import React, { Component } from "react";
-import { LoginModal, RegisterModal } from "../components/auth/AuthModal";
-import { UserDoc } from "../../server/models/User";
+import { LoginModal, RegisterModal } from "./AuthModal";
+import { UserDoc } from "../../../server/models/User";
 
-export type NavbarProps = {
+export type HeaderProps = {
     currUser: UserDoc;
 };
 
-export type NavbarStates = {
+export type HeaderStates = {
     isOpen: boolean;
 };
 
-export class Navbar extends Component<NavbarProps, NavbarStates> {
-    readonly state: Readonly<NavbarStates> = {
+export class Header extends Component<HeaderProps, HeaderStates> {
+    readonly state: Readonly<HeaderStates> = {
         isOpen: false
     };
 
@@ -21,30 +21,12 @@ export class Navbar extends Component<NavbarProps, NavbarStates> {
         );
     }
 
-    // componentDidMount = () => {
-    //     console.log(this.props);
-    // }
-
-    // _handleClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-    //     console.log("handleclick: ", (e.target as HTMLLIElement).id);
-    //     switch ((e.target as HTMLLIElement).id) {
-    //         case "account":
-    //             this.props.history.push("/user/view/" + this.props.user._id);
-    //             break;
-    //         case "logout":
-    //             this.props.history.push("/");
-    //             this.props.logoutUser();
-    //             break;
-    //         default:
-    //     }
-    // };
-
     render() {
         return (
             <div id="navigation">
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <div className="container">
-                        <a className="navbar-brand" href="#home">BCD<span className="sr-only">(current)</span></a>
+                        <a className="navbar-brand" href="/">BCD<span className="sr-only">(current)</span></a>
 
                         <button
                             className="navbar-toggler" type="button" data-toggle="collapse"
@@ -56,9 +38,9 @@ export class Navbar extends Component<NavbarProps, NavbarStates> {
 
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="navbar-nav mr-auto">
-                                <li className="nav-item"><a className="nav-link" href="#profile">Profile</a></li>
-                                <li className="nav-item"><a className="nav-link" href="#projects">Projects</a></li>
-                                <li className="nav-item"><a className="nav-link" href="#contact">Contact</a></li>
+                                <li className="nav-item"><a className="nav-link" href="/">Profile</a></li>
+                                <li className="nav-item"><a className="nav-link" href="/">Projects</a></li>
+                                <li className="nav-item"><a className="nav-link" href="/">Contact</a></li>
                             </ul>
                             <div className="dropdown-divider"></div>
                             {this._renderTopRightCorner()}
@@ -100,11 +82,21 @@ export class Navbar extends Component<NavbarProps, NavbarStates> {
     }
 
     _renderLoggedIn = (): React.ReactNode => {
+        const user = this.props.currUser;
         return (
             <div className="navbar-nav">
-                <li id="account" className="nav-dropdown-item">Account</li>
-                <li id="logout" className="nav-dropdown-item">
-                    <a className="nav-link" href="/auth/logout">Logout</a></li>
+                <li id="account" className="nav-item dropdown">
+                    <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                        <img className="avatar" src={user.profile.picture} alt={user.profile.firstName || user.email} />
+                        <span>&emsp;</span>
+                        <span>{user.profile.firstName || user.email}</span>
+                    </a>
+                    <ul className="dropdown-menu">
+                        <li className="nav-item"><a className="nav-link" href="/account">My Account</a></li>
+                        <li className="dropdown-divider"></li>
+                        <li className="nav-item"><a className="nav-link" href="/api/logout">Logout</a></li>
+                    </ul>
+                </li>
             </div>
         );
     }

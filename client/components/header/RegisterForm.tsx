@@ -1,18 +1,20 @@
-import React, { ReactElement } from "react";
-import { AjaxHandler } from "../utils/AjaxHandler";
-import { LoginForm, LoginFormProps, LoginFormStates } from "./LoginForm";
-import { EmptyException, InvalidLengthException, NotMatchException } from "./Exception";
+import React, { Component } from "react";
+import { AjaxHandler } from "../../utils/AjaxHandler";
+import { LoginFormProps, LoginFormStates } from "./LoginForm";
+import { EmptyException, InvalidLengthException, NotMatchException } from "../../utils/Exception";
+import { AlertMessage } from "../utils/AlertMessage";
+import { FormGroup } from "../utils/FormGroup";
 
-export type IRegisterFormProps = {
+export type RegisterFormProps = {
     idConfirmPassword?: string;
 } & LoginFormProps;
 
-export type IRegisterFormStates = {
+export type RegisterFormStates = {
     valConfirmPassword: string;
 } & LoginFormStates;
 
-export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormStates> {
-    readonly state: Readonly<IRegisterFormStates> = {
+export class RegisterForm extends Component<RegisterFormProps, RegisterFormStates> {
+    readonly state: Readonly<RegisterFormStates> = {
         isClicked: false,
         message: "",
         valEmail: "",
@@ -20,7 +22,7 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
         valConfirmPassword: "",
     };
 
-    static getDerivedStateFromProps(nextProps: LoginFormProps, prevState: LoginFormStates) {
+    static getDerivedStateFromProps(nextProps: RegisterFormProps, prevState: RegisterFormStates) {
         if (nextProps.isClicked !== prevState.isClicked) {
             return {
                 isClicked: nextProps.isClicked,
@@ -38,13 +40,30 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
     render() {
         return (
             <form onSubmit={this.onSubmit}>
-                {this.displayMessage()}
-                {this.getFormGroupEmail()}
-                {this.getFormGroupPassword()}
-                {this.getFormGroupConfirmPassword()}
+                <AlertMessage message={this.state.message} />
+                <FormGroup
+                    type={"email"} id={this.props.idEmail} value={this.state.valEmail}
+                    placeholder={"Enter Email"} onChange={this.onInputChange("valEmail")}
+                    smallHelpId={"email-small-help"}
+                    smallHelp={"We'll never share your email with anyone else. LIES!!"}
+                />
+                <FormGroup
+                    type={"password"} id={this.props.idPassword} value={this.state.valPassword}
+                    placeholder={"Password"} onChange={this.onInputChange("valPassword")}
+                />
+                <FormGroup
+                    type={"password"} id={this.props.idConfirmPassword} value={this.state.valConfirmPassword}
+                    placeholder={"Confirm Password"} onChange={this.onInputChange("valConfirmPassword")}
+                />
                 <button type="submit" className="btn">{this.props.textButton}</button>
             </form>
         );
+    }
+
+    onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            [field]: event.target.value
+        } as Pick<LoginFormStates, any>);
     }
 
     onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -120,15 +139,18 @@ export class RegisterForm extends LoginForm<IRegisterFormProps, IRegisterFormSta
         }
     }
 
-    getFormGroupConfirmPassword(): ReactElement {
-        return (
-            <div className="form-group">
-                <input
-                    type="password" className="form-control"
-                    id={this.props.idConfirmPassword} value={this.state.valConfirmPassword}
-                    placeholder="Confirm Password" onChange={this.onInputChange("valConfirmPassword")}
-                />
-            </div>
-        );
+    checkEmptyFields(): void {
+        if (this.state.valEmail === "") {
+            throw new EmptyException("Please enter an email address!");
+        }
+        if (this.state.valPassword === "") {
+            throw new EmptyException("Please enter a password!");
+        }
+    }
+
+    checkPasswordLength(): void {
+        if (this.state.valPassword.length < 4) {
+            throw new InvalidLengthException("Password must be at least 4 characters long");
+        }
     }
 }
