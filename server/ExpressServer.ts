@@ -6,6 +6,7 @@ import flash from "express-flash";
 import compression from "compression";  // compresses requests
 import bodyParser from "body-parser";
 import lusca from "lusca";
+import helmet from "helmet";
 
 import mongo from "connect-mongo";
 import mongoose from "mongoose";
@@ -40,19 +41,24 @@ export class ExpressServer extends Server {
 
     config(): void {
         const MongoStore = this.setMongoStore();
-        this.app.use(compression());
+        this.setRequestCompression();
         this.setBodyParser();
         this.setSession(MongoStore);
         this.setPassportSession();
         this.logSession();
         // this.setFlash();
         this.setLusca();
+        this.setHelmet();
         this.setCORS();
         // this.setCurrUser();
         /** No leading slashes for @overnightjs: @Controller("api"), not @Controller("/api") */
         this.setRoutes();
         this.setStaticFrontend();
         this.handleError();
+    }
+
+    setRequestCompression(): void {
+        this.app.use(compression());
     }
 
     setMongoStore(): mongo.MongoStoreFactory {
@@ -80,15 +86,24 @@ export class ExpressServer extends Server {
         });
     }
 
-    setBodyParser() {
+    setBodyParser(): void {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: true }));
     }
 
     setSession(MongoStore: mongo.MongoStoreFactory): void {
         this.app.use(cookieParser(SESSION_SECRET));
-        this.app.use(session({
-            cookie: { maxAge: 60000 },
+        const sess = this._setSession(MongoStore);
+        this.app.use(session(sess));
+    }
+
+    _setSession(MongoStore: mongo.MongoStoreFactory): session.SessionOptions {
+        const sess: session.SessionOptions = {
+            name: "sessionID",
+            cookie: {
+                maxAge: 60000,
+                httpOnly: true
+            },
             secret: SESSION_SECRET,
             resave: true,
             saveUninitialized: false,
@@ -96,7 +111,12 @@ export class ExpressServer extends Server {
                 url: MONGODB_URI,
                 autoReconnect: true
             })
-        }));
+        };
+        if (process.env.NODE_ENV === "production") {
+            this.app.set("trust proxy", 1);
+            sess.cookie.secure = true;
+        }
+        return sess;
     }
 
     setPassportSession(): void {
@@ -118,6 +138,10 @@ export class ExpressServer extends Server {
     setLusca(): void {
         this.app.use(lusca.xframe("SAMEORIGIN"));
         this.app.use(lusca.xssProtection(true));
+    }
+
+    setHelmet(): void {
+        this.app.use(helmet());
     }
 
     setCORS(): void {
