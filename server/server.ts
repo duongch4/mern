@@ -1,4 +1,6 @@
+import http from "http";
 import { ExpressServer } from "./ExpressServer";
 
 const port = process.env.PORT || "3000";
-export default new ExpressServer().listen(port);
+const server: http.Server = new ExpressServer().listen(port);
+export default server;
