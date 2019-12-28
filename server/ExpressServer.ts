@@ -59,14 +59,14 @@ export class ExpressServer extends Server {
     setMongoStore(): mongo.MongoStoreFactory {
         const MongoStore = mongo(session);
         (mongoose as any).Promise = bluebird;
-        mongoose.connect(MONGODB_URI, { useCreateIndex: true, useNewUrlParser: true }).then(() => {
+        mongoose.connect(MONGODB_URI as string, { useCreateIndex: true, useNewUrlParser: true }).then(() => {
             if (this.app.get("env") !== "production") {
                 Logger.Info(`MongoDB is connected at: ${MONGODB_URI}`);
             }
             else {
                 Logger.Info(`MongoDB is connected successfully`);
             }
-        }).catch((err) => {
+        }).catch((err: Error) => {
             Logger.Info(`!!! MongoDB connection error. Please make sure MongoDB is running:: ${err}`);
         });
         return MongoStore;
@@ -91,13 +91,15 @@ export class ExpressServer extends Server {
         this.app.use(cookieParser(SESSION_SECRET));
         this.app.use(session({
             cookie: { maxAge: 60000 },
-            secret: SESSION_SECRET,
+            secret: SESSION_SECRET as string,
             resave: true,
             saveUninitialized: false,
-            store: new MongoStore({
-                url: MONGODB_URI,
-                autoReconnect: true
-            })
+            store: new MongoStore(
+                {
+                    url: MONGODB_URI,
+                    autoReconnect: true
+                } as mongo.MongoUrlOptions
+            )
         }));
     }
 
@@ -111,8 +113,10 @@ export class ExpressServer extends Server {
         // Custom flash middleware -- from Ethan Brown's book, 'Web Development with Node & Express'
         this.app.use((req, res, next) => {
             // if there's a flash message in the session request, make it available in the response, then delete it
-            res.locals.sessionFlash = req.session.sessionFlash;
-            delete req.session.sessionFlash;
+            if (req.session) {
+                res.locals.sessionFlash = req.session.sessionFlash;
+                delete req.session.sessionFlash;
+            }
             next();
         });
     }
@@ -123,7 +127,7 @@ export class ExpressServer extends Server {
     }
 
     setCORS(): void {
-        this.app.use((req, res, next) => {
+        this.app.use((_, res, next) => {
             res.setHeader("Access-Control-Allow-Origin", "*");
             res.setHeader("Access-Control-Allow-Credentials", "true");
             res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
@@ -159,7 +163,7 @@ export class ExpressServer extends Server {
         );
         // React Router: client-side routing: ABSOLUTELY REQUIRED!!!
         // If request doesn't match api => return the main index.html
-        this.app.get("/*", (req, res) => {
+        this.app.get("/*", (_, res) => {
             res.sendFile(path.resolve(__dirname, "client", "index.html"), (err) => {
                 if (err) {
                     res.status(500).send(err);
@@ -170,7 +174,7 @@ export class ExpressServer extends Server {
 
     logSession(): void {
         if (process.env.NODE_ENV !== "production") {
-            this.app.use((req, res, next) => {
+            this.app.use((req, _, next) => {
                 Logger.Info(req.session, true);
                 Logger.Info(req.user, true);
                 next();

@@ -3,7 +3,7 @@ import { check, sanitize, validationResult } from "express-validator";
 
 import { User, UserDoc } from "../models/User";
 
-import { Controller, Middleware, Get, Put, Post, Delete } from "@overnightjs/core";
+import { Controller, Get, Put, Delete } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import { NotFoundException, ConflictException } from "./Exception";
 import { TResponse } from "./TypeResponse";

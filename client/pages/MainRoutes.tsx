@@ -16,7 +16,7 @@ import { AccountPage } from "./auth/AccountPage";
 import { NotFoundPage } from "./404/NotFoundPage";
 
 type MainStates = {
-    currUser: UserDoc;
+    currUser?: UserDoc;
 };
 
 export class MainRoutes extends Component<any, MainStates> {

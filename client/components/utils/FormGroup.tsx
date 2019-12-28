@@ -2,7 +2,7 @@ import React from "react";
 
 type FormGroupProps = {
     type: string;
-    id: string;
+    id?: string;
     value: string;
     placeholder: string;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;

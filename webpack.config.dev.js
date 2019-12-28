@@ -24,7 +24,7 @@ class WebpackConfig {
         };
     }
 
-    setModuleRulesTypescript(instanceName, tsconfigPath) {
+    setModuleRulesTranspilation() {
         return [
             {
                 enforce: "pre",
@@ -32,17 +32,9 @@ class WebpackConfig {
                 loader: "source-map-loader"
             },
             {
-                test: /\.tsx?$/,
-                use: [
-                    {
-                        loader: "ts-loader",
-                        options: {
-                            transpileOnly: true,
-                            instance: instanceName,
-                            configFile: tsconfigPath
-                        }
-                    }
-                ]
+                test: /\.(ts|js)x?$/,
+                loader: "babel-loader",
+                // exclude: /node_modules/
             },
         ];
     }
@@ -63,15 +55,16 @@ class WebpackConfig {
             new MomentLocalesPlugin({
                 localesToKeep: ["en", "en-ca"],
             }),
-            new ForkTsCheckerWebpackPlugin({
-                tsconfig: tsconfigPath,
-                tslint: tslintPath,
-                // eslint: true,
-                // eslintOptions: {
-                //     configFile: eslintrcPath
-                // },
-                useTypescriptIncrementalApi: true
-            }),
+            // new ForkTsCheckerWebpackPlugin({
+            //     tsconfig: tsconfigPath,
+            //     tslint: tslintPath,
+            //     // eslint: true,
+            //     // eslintOptions: {
+            //     //     configFile: eslintrcPath
+            //     // },
+            //     useTypescriptIncrementalApi: true
+            // }),
+            new ForkTsCheckerWebpackPlugin(),
             new ForkTsCheckerNotifierWebpackPlugin({
                 title: "TypeScript",
                 excludeWarnings: false
@@ -116,7 +109,7 @@ class WebpackConfig {
             },
             module: {
                 rules: [
-                    ...this.setModuleRulesTypescript(instanceName, tsconfigPath),
+                    ...this.setModuleRulesTranspilation(),
                     {
                         test: /\.s?css$/,
                         use: [
@@ -201,7 +194,7 @@ class WebpackConfig {
             },
             module: {
                 rules: [
-                    ...this.setModuleRulesTypescript(instanceName, tsconfigPath),
+                    ...this.setModuleRulesTranspilation(),
                     {
                         test: /\.(jpe?g|png|gif|svg|pdf)$/,
                         use: [

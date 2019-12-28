@@ -2,8 +2,8 @@ import React, { Component } from "react";
 
 export type ModalProps = {
     id: string;
-    isOpen?: boolean;
-    toggle?: () => void;
+    isOpen: boolean;
+    toggle: () => void;
     title?: string;
     body?: React.ReactNode;
     closeTitle?: string;

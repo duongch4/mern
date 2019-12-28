@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import "../auth/passport";
 
-import { Controller, Middleware, Get, Put, Post, Delete } from "@overnightjs/core";
+import { Controller, Get } from "@overnightjs/core";
 
 @Controller("api/logout")
 export class Logout {
