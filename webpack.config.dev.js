@@ -165,7 +165,9 @@ class WebpackConfig {
                 new webpack.HotModuleReplacementPlugin(),
                 new HtmlWebpackPlugin({
                     inject: true,
-                    template: entryHtmlPath
+                    template: entryHtmlPath,
+                    title: "MERN",
+                    favicon: "./client/assets/png/titleImg.png"
                 }),
                 new MiniCssExtractPlugin({
                     filename: "[name].css",

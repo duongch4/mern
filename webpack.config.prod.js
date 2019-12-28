@@ -162,6 +162,8 @@ class WebpackConfig {
                 ...this.setCommonPlugins(tsconfigPath, tslintPath),
                 new HtmlWebpackPlugin({
                     template: entryHtmlPath,
+                    title: "MERN",
+                    favicon: "./client/assets/png/titleImg.png",
                     hash: true,
                     inject: true,
                     minify: {

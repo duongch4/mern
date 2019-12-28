@@ -13,7 +13,7 @@
         "serve": "node dist/server.js",
         "watch-client": "webpack-dev-server --open --stack=client --config=webpack.config.dev.js",
         "watch-server": "nodemon --config \"./nodemon.json\"",
-        "watch": "concurrently -k -p \"[{name}]\" -n \"React,Node\" -c \"yellow.bold,cyan.bold\" \"npm run watch-client\" \"npm run watch-server\"",
+        "watch": "concurrently -k -p \"[{name}]\" -n \"Node,React\" -c \"yellow.bold,cyan.bold\" \"npm run watch-server\" \"npm run watch-client\"",
         "test": "jest --forceExit --coverage --verbose",
         "watch-test": "npm run test -- --watchAll",
         "watch-ts": "tsc -w",
