@@ -15,8 +15,8 @@
         "baseUrl": "..",
         "paths": {
             "*": [
-                "node_modules/@types/*",
-                "client/types/*"
+                "node_modules/@types/*", // with `import <module-a>`, matching `../node_modules/@types/<module-a>`
+                "client/types/"
             ]
         }
     },
