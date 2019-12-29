@@ -40,20 +40,23 @@ export class ExpressServer extends Server {
     }
 
     config(): void {
-        const MongoStore = this.setMongoStore();
-        this.app.use(compression());
-        this.setBodyParser();
-        this.setSession(MongoStore);
-        this.setPassportSession();
-        this.logSession();
-        // this.setFlash();
-        this.setLusca();
-        this.setCORS();
-        // this.setCurrUser();
-        /** No leading slashes for @overnightjs: @Controller("api"), not @Controller("/api") */
-        this.setRoutes();
-        this.setStaticFrontend();
-        this.handleError();
+        mongoose.connection.close((err: Error) => {
+            if (err) process.exit(1);
+            const MongoStore = this.setMongoStore();
+            this.app.use(compression());
+            this.setBodyParser();
+            this.setSession(MongoStore);
+            this.setPassportSession();
+            this.logSession();
+            // this.setFlash();
+            this.setLusca();
+            this.setCORS();
+            // this.setCurrUser();
+            /** No leading slashes for @overnightjs: @Controller("api"), not @Controller("/api") */
+            this.setRoutes();
+            this.setStaticFrontend();
+            this.handleError();
+        });
     }
 
     setMongoStore(): mongo.MongoStoreFactory {

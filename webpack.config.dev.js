@@ -19,7 +19,8 @@ class WebpackConfig {
             mode: "development",
             devtool: "source-map",
             resolve: {
-                extensions: [".ts", ".tsx", ".js", ".json"]
+                extensions: [".ts", ".tsx", ".js", ".json", '.webpack-loader.js', '.web-loader.js', '.loader.js'],
+                modules: [path.resolve(__dirname, "node_modules")]
             },
         };
     }
@@ -34,6 +35,10 @@ class WebpackConfig {
             {
                 test: /\.(ts|js)x?$/,
                 loader: "babel-loader",
+                options : {
+                    babelrc : true,
+                    cacheDirectory: true
+                }
                 // exclude: /node_modules/
             },
         ];
@@ -85,6 +90,7 @@ class WebpackConfig {
         const tslintPath = path.resolve(__dirname, tslintDir, tslintFile);
 
         return {
+            name: instanceName,
             ...this.setModeResolve(),
             entry: [entryTsPath].concat(glob.sync(allStyles)),
             output: {
@@ -158,7 +164,9 @@ class WebpackConfig {
                 new webpack.HotModuleReplacementPlugin(),
                 new HtmlWebpackPlugin({
                     inject: true,
-                    template: entryHtmlPath
+                    template: entryHtmlPath,
+                    title: "MERN",
+                    favicon: "./client/assets/png/titleImg.png"
                 }),
                 new MiniCssExtractPlugin({
                     filename: "[name].css",
@@ -186,11 +194,12 @@ class WebpackConfig {
         const tslintPath = path.resolve(__dirname, tslintDir, tslintFile);
 
         return {
+            name: instanceName,
             ...this.setModeResolve(),
-            entry: [entryTsPath],
+            entry: ["webpack/hot/poll?1000", entryTsPath],
             output: {
                 filename: toServerFile,
-                path: outPath
+                path: outPath,
             },
             module: {
                 rules: [
@@ -211,10 +220,20 @@ class WebpackConfig {
             optimization: {
                 minimizer: this.setOptMinimizerUglifyJs()
             },
-            plugins: this.setCommonPlugins(tsconfigPath, tslintPath),
+            plugins: [
+                ...this.setCommonPlugins(tsconfigPath, tslintPath),
+                new webpack.HotModuleReplacementPlugin()
+            ],
             target: "node",
-            externals: [nodeExternals()],
+            externals: [nodeExternals({
+                whitelist: ["webpack/hot/poll?1000"]
+              })],
             node: {
+                // console: false,
+                // globale: false,
+                // process: false,
+                // Buffer: false,
+                __filename: false,
                 __dirname: false
             }
         };
