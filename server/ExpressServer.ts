@@ -41,7 +41,10 @@ export class ExpressServer extends Server {
 
     config(): void {
         mongoose.connection.close((err: Error) => {
-            if (err) process.exit(1);
+            if (err) {
+                Logger.Err(err, true);
+                process.exit(1);
+            }
             const MongoStore = this.setMongoStore();
             this.app.use(compression());
             this.setBodyParser();
@@ -70,7 +73,7 @@ export class ExpressServer extends Server {
                 Logger.Info(`MongoDB is connected successfully`);
             }
         }).catch((err: Error) => {
-            Logger.Info(`!!! MongoDB connection error. Please make sure MongoDB is running:: ${err}`);
+            Logger.Err(`!!! MongoDB connection error. Please make sure MongoDB is running:: ${err}`);
         });
         return MongoStore;
     }
