@@ -11,9 +11,7 @@ const ForkTsCheckerNotifierWebpackPlugin = require("fork-ts-checker-notifier-web
 const nodeExternals = require("webpack-node-externals"); // for backend
 const path = require("path");
 
-
 class WebpackConfig {
-
     setModeResolve() {
         return {
             mode: "development",
@@ -45,7 +43,7 @@ class WebpackConfig {
     }
 
     setStyleLoader(forBuild = false) {
-        let result = {
+        const result = {
             test: /\.s?css$/,
             use: [
                 {
@@ -116,28 +114,30 @@ class WebpackConfig {
         });
     }
 
-    setCommonPlugins(tsconfigPath, tslintPath) {
-        return [
+    setCommonPlugins(tsconfigPath, forBuildServerOnceToWatch = false) {
+        const base = [
             new webpack.optimize.OccurrenceOrderPlugin(),
             new MomentLocalesPlugin({
                 localesToKeep: ["en", "en-ca"],
             }),
-            // new ForkTsCheckerWebpackPlugin({
-            //     tsconfig: tsconfigPath,
-            //     tslint: tslintPath,
-            //     // eslint: true,
-            //     // eslintOptions: {
-            //     //     configFile: eslintrcPath
-            //     // },
-            //     useTypescriptIncrementalApi: true
-            // }),
-            new ForkTsCheckerWebpackPlugin(),
-            new ForkTsCheckerNotifierWebpackPlugin({
-                title: "TypeScript",
-                excludeWarnings: false
-            }),
             new webpack.HotModuleReplacementPlugin()
         ];
+        if (forBuildServerOnceToWatch) {
+            return base;
+        }
+        else {
+            return [
+                ...base,
+                new ForkTsCheckerWebpackPlugin({
+                    eslint: true,
+                    tsconfig: tsconfigPath
+                }),
+                new ForkTsCheckerNotifierWebpackPlugin({
+                    title: "TypeScript",
+                    excludeWarnings: false
+                }),
+            ];
+        }
     }
 
     setDevServer(outPath) {
@@ -161,17 +161,15 @@ class WebpackConfig {
     }
 
     setClientConfig(
-        fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html", toDir = "./dist/client",
-        instanceName = "client", tsconfigDir = "./client", tsconfigFile = "tsconfig.client.json",
-        tslintDir = ".", tslintFile = "tslint.json", forBuild = false,
-        htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png"
+        fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html",
+        toDir = "./dist/client", instanceName = "client", forBuild = false,
+        htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png",
+        tsconfigPath = "./tsconfig.client.json"
     ) {
         const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
         const entryHtmlPath = path.resolve(__dirname, fromDir, entryHtml);
         const allStyles = path.resolve(__dirname, fromDir, "**", "*.scss");
         const outPath = path.resolve(__dirname, toDir);
-        const tsconfigPath = path.resolve(__dirname, tsconfigDir, tsconfigFile);
-        const tslintPath = path.resolve(__dirname, tslintDir, tslintFile);
 
         return {
             name: instanceName,
@@ -200,7 +198,7 @@ class WebpackConfig {
                 ]
             },
             plugins: [
-                ...this.setCommonPlugins(tsconfigPath, tslintPath),
+                ...this.setCommonPlugins(tsconfigPath),
                 new HtmlWebpackPlugin({
                     inject: true,
                     template: entryHtmlPath,
@@ -223,14 +221,12 @@ class WebpackConfig {
     }
 
     setServerConfig(
-        fromDir = "./server", entryTs = "server.ts", toDir = "./dist", toServerFile = "server.js",
-        instanceName = "server", tsconfigDir = "./server", tsconfigFile = "tsconfig.server.json",
-        tslintDir = "./server", tslintFile = ".eslintrc.js"
+        fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
+        toServerFile = "server.js", instanceName = "server",
+        tsconfigPath = "./tsconfig.server.json", forBuildServerOnceToWatch = false
     ) {
         const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
         const outPath = path.resolve(__dirname, toDir);
-        const tsconfigPath = path.resolve(__dirname, tsconfigDir, tsconfigFile);
-        const tslintPath = path.resolve(__dirname, tslintDir, tslintFile);
 
         return {
             name: instanceName,
@@ -251,7 +247,7 @@ class WebpackConfig {
             optimization: {
                 minimizer: [this.setOptMinimizerUglifyJs()]
             },
-            plugins: this.setCommonPlugins(tsconfigPath, tslintPath),
+            plugins: this.setCommonPlugins(tsconfigPath, forBuildServerOnceToWatch),
             externals: [
                 nodeExternals({
                     whitelist: ["webpack/hot/poll?1000"]
@@ -274,30 +270,43 @@ module.exports = (env, argv) => {
 
     if (argv["stack"] === "client") {
         const client = webpackConfig.setClientConfig(
-            fromDir = "./client", entryTsx = "index.tsx", entryHtml = "index.html", toDir = "./dist/client",
-            instanceName = "client", tsconfigDir = "./client", tsconfigFile = "tsconfig.json",
-            tslintDir = ".", tslintFile = "tslint.json", forBuild = false, htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png"
+            fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html",
+            toDir = "./dist/client", instanceName = "client", forBuild = false,
+            htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png",
+            tsconfigPath = path.resolve(__dirname, "./tsconfig.client.json")
         );
         return client;
     }
-    else if (argv["stack"] === "server") {
+    else if (argv["stack"] === "server-build-once") {
         const server = webpackConfig.setServerConfig(
-            fromDir = "./server", entryTs = "server.ts", toDir = "./dist", toFile = "server.js",
-            instanceName = "server", tsconfigDir = "./server", tsconfigFile = "tsconfig.json",
-            tslintDir = ".", tslintFile = "tslint.json"
+            fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
+            toServerFile = "server.js", instanceName = "server",
+            tsconfigPath = path.resolve(__dirname, "./tsconfig.server.json"),
+            forBuildServerOnceToWatch = true
         );
         return server;
     }
-    else { // for build
+    else if (argv["stack"] === "server") {
+        const server = webpackConfig.setServerConfig(
+            fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
+            toServerFile = "server.js", instanceName = "server",
+            tsconfigPath = path.resolve(__dirname, "./tsconfig.server.json"),
+            forBuildServerOnceToWatch = false
+        );
+        return server;
+    }
+    else { // build both
         const client = webpackConfig.setClientConfig(
-            fromDir = "./client", entryTsx = "index.tsx", entryHtml = "index.html", toDir = "./dist/client",
-            instanceName = "client", tsconfigDir = "./client", tsconfigFile = "tsconfig.json",
-            tslintDir = ".", tslintFile = "tslint.json", forBuild = true, htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png"
+            fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html",
+            toDir = "./dist/client", instanceName = "client", forBuild = true,
+            htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png",
+            tsconfigPath = path.resolve(__dirname, "./tsconfig.client.json")
         );
         const server = webpackConfig.setServerConfig(
-            fromDir = "./server", entryTs = "server.ts", toDir = "./dist", toFile = "server.js",
-            instanceName = "server", tsconfigDir = "./server", tsconfigFile = "tsconfig.json",
-            tslintDir = ".", tslintFile = "tslint.json"
+            fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
+            toServerFile = "server.js", instanceName = "server",
+            tsconfigPath = path.resolve(__dirname, "./tsconfig.server.json"),
+            forBuildServerOnceToWatch = false
         );
         return [client, server];
     }

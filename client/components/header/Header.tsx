@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { LoginModal, RegisterModal } from "./AuthModal";
-import { UserDoc } from "../../../server/models/User";
+import { UserPayload } from "../../pages/MainRoutes";
 
 export type HeaderProps = {
-    currUser?: UserDoc;
+    currUser?: UserPayload;
 };
 
 export type HeaderStates = {

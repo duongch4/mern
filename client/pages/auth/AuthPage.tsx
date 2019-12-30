@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { UserDoc } from "../../../server/models/User";
+import { UserPayload } from "../../pages/MainRoutes";
 
 type AuthPageProps = {
-    currUser: UserDoc
+    currUser: UserPayload
 };
 
 export class AuthPage extends Component<AuthPageProps, any> {
