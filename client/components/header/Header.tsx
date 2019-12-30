@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { LoginModal, RegisterModal } from "./AuthModal";
-import { UserDoc } from "../../../server/models/User";
+import { UserPayload } from "../../pages/MainRoutes";
 
 export type HeaderProps = {
-    currUser: UserDoc;
+    currUser?: UserPayload;
 };
 
 export type HeaderStates = {
@@ -83,21 +83,23 @@ export class Header extends Component<HeaderProps, HeaderStates> {
 
     _renderLoggedIn = (): React.ReactNode => {
         const user = this.props.currUser;
-        return (
-            <div className="navbar-nav">
-                <li id="account" className="nav-item dropdown">
-                    <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                        <img className="avatar" src={user.profile.picture} alt={user.profile.firstName || user.email} />
-                        <span>&emsp;</span>
-                        <span>{user.profile.firstName || user.email}</span>
-                    </a>
-                    <ul className="dropdown-menu">
-                        <li className="nav-item"><a className="nav-link" href="/account">My Account</a></li>
-                        <li className="dropdown-divider"></li>
-                        <li className="nav-item"><a className="nav-link" href="/api/logout">Logout</a></li>
-                    </ul>
-                </li>
-            </div>
-        );
+        if (user) {
+            return (
+                <div className="navbar-nav">
+                    <li id="account" className="nav-item dropdown">
+                        <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                            <img className="avatar" src={user.profile.picture} alt={user.profile.firstName || user.email} />
+                            <span>&emsp;</span>
+                            <span>{user.profile.firstName || user.email}</span>
+                        </a>
+                        <ul className="dropdown-menu">
+                            <li className="nav-item"><a className="nav-link" href="/account">My Account</a></li>
+                            <li className="dropdown-divider"></li>
+                            <li className="nav-item"><a className="nav-link" href="/api/logout">Logout</a></li>
+                        </ul>
+                    </li>
+                </div>
+            );
+        }
     }
 }

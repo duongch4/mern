@@ -8,7 +8,7 @@ type ProgressViewState = {
 
 type ProgressViewProps = {
     promise: Promise<any>;
-    content?: () => any;
+    content: () => any;
 };
 
 export class ProgressView extends Component<ProgressViewProps, ProgressViewState> {

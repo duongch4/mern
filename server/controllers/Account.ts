@@ -1,13 +1,20 @@
 import { Request, Response, NextFunction } from "express";
 import { check, sanitize, validationResult } from "express-validator";
 
-import { User, UserDoc } from "../models/User";
+import { User, UserProfile, UserDoc } from "../models/User";
 
-import { Controller, Middleware, Get, Put, Post, Delete } from "@overnightjs/core";
+import { Controller, Get, Put, Delete } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import { NotFoundException, ConflictException } from "./Exception";
 import { TResponse } from "./TypeResponse";
 import { WriteError } from "mongodb";
+
+type UserPayload = {
+    id: string;
+    email: string;
+    facebook: string;
+    profile: UserProfile;
+};
 
 @Controller("api/account")
 export class Account {
@@ -15,13 +22,26 @@ export class Account {
     @Get()
     getSessionCurrentUser(req: Request, res: Response) {
         if (req.user) {
-            const response: TResponse = {
-                status: "OK",
-                code: 200,
-                payload: req.user,
-                message: "Session has a current user"
-            };
-            return res.status(200).json(response);
+            User.findById(req.user.id, (err, user: UserDoc) => {
+                if (err) {
+                    return res.status(404).json(new NotFoundException(err).response);
+                }
+                else {
+                    const userPayload: UserPayload = {
+                        id: user.id,
+                        email: user.email,
+                        facebook: user.facebook,
+                        profile: user.profile
+                    };
+                    const response: TResponse = {
+                        status: "OK",
+                        code: 200,
+                        payload: userPayload,
+                        message: "Account info found"
+                    };
+                    return res.status(200).json(response);
+                }
+            });
         }
         else {
             return res.status(404).json(new NotFoundException("Session has no user").response);

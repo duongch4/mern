@@ -73,25 +73,27 @@ export class RegisterForm extends Component<RegisterFormProps, RegisterFormState
             this.checkEmptyFields();
             this.checkPasswordLength();
             this.checkConfirmPassword();
+            this.submit();
         }
         catch (err) {
             switch (true) {
                 case err instanceof EmptyException:
                     this.setState({ message: err.message });
-                    return;
+                    break;
                 case err instanceof InvalidLengthException:
                     this.setState({
                         valPassword: "",
                         valConfirmPassword: "",
                         message: err.message
                     });
-                    return;
+                    break;
                 case err instanceof NotMatchException:
                     this.setState({
                         valPassword: "",
                         valConfirmPassword: "",
                         message: err.message
                     });
+                    break;
                 default:
                     this.setState({
                         valEmail: "",
@@ -99,10 +101,9 @@ export class RegisterForm extends Component<RegisterFormProps, RegisterFormState
                         valConfirmPassword: "",
                         message: err.message
                     });
-                    return;
+                    break;
             }
         }
-        this.submit();
     }
 
     async submit(): Promise<any> {

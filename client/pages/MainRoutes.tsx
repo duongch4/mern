@@ -11,12 +11,27 @@ import { Footer } from "../components/footer/Footer";
 import { AjaxHandler } from "../utils/AjaxHandler";
 import { AuthPage } from "./auth/AuthPage";
 import { PropsRoute } from "../utils/CustomRoute";
-import { UserDoc } from "../../server/models/User";
 import { AccountPage } from "./auth/AccountPage";
 import { NotFoundPage } from "./404/NotFoundPage";
 
+export type UserProfile = {
+    firstName: string;
+    lastName: string;
+    gender: string;
+    location: string;
+    website: string;
+    picture: string;
+};
+
+export type UserPayload = {
+    id: string;
+    email: string;
+    facebook: string;
+    profile: UserProfile;
+};
+
 type MainStates = {
-    currUser: UserDoc;
+    currUser?: UserPayload;
 };
 
 export class MainRoutes extends Component<any, MainStates> {

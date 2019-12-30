@@ -3,7 +3,7 @@ import { check, sanitize, validationResult } from "express-validator";
 
 import { User, UserDoc } from "../models/User";
 
-import { Controller, Middleware, Get, Put, Post, Delete } from "@overnightjs/core";
+import { Controller, Post } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import { ConflictException } from "./Exception";
 import { TResponse } from "./TypeResponse";
@@ -37,7 +37,8 @@ export class Register {
             validationResult(req).throw();
         }
         catch (errs) {
-            console.log(errs.array());
+            // console.log(errs.array());
+            Logger.Err(errs.array(), true);
             return res.status(422).json(errs.array());
         }
 
