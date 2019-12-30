@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { UserDoc } from "../../../server/models/User";
 import { AccountForm } from "../../components/account/AccountForm";
 
 export class AccountPage extends Component<any, any> {

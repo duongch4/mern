@@ -7,6 +7,15 @@ export type AuthToken = {
     kind: string;
 };
 
+export type UserProfile = {
+    firstName: string;
+    lastName: string;
+    gender: string;
+    location: string;
+    website: string;
+    picture: string;
+};
+
 export type UserDoc = mongoose.Document & {
     _id: string;
     email: string;
@@ -17,14 +26,7 @@ export type UserDoc = mongoose.Document & {
     facebook: string;
     tokens: AuthToken[];
 
-    profile: {
-        firstName: string;
-        lastName: string;
-        gender: string,
-        location: string,
-        website: string,
-        picture: string
-    };
+    profile: UserProfile;
 
     getGravatar: (size: number) => string;
     getFullName: () => string;
