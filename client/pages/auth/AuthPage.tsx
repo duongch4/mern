@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { UserPayload } from "../../pages/MainRoutes";
 
 type AuthPageProps = {
-    currUser: UserPayload
+    currUser: UserPayload;
 };
 
 export class AuthPage extends Component<AuthPageProps, any> {

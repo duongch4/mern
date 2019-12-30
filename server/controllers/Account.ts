@@ -72,7 +72,7 @@ export class Account {
 
         check("email", "Email cannot be empty").exists({ checkNull: true, checkFalsy: true });
         check("email", "Email is not valid").isEmail();
-        sanitize("email").normalizeEmail({ gmail_remove_dots: false });
+        sanitize("email").normalizeEmail({ "gmail_remove_dots": false });
         try {
             validationResult(req).throw();
         }

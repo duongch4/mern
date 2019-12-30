@@ -62,19 +62,17 @@ const UserSchema: mongoose.Schema = new mongoose.Schema(
 );
 
 UserSchema.pre<UserDoc>("save", function save(next) {
-    const user = this;
-
-    if (!user.isModified("password")) {
+    if (!this.isModified("password")) {
         return next();
     }
 
-    if (user.password) {
-        Auth.hashPassword(user.password, 12, (err: mongoose.Error, hash) => {
+    if (this.password) {
+        Auth.hashPassword(this.password, 12, (err: mongoose.Error, hash) => {
             if (err) {
                 return next(err);
             }
             else {
-                user.password = hash;
+                this.password = hash;
                 return next();
             }
         });

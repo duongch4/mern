@@ -31,7 +31,7 @@ export class Register {
         check("email", "Email is not valid").isEmail();
         check("password", "Password must be at least 4 characters long").isLength({ min: 4 });
         check("confirmPassword", "Passwords do not match").equals(req.body.password);
-        sanitize("email").normalizeEmail({ gmail_remove_dots: false });
+        sanitize("email").normalizeEmail({ "gmail_remove_dots": false });
 
         try {
             validationResult(req).throw();

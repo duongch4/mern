@@ -116,7 +116,8 @@ class WebpackConfig {
             new ForkTsCheckerWebpackPlugin({
                 eslint: true,
                 tsconfig: tsconfigPath,
-                async: false // check type/lint first then build
+                async: false, // check type/lint first then build
+                workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE // recommended - leave two CPUs free (one for build, one for system)
             }),
         ];
     }

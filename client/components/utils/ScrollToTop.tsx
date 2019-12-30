@@ -20,4 +20,4 @@ class ScrollToTopComponent extends Component<any, any> {
     }
 }
 
-export let ScrollToTop = withRouter(ScrollToTopComponent);
+export const ScrollToTop = withRouter(ScrollToTopComponent);
