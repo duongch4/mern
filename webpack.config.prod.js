@@ -11,50 +11,102 @@ const nodeExternals = require("webpack-node-externals"); // for backend
 const path = require("path");
 
 class WebpackConfig {
-
     setModeResolve() {
         return {
             mode: "production",
             resolve: {
-                extensions: [".ts", ".tsx", ".js", ".json"]
+                extensions: [".ts", ".tsx", ".js", ".json"],
+                modules: [path.resolve(__dirname, "node_modules")]
             },
         };
     }
 
-    setModuleRulesTypescript(instanceName, tsconfigPath) {
-        return [
-            {
-                enforce: "pre",
-                test: /\.js$/,
-                loader: "source-map-loader"
-            },
-            {
-                test: /\.tsx?$/,
-                use: [
-                    {
-                        loader: "ts-loader",
-                        options: {
-                            transpileOnly: true,
-                            instance: instanceName,
-                            configFile: tsconfigPath
-                        }
+    setTranspilationLoader() {
+        return {
+            test: /\.(ts|js)x?$/,
+            loader: "babel-loader",
+            options: {
+                babelrc: true,
+                cacheDirectory: true
+            }
+        };
+    }
+
+    setJavascriptSourceMapLoader() {
+        return {
+            enforce: "pre",
+            test: /\.js$/,
+            loader: "source-map-loader"
+        };
+    }
+
+    setStyleLoader() {
+        return {
+            test: /\.s?css$/,
+            use: [
+                MiniCssExtractPlugin.loader,
+                {
+                    loader: "css-loader",
+                    options: {
+                        sourceMap: true
                     }
-                ]
-            },
-        ];
+                },
+                {
+                    loader: "sass-loader",
+                    options: {
+                        sourceMap: true
+                    }
+                },
+            ]
+        };
+    }
+
+    setImageLoader() {
+        return {
+            test: /\.(jpe?g|png|gif|svg)$/,
+            loader: "image-webpack-loader",
+            enforce: "pre"
+        };
+    }
+
+    setFileLoaderClient() {
+        return {
+            test: /\.(jpe?g|png|gif|svg|pdf)$/,
+            use: [
+                {
+                    loader: "file-loader",
+                    options: {
+                        name: "[hash]/[name].[ext]",
+                        outputPath: "assets"
+                    }
+                }
+            ]
+        };
+    }
+
+    setFileLoaderServer() {
+        return {
+            test: /\.(jpe?g|png|gif|svg|pdf)$/,
+            use: [
+                {
+                    loader: "file-loader",
+                    options: {
+                        emitFile: false
+                    }
+                }
+            ]
+        };
     }
 
     setOptMinimizerUglifyJs() {
-        return [
-            new TerserPlugin({
-                cache: true,
-                parallel: true,
-                // sourceMap: true
-            })
-        ];
+        return new TerserPlugin({
+            cache: true,
+            parallel: true,
+            // sourceMap: true
+        });
     }
 
-    setCommonPlugins(tsconfigPath, tslintPath) {
+    setCommonPlugins(tsconfigPath) {
         return [
             new webpack.optimize.OccurrenceOrderPlugin(),
             new webpack.HashedModuleIdsPlugin(), // so that file hashes dont change unexpectedly
@@ -62,28 +114,27 @@ class WebpackConfig {
                 localesToKeep: ["en", "en-ca"],
             }),
             new ForkTsCheckerWebpackPlugin({
+                eslint: true,
                 tsconfig: tsconfigPath,
-                tslint: tslintPath,
-                async: false, // check Typing first then build
-                useTypescriptIncrementalApi: true,
-                memoryLimit: 4096
-            })
+                async: false // check type/lint first then build
+            }),
         ];
     }
 
     setClientConfig(
-        fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html", toDir = "./dist/client",
-        instanceName = "client", tsconfigDir = ".", tsconfigFile = "tsconfig.client.json",
-        tslintDir = ".", tslintFile = "tslint.json"
+        fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html",
+        toDir = "./dist/client", instanceName = "client",
+        htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png",
+        tsconfigPath = "./tsconfig.client.json"
     ) {
         const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
         const entryHtmlPath = path.resolve(__dirname, fromDir, entryHtml);
         const allStyles = path.resolve(__dirname, fromDir, "**", "*.scss");
         const outPath = path.resolve(__dirname, toDir);
-        const tsconfigPath = path.resolve(__dirname, tsconfigDir, tsconfigFile);
-        const tslintPath = path.resolve(__dirname, tslintDir, tslintFile);
 
         return {
+            name: instanceName,
+            target: "web",
             ...this.setModeResolve(),
             entry: {
                 main: [entryTsPath].concat(glob.sync(allStyles)),
@@ -96,47 +147,16 @@ class WebpackConfig {
             },
             module: {
                 rules: [
-                    ...this.setModuleRulesTypescript(instanceName, tsconfigPath),
-                    {
-                        test: /\.scss$/,
-                        use: [
-                            MiniCssExtractPlugin.loader,
-                            {
-                                loader: "css-loader",
-                                options: {
-                                    sourceMap: true
-                                }
-                            },
-                            {
-                                loader: "sass-loader",
-                                options: {
-                                    sourceMap: true
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        test: /\.(jpe?g|png|gif|svg|pdf)$/,
-                        use: [
-                            {
-                                loader: "file-loader",
-                                options: {
-                                    name: "[hash]/[name].[ext]",
-                                    outputPath: "assets"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        test: /\.(jpe?g|png|gif|svg)$/,
-                        loader: "image-webpack-loader",
-                        enforce: "pre"
-                    }
+                    this.setJavascriptSourceMapLoader(),
+                    this.setTranspilationLoader(),
+                    this.setStyleLoader(),
+                    this.setFileLoaderClient(),
+                    this.setImageLoader()
                 ]
             },
             optimization: {
                 minimizer: [
-                    ...this.setOptMinimizerUglifyJs(),
+                    this.setOptMinimizerUglifyJs(),
                     new OptimizeCSSAssetsPlugin({})
                 ],
                 runtimeChunk: "single",
@@ -159,11 +179,13 @@ class WebpackConfig {
                 }
             },
             plugins: [
-                ...this.setCommonPlugins(tsconfigPath, tslintPath),
+                ...this.setCommonPlugins(tsconfigPath),
                 new HtmlWebpackPlugin({
-                    template: entryHtmlPath,
-                    hash: true,
                     inject: true,
+                    template: entryHtmlPath,
+                    title: htmlTitle,
+                    favicon: faviconPath,
+                    hash: true,
                     minify: {
                         removeComments: true,
                         collapseWhitespace: true,
@@ -193,71 +215,60 @@ class WebpackConfig {
     }
 
     setServerConfig(
-        fromDir = "./server", entryTs = "server.ts", toDir = "./dist", toServerFile = "server.js",
-        instanceName = "server", tsconfigDir = ".", tsconfigFile = "tsconfig.server.json",
-        tslintDir = ".", tslintFile = "tslint.json"
+        fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
+        toServerFile = "server.js", instanceName = "server",
+        tsconfigPath = "./tsconfig.server.json"
     ) {
         const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
         const outPath = path.resolve(__dirname, toDir);
-        const tsconfigPath = path.resolve(__dirname, tsconfigDir, tsconfigFile);
-        const tslintPath = path.resolve(__dirname, tslintDir, tslintFile);
 
         return {
+            name: instanceName,
+            target: "node",
             ...this.setModeResolve(),
-            entry: entryTsPath,
+            entry: [entryTsPath],
             output: {
                 filename: toServerFile,
                 path: outPath
             },
             module: {
                 rules: [
-                    ...this.setModuleRulesTypescript(instanceName, tsconfigPath),
-                    {
-                        test: /\.(jpe?g|png|gif|svg|pdf)$/,
-                        use: [
-                            {
-                                loader: "file-loader",
-                                options: {
-                                    emitFile: false
-                                }
-                            }
-                        ]
-                    },
+                    this.setJavascriptSourceMapLoader(),
+                    this.setTranspilationLoader(),
+                    this.setFileLoaderServer()
                 ]
             },
             optimization: {
-                minimizer: this.setOptMinimizerUglifyJs()
+                minimizer: [this.setOptMinimizerUglifyJs()]
             },
-            plugins: this.setCommonPlugins(tsconfigPath, tslintPath),
-            target: "node",
+            plugins: this.setCommonPlugins(tsconfigPath),
             externals: [nodeExternals()],
             node: {
+                // console: false,
+                // globale: false,
+                // process: false,
+                // Buffer: false,
+                __filename: false,
                 __dirname: false
             }
         };
     }
 }
 
-module.exports = (env, argv) => {
+module.exports = () => {
     const webpackConfig = new WebpackConfig();
+
     const client = webpackConfig.setClientConfig(
-        fromDir = "./client", entryTsx = "index.tsx", entryHtml = "index.html", toDir = "./dist/client",
-        instanceName = "client", tsconfigDir = "./client", tsconfigFile = "tsconfig.json",
-        tslintDir = ".", tslintFile = "tslint.json"
+        fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html",
+        toDir = "./dist/client", instanceName = "client",
+        htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png",
+        tsconfigPath = path.resolve(__dirname, "./tsconfig.client.json")
     );
     const server = webpackConfig.setServerConfig(
-        fromDir = "./server", entryTs = "server.ts", toDir = "./dist", toServerFile = "server.js",
-        instanceName = "server", tsconfigDir = "./server", tsconfigFile = "tsconfig.json",
-        tslintDir = ".", tslintFile = "tslint.json"
+        fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
+        toServerFile = "server.js", instanceName = "server",
+        tsconfigPath = path.resolve(__dirname, "./tsconfig.server.json")
     );
 
-    if (argv["stack"] === "client") {
-        return client;
-    }
-    else if (argv["stack"] === "server") {
-        return server;
-    }
-    else {
-        return [client, server];
-    }
+    return [client, server];
 };

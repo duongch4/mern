@@ -270,7 +270,7 @@ module.exports = (env, argv) => {
 
     if (argv["stack"] === "client") {
         const client = webpackConfig.setClientConfig(
-            fromDir = "./client", entryTsx = "index.tsx", entryHtml = "index.html",
+            fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html",
             toDir = "./dist/client", instanceName = "client", forBuild = false,
             htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png",
             tsconfigPath = path.resolve(__dirname, "./tsconfig.client.json")
@@ -280,7 +280,7 @@ module.exports = (env, argv) => {
     else if (argv["stack"] === "server-build-once") {
         const server = webpackConfig.setServerConfig(
             fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
-            toFile = "server.js", instanceName = "server",
+            toServerFile = "server.js", instanceName = "server",
             tsconfigPath = path.resolve(__dirname, "./tsconfig.server.json"),
             forBuildServerOnceToWatch = true
         );
@@ -289,7 +289,7 @@ module.exports = (env, argv) => {
     else if (argv["stack"] === "server") {
         const server = webpackConfig.setServerConfig(
             fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
-            toFile = "server.js", instanceName = "server",
+            toServerFile = "server.js", instanceName = "server",
             tsconfigPath = path.resolve(__dirname, "./tsconfig.server.json"),
             forBuildServerOnceToWatch = false
         );
@@ -297,16 +297,16 @@ module.exports = (env, argv) => {
     }
     else { // build both
         const client = webpackConfig.setClientConfig(
-            fromDir = "./client", entryTsx = "index.tsx", entryHtml = "index.html",
+            fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html",
             toDir = "./dist/client", instanceName = "client", forBuild = true,
             htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png",
             tsconfigPath = path.resolve(__dirname, "./tsconfig.client.json")
         );
         const server = webpackConfig.setServerConfig(
             fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
-            toFile = "server.js", instanceName = "server",
+            toServerFile = "server.js", instanceName = "server",
             tsconfigPath = path.resolve(__dirname, "./tsconfig.server.json"),
-            forBuildServer = false
+            forBuildServerOnceToWatch = false
         );
         return [client, server];
     }
