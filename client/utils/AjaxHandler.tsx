@@ -1,4 +1,4 @@
-export type IGenericObject<TValue> = {
+export type TGenericObject<TValue> = {
     [key: string]: TValue;
 };
 
@@ -22,11 +22,11 @@ export class AjaxHandler {
         });
     }
 
-    static putRequest(url: string, data: IGenericObject<any> = {}): Promise<any> {
+    static putRequest(url: string, data: TGenericObject<any> = {}): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const dataFormated = {};
-                this.assign(dataFormated, ["attributes", data.key], data.val);
+                // this.assign(dataFormated, ["attributes", data.key], data.val);
                 // console.log(dataFormated);
 
                 const response: Response = await fetch(url, {
@@ -37,10 +37,11 @@ export class AjaxHandler {
                     headers: {
                         "Content-Type": "application/json",
                         // "Content-Type": "application/x-www-form-urlencoded",
+                        "Accept": "application/json"
                     },
                     // redirect: "follow", // manual, *follow, error
                     // referrer: "no-referrer", // no-referrer, *client
-                    body: JSON.stringify(dataFormated), // body data type must match "Content-Type" header
+                    body: JSON.stringify(data), // body data type must match "Content-Type" header
                 });
                 // console.log(response);
                 if (response.ok) {
@@ -57,7 +58,7 @@ export class AjaxHandler {
         });
     }
 
-    static postRequest(url: string, data: IGenericObject<any> = {}): Promise<any> {
+    static postRequest(url: string, data: TGenericObject<any> = {}): Promise<any> {
         console.log(JSON.stringify(data));
         return new Promise(async (resolve, reject) => {
             try {
@@ -65,7 +66,8 @@ export class AjaxHandler {
                     method: "POST",
                     mode: "cors",
                     headers: {
-                        "Content-Type": "application/json; charset=utf-8"
+                        "Content-Type": "application/json; charset=utf-8",
+                        "Accept": "application/json"
                     },
                     body: JSON.stringify(data)
                 });
@@ -93,7 +95,7 @@ export class AjaxHandler {
         });
     }
 
-    static assign(obj: IGenericObject<any>, keyArray: string[], value: string) {
+    static assign(obj: TGenericObject<any>, keyArray: string[], value: string) {
         const lastKeyIndex = keyArray.length - 1;
         for (let i = 0; i < lastKeyIndex; i++) {
             const key = keyArray[i];

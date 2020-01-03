@@ -169,7 +169,7 @@ export class ExpressServer extends Server {
 
     setGraphQL(): void {
         this.app.use(
-            "/graphql",
+            "/api/graphql",
             graphqlHTTP({
                 schema: graphqlSchema,
                 rootValue: graphqlResolver,

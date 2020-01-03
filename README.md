@@ -20,67 +20,12 @@ Within the `getSingleCourse` we’re executing the course query and for this spe
 
 Because the `getSingleCourse` query operation uses a dynamic parameter we need to supply the value of this parameter in the `Query Variables` input field
 
-```
-query getSingleCourse($courseID: Int!) {
-    course(id: $courseID) {
-        title
-        author
-        description
-        topic
-        url
-    }
-}
-
-============ Query Variables ============
-{
-    "courseID": 1
-}
-```
-
 ## Example 2: Using Aliases and Fragments
 As you can see the query operations requires two parameters: `courseID1` and `courseID2`. The first ID is used for the first query and the second ID is used for the second query.
 
 Another feature which is used is a `fragment`. By using a fragment we’re able to avoid repeating the same set of fields in multiple queries. Instead we’re defining a reusable fragment with name `courseFields` and specific which fields are relevent for both queries in one place.
 
-```
-query getCourseWithFragments($courseID1: Int!, $courseID2: Int!) {
-    course1: course(id: $courseID1) {
-        ...courseFields
-    },
-    course2: course(id: $courseID2) {
-        ...courseFields
-    } 
-}
-fragment courseFields on Course {
-    title
-    author
-    description
-    topic
-    url
-}
-
-============ Query Variables ============
-{ 
-    "courseID1": 1,
-    "courseID2": 2
-}
-```
-
 ## Example 3: Using Mutation
 A mutation operation is defined by using the `mutation` keyword followed by the name of the mutation operation. In the following example the `updateCourseTopic` mutation is included in the operation and again we’re making use of the `courseFields` fragment.
 
 The mutation operation is using two dynamic variables so we need to assign the values in the query variables input field
-
-```
-mutation updateCourseTopic($id: Int!, $topic: String!) {
-    updateCourseTopic(id: $id, topic: $topic) {
-        ... courseFields
-    }
-}
-
-============ Query Variables ============
-{
-    "id": 1,
-    "topic": "JavaScript"
-}
-```
