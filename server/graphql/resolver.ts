@@ -1,6 +1,7 @@
-import { getCourse, getCourses } from "./action"
+import { getCourse, getCourses, updateTopic } from "./action"
 
 export const root = {
     course: getCourse,
-    courses: getCourses
+    courses: getCourses,
+    updateCourseTopic: updateTopic
 };

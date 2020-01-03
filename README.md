@@ -13,7 +13,7 @@ After `build-*`, we cannot open static `client/index.html` as a standalone file 
 
 # With `/graphql` endpoint, on the Graph-i-QL in browser:
 
-## Example 1:
+## Example 1: Simple Use Case
 The `getSingleCourse` query operation is expecting to get one parameter: `$courseID` of type `Int`. By usign the exclamation mark we’re specifying that this parameters needs to be provided.
 
 Within the `getSingleCourse` we’re executing the course query and for this specific ID. We’re specifying that we’d like to retrieve `title, author, description, topic and url` of that that specific course.
@@ -22,13 +22,13 @@ Because the `getSingleCourse` query operation uses a dynamic parameter we need t
 
 ```
 query getSingleCourse($courseID: Int!) {
-  course(id: $courseID) {
-    title
-    author
-    description
-    topic
-    url
-  }
+    course(id: $courseID) {
+        title
+        author
+        description
+        topic
+        url
+    }
 }
 
 ============ Query Variables ============
@@ -44,24 +44,43 @@ Another feature which is used is a `fragment`. By using a fragment we’re able 
 
 ```
 query getCourseWithFragments($courseID1: Int!, $courseID2: Int!) {
-      course1: course(id: $courseID1) {
-             ...courseFields
-      },
-      course2: course(id: $courseID2) {
-            ...courseFields
-      } 
+    course1: course(id: $courseID1) {
+        ...courseFields
+    },
+    course2: course(id: $courseID2) {
+        ...courseFields
+    } 
 }
 fragment courseFields on Course {
-  title
-  author
-  description
-  topic
-  url
+    title
+    author
+    description
+    topic
+    url
 }
 
 ============ Query Variables ============
 { 
     "courseID1": 1,
     "courseID2": 2
+}
+```
+
+## Example 3: Using Mutation
+A mutation operation is defined by using the `mutation` keyword followed by the name of the mutation operation. In the following example the `updateCourseTopic` mutation is included in the operation and again we’re making use of the `courseFields` fragment.
+
+The mutation operation is using two dynamic variables so we need to assign the values in the query variables input field
+
+```
+mutation updateCourseTopic($id: Int!, $topic: String!) {
+    updateCourseTopic(id: $id, topic: $topic) {
+        ... courseFields
+    }
+}
+
+============ Query Variables ============
+{
+    "id": 1,
+    "topic": "JavaScript"
 }
 ```

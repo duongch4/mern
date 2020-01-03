@@ -6,6 +6,9 @@ export const schema = buildSchema(`
         course(id: Int!): Course
         courses(topic: String): [Course]
     },
+    type Mutation {
+        updateCourseTopic(id: Int!, topic: String!): Course
+    },
     type Course {
         id: Int
         title: String

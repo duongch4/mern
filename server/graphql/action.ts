@@ -47,3 +47,13 @@ export const getCourses = function (args: Args) {
         return coursesData;
     }
 }
+
+export const updateTopic = function(args: Args) {
+    coursesData.map(course => {
+        if (course.id === args.id) {
+            course.topic = args.topic;
+            return course;
+        }
+    });
+    return coursesData.filter(course => course.id === args.id) [0];
+}
