@@ -1,7 +1,0 @@
-{
-    "watch": [
-        "server"
-    ],
-    "ext": "js",
-    "exec": "npm run serve"
-}
