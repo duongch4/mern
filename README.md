@@ -11,7 +11,7 @@ SESSION_SECRET=someSecret
 # Note
 After `build-*`, we cannot open static `client/index.html` as a standalone file since it will not recognise the paths to `js/css` files, have to use `webpack-dev-server` in `watch` mode so that there is a single truth of `root`
 
-# With `/graphql` endpoint, on the Graph-i-QL in browser:
+# With `/api/graphql` endpoint, on the Graph-i-QL in browser:
 
 ## Example 1: Simple Use Case
 The `getSingleCourse` query operation is expecting to get one parameter: `$courseID` of type `Int`. By usign the exclamation mark we’re specifying that this parameters needs to be provided.
