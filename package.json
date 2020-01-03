@@ -30,11 +30,12 @@
         "Webpack",
         "Typescript",
         "Babel",
-        "Eslint",
+        "ESLint",
         "MongoDB",
         "ExpressJS",
         "React",
-        "NodeJS"
+        "NodeJS",
+        "GraphQL"
     ],
     "author": "DBC",
     "license": "ISC",
