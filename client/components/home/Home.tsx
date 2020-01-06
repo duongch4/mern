@@ -3,11 +3,13 @@ import homeImg from "../../assets/png/titleImg.png";
 import { AjaxHandler, TGenericObject } from "../../utils/AjaxHandler";
 import { AlertMessage } from "../utils/AlertMessage";
 import { JsonPrint } from "../utils/JsonPrint";
+import { ProgressBar } from "../utils/ProgressBar";
 
 type HomeState = {
     message: string;
     reqBody: TGenericObject<any>;
     resData: {};
+    loading: number;
 };
 
 export class Home extends Component<any, HomeState> {
@@ -15,7 +17,8 @@ export class Home extends Component<any, HomeState> {
     readonly state: Readonly<HomeState> = {
         message: "",
         reqBody: {},
-        resData: {}
+        resData: {},
+        loading: 0
     };
 
     render() {
@@ -31,6 +34,7 @@ export class Home extends Component<any, HomeState> {
                     </div>
                     <div className="col-md-8 d-none d-md-block">
                         Request Body
+                        <ProgressBar percentage={this.state.loading} />
                         <JsonPrint data={this.state.reqBody} />
                         <hr />
                         Response Data
@@ -42,14 +46,17 @@ export class Home extends Component<any, HomeState> {
     }
 
     onClick_1 = () => {
+        this.setState({ loading: 0 });
         this._onClick_1();
     }
 
     onClick_2 = () => {
+        this.setState({ loading: 0 });
         this._onClick_2();
     }
 
     onClick_3 = () => {
+        // this.setState({ loading: 0 });
         this._onClick_3();
     }
 
@@ -77,7 +84,7 @@ export class Home extends Component<any, HomeState> {
 
         try {
             const response = await AjaxHandler.postRequest("/api/graphql", data);
-            this.setState({ message: "Success", reqBody: data, resData: response });
+            this.setState({ message: "Success", reqBody: data, resData: response, loading: 100 });
         }
         catch (err) {
             this.setState({ message: err.message, reqBody: data, resData: err });
@@ -115,7 +122,7 @@ export class Home extends Component<any, HomeState> {
 
         try {
             const response = await AjaxHandler.postRequest("/api/graphql", data);
-            this.setState({ message: "Success", reqBody: data, resData: response });
+            this.setState({ message: "Success", reqBody: data, resData: response, loading: 100 });
         }
         catch (err) {
             this.setState({ message: err.message, reqBody: data, resData: err });
@@ -150,7 +157,7 @@ export class Home extends Component<any, HomeState> {
 
         try {
             const response = await AjaxHandler.postRequest("/api/graphql", data);
-            this.setState({ message: "Success", reqBody: data, resData: response });
+            this.setState({ message: "Success", reqBody: data, resData: response, loading: 100 });
         }
         catch (err) {
             this.setState({ message: err.message, reqBody: data, resData: err });

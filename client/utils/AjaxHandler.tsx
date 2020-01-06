@@ -59,7 +59,7 @@ export class AjaxHandler {
     }
 
     static postRequest(url: string, data: TGenericObject<any> = {}): Promise<any> {
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         return new Promise(async (resolve, reject) => {
             try {
                 const response: Response = await fetch(url, {
