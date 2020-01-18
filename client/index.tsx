@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
+import { Provider } from "react-redux";
 import {
     BrowserRouter as Router,
     Route,
@@ -10,17 +11,20 @@ import {
 
 import { ScrollToTop } from "./components/utils/ScrollToTop";
 import { MainRoutes } from "./pages/MainRoutes";
+import { store } from "./redux/store";
 
 const rootElem = document.getElementById("root");
 let render = () => {
     ReactDOM.render(
-        <Router>
-            <ScrollToTop>
-                <Switch>
-                    <Route path={"/"} component={MainRoutes} />
-                </Switch>
-            </ScrollToTop>
-        </Router>
+        <Provider store={store}>
+            <Router>
+                <ScrollToTop>
+                    <Switch>
+                        <Route path={"/"} component={MainRoutes} />
+                    </Switch>
+                </ScrollToTop>
+            </Router>
+        </Provider>
         ,
         rootElem
     );
@@ -39,7 +43,7 @@ if (module.hot) {
         try {
             renderApp();
         }
-        catch(error) {
+        catch (error) {
             console.error(error);
             renderErr(error);
         }
