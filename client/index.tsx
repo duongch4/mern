@@ -11,7 +11,12 @@ import {
 
 import { ScrollToTop } from "./components/utils/ScrollToTop";
 import { MainRoutes } from "./pages/MainRoutes";
-import { store } from "./redux/store";
+import store from "./redux/store";
+
+// Only Logging debug info to console in dev mode
+if (process.env.NODE_ENV !== "production") {
+    localStorage.setItem("debug", "client:*");
+}
 
 const rootElem = document.getElementById("root");
 let render = () => {
@@ -28,7 +33,7 @@ let render = () => {
         ,
         rootElem
     );
-}
+};
 
 if (module.hot) {
     const renderApp = render;
@@ -37,14 +42,15 @@ if (module.hot) {
         ReactDOM.render(
             <RedBox error={err} />,
             rootElem
-        )
-    }
+        );
+    };
     render = () => {
         try {
             renderApp();
         }
         catch (error) {
-            console.error(error);
+            const log = require("./utils/Log").default;
+            log.error(error);
             renderErr(error);
         }
     };

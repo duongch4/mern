@@ -70,7 +70,8 @@ module.exports = {
         "@typescript-eslint/type-annotation-spacing": "error",
         "@typescript-eslint/unified-signatures": "error",
         "arrow-parens": ["error", "always"],
-        "brace-style": ["error", "1tbs"],
+        "brace-style": ["error", "stroustrup"],
+        // "brace-style": ["error", "1tbs"],
         "complexity": "off",
         "constructor-super": "error",
         "curly": "error",
@@ -137,14 +138,14 @@ module.exports = {
                     "no-reference-import": true,
                     "no-shadowed-variable": true,
                     "no-unused-expression": true,
-                    "one-line": [
-                        true,
-                        "check-catch",
-                        "check-else",
-                        "check-finally",
-                        "check-open-brace",
-                        "check-whitespace"
-                    ],
+                    // "one-line": [
+                    //     true,
+                    //     "check-catch",
+                    //     "check-else",
+                    //     "check-finally",
+                    //     "check-open-brace",
+                    //     "check-whitespace"
+                    // ],
                     "quotemark": [
                         true,
                         "double",
