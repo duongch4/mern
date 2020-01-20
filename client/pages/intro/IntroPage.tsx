@@ -4,7 +4,7 @@ import { Home } from "../../components/home/Home";
 import { Notes } from "../../components/note/Notes";
 
 export class IntroPage extends Component<any, any> {
-    render() {
+    public render() {
         return (
             <div id="intro-page">
                 <Home />

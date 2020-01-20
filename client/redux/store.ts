@@ -1,19 +1,25 @@
-import { createStore } from "redux";
-import { rootReducer, ReduxStates } from "./reducers";
+import { createStore, applyMiddleware } from "redux";
+import { load, save } from "redux-localstorage-simple";
+import reduxThunk from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension";
 
-const initState: ReduxStates = {
-    reducerNotes: {
-        notes:[
-            { title: "T1", content: "C1" },
-            { title: "T2", content: "C2" },
-            { title: "T3", content: "C3" }
-        ],
-        vis: "AWESOME_TAG"
-    }
-};
+import rootReducer from "./reducers";
 
-export const store = createStore(
+const middlewares = (process.env.NODE_ENV !== "production") ?
+    [reduxThunk, require("redux-immutable-state-invariant").default(), require("redux-logger").default] :
+    [reduxThunk];
+
+const store = createStore(
     rootReducer,
-    initState, // or undefined if dont want initState
-    // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    load(), // load from current saved redux-state in local storage
+    composeWithDevTools(applyMiddleware(...middlewares, save()))
 );
+
+if (module.hot) {
+    module.hot.accept("./reducers", () => {
+        const newRootReducer = require("./reducers").default;
+        store.replaceReducer(newRootReducer);
+    });
+}
+
+export default store;
