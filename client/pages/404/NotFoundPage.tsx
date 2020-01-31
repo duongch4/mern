@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 export class NotFoundPage extends Component<any, any> {
-    render() {
+    public render() {
         return (
             <div id="not-found-page">
                 <h1>404</h1>

@@ -3,7 +3,7 @@ import NotesForm from "./NotesForm";
 import AllNotes from "./AllNotes";
 
 export class Notes extends Component {
-    render() {
+    public render() {
         return (
             <Fragment>
                 <h1>React Redux Notes App</h1>

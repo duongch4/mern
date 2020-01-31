@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 export class Footer extends Component<any, any> {
-    render() {
+    public render() {
         return (
             <nav className="footer navbar-dark bg-dark static-bottom text-center">
                 <div className="social-icons">

@@ -14,22 +14,22 @@ type HomeState = {
 
 export class Home extends Component<any, HomeState> {
 
-    readonly state: Readonly<HomeState> = {
+    public readonly state: Readonly<HomeState> = {
         message: "",
         reqBody: {},
         resData: {},
         loading: 0
     };
 
-    render() {
+    public render() {
         return (
             <div id="home" className="container-fluid">
                 <div className="row">
                     <div className="col-md-4 img-sect d-none d-md-block">
                         <img src={homeImg} className="home-img img-fluid" alt="HomeImage" />
-                        <input type="button" onClick={this.onClick_1} value="Testing GraphQL: Simple Query" />
-                        <input type="button" onClick={this.onClick_2} value="Testing GraphQL: Aliases and Fragment" />
-                        <input type="button" onClick={this.onClick_3} value="Testing GraphQL: Mutation" />
+                        <input type="button" onClick={this.onClick1} value="Testing GraphQL: Simple Query" />
+                        <input type="button" onClick={this.onClick2} value="Testing GraphQL: Aliases and Fragment" />
+                        <input type="button" onClick={this.onClick3} value="Testing GraphQL: Mutation" />
                         <AlertMessage message={this.state.message} />
                     </div>
                     <div className="col-md-8 d-none d-md-block">
@@ -45,22 +45,22 @@ export class Home extends Component<any, HomeState> {
         );
     }
 
-    onClick_1 = () => {
+    private onClick1 = () => {
         this.setState({ loading: 0 });
-        this._onClick_1();
+        this.onClick11();
     }
 
-    onClick_2 = () => {
+    private onClick2 = () => {
         this.setState({ loading: 0 });
-        this._onClick_2();
+        this.onClick22();
     }
 
-    onClick_3 = () => {
+    private onClick3 = () => {
         // this.setState({ loading: 0 });
-        this._onClick_3();
+        this.onClick33();
     }
 
-    _onClick_1 = async () => {
+    private onClick11 = async () => {
         const query: string = `
             query getSingleCourse($courseID: Int!) {
                 course(id: $courseID) {
@@ -74,9 +74,9 @@ export class Home extends Component<any, HomeState> {
         `;
 
         const variables = {
-            "courseID": 1
+            courseID: 1
         };
-        
+
         const data = {
             query: query,
             variables: variables
@@ -91,7 +91,7 @@ export class Home extends Component<any, HomeState> {
         }
     }
 
-    _onClick_2 = async () => {
+    private onClick22 = async () => {
         const query: string = `
             query getCourseWithFragments($courseID1: Int!, $courseID2: Int!) {
                 course1: course(id: $courseID1) {
@@ -99,7 +99,7 @@ export class Home extends Component<any, HomeState> {
                 },
                 course2: course(id: $courseID2) {
                     ...courseFields
-                } 
+                }
             }
             fragment courseFields on Course {
                 title
@@ -110,11 +110,11 @@ export class Home extends Component<any, HomeState> {
             }
         `;
 
-        const variables = { 
-            "courseID1": 1,
-            "courseID2": 2
+        const variables = {
+            courseID1: 1,
+            courseID2: 2
         };
-        
+
         const data = {
             query: query,
             variables: variables
@@ -129,7 +129,7 @@ export class Home extends Component<any, HomeState> {
         }
     }
 
-    _onClick_3 = async () => {
+    private onClick33 = async () => {
         const query: string = `
             mutation updateCourseTopic($id: Int!, $topic: String!) {
                 updateCourseTopic(id: $id, topic: $topic) {
@@ -146,10 +146,10 @@ export class Home extends Component<any, HomeState> {
         `;
 
         const variables = {
-            "id": 1,
-            "topic": "JS"
+            id: 1,
+            topic: "JS"
         };
-        
+
         const data = {
             query: query,
             variables: variables

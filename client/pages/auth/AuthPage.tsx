@@ -6,7 +6,7 @@ type AuthPageProps = {
 };
 
 export class AuthPage extends Component<AuthPageProps, any> {
-    render() {
+    public render() {
         return (
             <div id="auth-page">
                 <h1>Only Authenticated Users See This Page.</h1>

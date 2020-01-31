@@ -5,13 +5,13 @@ import {
 
 class ScrollToTopComponent extends Component<any, any> {
 
-    componentWillReceiveProps(prevProps: any) {
+    public componentWillReceiveProps(prevProps: any) {
         if (this.props.location !== prevProps.location) {
             window.scrollTo(0, 0);
         }
     }
 
-    render() {
+    public render() {
         return (
             <div>
                 {this.props.children}

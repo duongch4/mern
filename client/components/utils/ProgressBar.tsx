@@ -7,16 +7,16 @@ type ProgressBarProps = {
 type ProgressBarStates = {
     percentage: number;
     hide: boolean;
-}
+};
 
 export class ProgressBar extends Component<ProgressBarProps, ProgressBarStates> {
 
-    readonly state: Readonly<ProgressBarStates> = {
+    public readonly state: Readonly<ProgressBarStates> = {
         percentage: 0,
         hide: true,
     };
 
-    static getDerivedStateFromProps(nextProps: ProgressBarProps, prevState: ProgressBarStates) {
+    public static getDerivedStateFromProps(nextProps: ProgressBarProps, prevState: ProgressBarStates) {
 
         const nextState = {
             percentage: nextProps.percentage,
@@ -26,8 +26,11 @@ export class ProgressBar extends Component<ProgressBarProps, ProgressBarStates> 
         if (nextProps.percentage !== prevState.percentage) {
             if (nextProps.percentage === 100 && prevState.percentage === 0) {
                 nextState.hide = false;
-                setTimeout(() => {nextState.hide = true; return nextState;}, 1000);
-            } 
+                setTimeout(() => {
+                    nextState.hide = true;
+                    return nextState;
+                }, 1000);
+            }
             else if (nextProps.percentage === 0 && prevState.percentage === 100) {
                 nextState.hide = true;
             }
@@ -38,7 +41,7 @@ export class ProgressBar extends Component<ProgressBarProps, ProgressBarStates> 
         }
     }
 
-    render() {
+    public render() {
         const progressStyle = {
             height: "2px",
             visibility: "visible" as "visible" | "hidden"
@@ -49,7 +52,7 @@ export class ProgressBar extends Component<ProgressBarProps, ProgressBarStates> 
         };
 
         if (this.state.hide) {
-            progressStyle.visibility = "hidden"
+            progressStyle.visibility = "hidden";
         }
 
         return (

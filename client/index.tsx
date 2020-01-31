@@ -6,7 +6,7 @@ import {
     BrowserRouter as Router,
     Route,
     Switch,
-    withRouter,
+    withRouter as _,
 } from "react-router-dom";
 
 import { ScrollToTop } from "./components/utils/ScrollToTop";

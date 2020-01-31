@@ -1,4 +1,4 @@
-import { EReduxActionType, ReduxBaseAction } from "../../redux/actions"
+import { EReduxActionType, ReduxBaseAction } from "../../redux/actions";
 
 export type AddNoteAction = {
     type: EReduxActionType.ADD_NOTE;

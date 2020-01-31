@@ -20,7 +20,7 @@ type DispatchProps = {
 type AllNotesProps = OwnProps & StateProps & DispatchProps;
 
 class AllNotes extends Component<AllNotesProps, any> {
-    render() {
+    public render() {
         const notesItems = this.props.notes.map((note: NotesFormStates, index: number) => {
             return (
                 <li key={index}>

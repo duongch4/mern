@@ -13,13 +13,13 @@ type Colours = {
 };
 const COLOURS: Colours = {
     trace: "lightblue",
-    info: "blue",
+    info: "aqua",
     warn: "pink",
     error: "red"
 }; // choose better colours :)
 
 class Log {
-    private generateMessage(level: string, message: string, source: string) {
+    private generateMessage(level: string, message: any, source?: string) {
         // Set the prefix which will cause debug to enable the message
         const namespace = `${BASE}:${level}`;
         const createDebug = debug(namespace);
@@ -35,19 +35,19 @@ class Log {
         }
     }
 
-    public trace(message: string, source: string) {
+    public trace(message: any, source?: string) {
         return this.generateMessage("trace", message, source);
     }
 
-    public info(message: string, source: string) {
+    public info(message: any, source?: string) {
         return this.generateMessage("info", message, source);
     }
 
-    public warn(message: string, source: string) {
+    public warn(message: any, source?: string) {
         return this.generateMessage("warn", message, source);
     }
 
-    public error(message: string, source: string) {
+    public error(message: any, source?: string) {
         return this.generateMessage("error", message, source);
     }
 }

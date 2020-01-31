@@ -3,6 +3,7 @@ import { AjaxHandler } from "../../utils/AjaxHandler";
 import { EmptyException, InvalidLengthException } from "../../utils/Exception";
 import { AlertMessage } from "../utils/AlertMessage";
 import { FormGroup } from "../utils/FormGroup";
+import Log from "../../utils/Log";
 
 export type AccountFormProps = {
     idEmail?: string;
@@ -19,27 +20,27 @@ export type AccountFormStates = {
 
 export class AccountForm extends Component<AccountFormProps, AccountFormStates> {
 
-    readonly state: Readonly<AccountFormStates> = {
+    public readonly state: Readonly<AccountFormStates> = {
         message: "",
         valEmail: "",
         valPassword: ""
     };
 
-    render() {
+    public render() {
         return (
             <form onSubmit={this.onSubmit}>
                 <AlertMessage message={this.state.message} />
-                {this._renderFormGroupEmail()}
-                {this._renderFormGroupEmail()}
-                {this._renderFormGroupEmail()}
-                {this._renderFormGroupEmail()}
-                {this._renderFormGroupPassword()}
+                {this.renderFormGroupEmail()}
+                {this.renderFormGroupEmail()}
+                {this.renderFormGroupEmail()}
+                {this.renderFormGroupEmail()}
+                {this.renderFormGroupPassword()}
                 <button type="submit" className="btn">{this.props.textButton}</button>
             </form>
         );
     }
 
-    _renderFormGroupEmail = (): React.ReactElement => {
+    private renderFormGroupEmail = (): React.ReactElement => {
         return (
             <FormGroup
                 type={"email"} id={this.props.idEmail} value={this.state.valEmail}
@@ -48,7 +49,7 @@ export class AccountForm extends Component<AccountFormProps, AccountFormStates> 
         );
     }
 
-    _renderFormGroupPassword = (): React.ReactElement => {
+    private renderFormGroupPassword = (): React.ReactElement => {
         return (
             <FormGroup
                 type={"password"} id={this.props.idPassword} value={this.state.valPassword}
@@ -57,13 +58,13 @@ export class AccountForm extends Component<AccountFormProps, AccountFormStates> 
         );
     }
 
-    onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    private onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             [field]: event.target.value
         } as Pick<AccountFormStates, any>);
     }
 
-    onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    private onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
             this.checkEmptyFields();
@@ -72,7 +73,7 @@ export class AccountForm extends Component<AccountFormProps, AccountFormStates> 
         catch (err) {
             switch (true) {
                 case err instanceof EmptyException:
-                    console.log(err);
+                    Log.error(err);
                     this.setState({ message: err.message });
                     return;
                 case err instanceof InvalidLengthException:
@@ -90,12 +91,12 @@ export class AccountForm extends Component<AccountFormProps, AccountFormStates> 
                     return;
             }
         }
-        console.log(this.state);
+        Log.trace(this.state);
         this.submit();
     }
 
-    async submit(): Promise<any> {
-        console.log("Submitting form to: ", this.props.postToUrl);
+    private async submit(): Promise<any> {
+        Log.info("Submitting form to: ", this.props.postToUrl);
         const data = {
             email: this.state.valEmail,
             password: this.state.valPassword
@@ -103,13 +104,13 @@ export class AccountForm extends Component<AccountFormProps, AccountFormStates> 
 
         try {
             const response = await AjaxHandler.postRequest(this.props.postToUrl, data);
-            console.log("YAY!!!");
-            console.log(response);
+            Log.info("YAY!!!");
+            Log.trace(response);
             this.setState({ message: response.message });
             window.location = window.location;
         }
         catch (err) {
-            console.log(`NAY: ${err}`);
+            Log.error(`NAY: ${err}`);
             this.setState({
                 message: err.message,
                 valEmail: "",
@@ -118,7 +119,7 @@ export class AccountForm extends Component<AccountFormProps, AccountFormStates> 
         }
     }
 
-    checkEmptyFields(): void {
+    private checkEmptyFields(): void {
         if (this.state.valEmail === "") {
             throw new EmptyException("Please enter an email address!");
         }
@@ -127,7 +128,7 @@ export class AccountForm extends Component<AccountFormProps, AccountFormStates> 
         }
     }
 
-    checkPasswordLength(): void {
+    private checkPasswordLength(): void {
         if (this.state.valPassword.length < 4) {
             throw new InvalidLengthException("Password must be at least 4 characters long");
         }

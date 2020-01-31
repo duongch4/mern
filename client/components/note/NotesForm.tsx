@@ -20,18 +20,18 @@ export type NotesFormStates = {
 };
 
 class NotesForm extends Component<NotesFormProps, NotesFormStates> {
-    readonly state: Readonly<NotesFormStates> = {
+    public readonly state: Readonly<NotesFormStates> = {
         title: "",
         content: ""
     };
 
-    handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    private handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         this.setState({
             [e.target.name]: e.target.value
         } as Pick<NotesFormStates, any>);
     }
 
-    handleSubmission = (e: FormEvent<HTMLFormElement>) => {
+    private handleSubmission = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const { title, content } = this.state;
@@ -43,7 +43,7 @@ class NotesForm extends Component<NotesFormProps, NotesFormStates> {
         });
     }
 
-    render() {
+    public render() {
         return (
             <Fragment>
                 <h3>Add a Note</h3>
@@ -58,14 +58,14 @@ class NotesForm extends Component<NotesFormProps, NotesFormStates> {
                     <button type="submit">Add Note</button>
                 </form>
             </Fragment>
-        )
+        );
     }
 }
 
 const mapStateToProps = undefined; // dont care about the redux store state, component will not subscribe to store
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => { // inject ActionCreator "addNote" to the component's props
-    return bindActionCreators({ addNote }, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
+    return bindActionCreators({ addNote }, dispatch); // inject ActionCreator "addNote" to the component's props
 };
 
 export default connect<{}, DispatchProps, OwnProps, ReduxStates>(mapStateToProps, mapDispatchToProps)(NotesForm);
