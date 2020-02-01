@@ -11,17 +11,17 @@ export type HeaderStates = {
 };
 
 export class Header extends Component<HeaderProps, HeaderStates> {
-    readonly state: Readonly<HeaderStates> = {
+    public readonly state: Readonly<HeaderStates> = {
         isOpen: false
     };
 
-    _toggleModal = () => {
+    private toggleModal = () => {
         this.setState(
             { isOpen: !this.state.isOpen }
         );
     }
 
-    render() {
+    public render() {
         return (
             <div id="navigation">
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -43,7 +43,7 @@ export class Header extends Component<HeaderProps, HeaderStates> {
                                 <li className="nav-item"><a className="nav-link" href="/">Contact</a></li>
                             </ul>
                             <div className="dropdown-divider"></div>
-                            {this._renderTopRightCorner()}
+                            {this.renderTopRightCorner()}
                         </div>
                     </div>
                 </nav>
@@ -51,44 +51,45 @@ export class Header extends Component<HeaderProps, HeaderStates> {
         );
     }
 
-    _renderTopRightCorner = (): React.ReactNode => {
+    private renderTopRightCorner = (): React.ReactNode => {
         if (!this.props.currUser) {
-            return this._renderNotLoggedIn();
+            return this.renderNotLoggedIn();
         }
         else {
-            return this._renderLoggedIn();
+            return this.renderLoggedIn();
         }
     }
 
-    _renderNotLoggedIn = (): React.ReactNode => {
+    private renderNotLoggedIn = (): React.ReactNode => {
         return (
             <div className="navbar-nav">
                 <div>
                     <button
-                        type="button" className="btn" onClick={this._toggleModal}
+                        type="button" className="btn" onClick={this.toggleModal}
                         data-toggle="modal" data-target="#loginModal"
                     >Log In</button>
-                    <LoginModal id="loginModal" isOpen={this.state.isOpen} toggle={this._toggleModal} />
+                    <LoginModal id="loginModal" isOpen={this.state.isOpen} toggle={this.toggleModal} />
                 </div>
                 <div>
                     <button
-                        type="button" className="btn" onClick={this._toggleModal}
+                        type="button" className="btn" onClick={this.toggleModal}
                         data-toggle="modal" data-target="#registerModal"
                     >Register</button>
-                    <RegisterModal id="registerModal" isOpen={this.state.isOpen} toggle={this._toggleModal} />
+                    <RegisterModal id="registerModal" isOpen={this.state.isOpen} toggle={this.toggleModal} />
                 </div>
             </div>
         );
     }
 
-    _renderLoggedIn = (): React.ReactNode => {
+    private renderLoggedIn = (): React.ReactNode => {
         const user = this.props.currUser;
         if (user) {
             return (
                 <div className="navbar-nav">
                     <li id="account" className="nav-item dropdown">
                         <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                            <img className="avatar" src={user.profile.picture} alt={user.profile.firstName || user.email} />
+                            <img className="avatar" src={user.profile.picture}
+                                alt={user.profile.firstName || user.email} />
                             <span>&emsp;</span>
                             <span>{user.profile.firstName || user.email}</span>
                         </a>

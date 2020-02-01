@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import {
     Route,
     Switch,
-    Redirect,
+    Redirect as _,
 } from "react-router-dom";
 
 import { IntroPage } from "./intro/IntroPage";
@@ -13,6 +13,7 @@ import { AuthPage } from "./auth/AuthPage";
 import { PropsRoute } from "../utils/CustomRoute";
 import { AccountPage } from "./auth/AccountPage";
 import { NotFoundPage } from "./404/NotFoundPage";
+import Log from "../utils/Log";
 
 export type UserProfile = {
     firstName: string;
@@ -35,19 +36,19 @@ type MainStates = {
 };
 
 export class MainRoutes extends Component<any, MainStates> {
-    readonly state: Readonly<MainStates> = {
+    public readonly state: Readonly<MainStates> = {
         currUser: undefined
     };
 
-    componentDidMount = () => {
+    public componentDidMount = () => {
         this.getUser();
     }
 
-    updateUser = (states: MainStates) => {
+    private updateUser = (states: MainStates) => {
         this.setState(states);
     }
 
-    getUser = async () => {
+    private getUser = async () => {
         try {
             const response = await AjaxHandler.getRequest("/api/account");
             this.setState({
@@ -55,24 +56,24 @@ export class MainRoutes extends Component<any, MainStates> {
             });
         }
         catch (err) {
-            console.log(err);
+            Log.error(err);
             this.setState({
                 currUser: undefined
             });
         }
     }
 
-    render() {
-        console.log(this.state);
+    public render() {
+        Log.trace(this.state);
         if (!this.state.currUser) {
-            return this._renderNotLoggedIn();
+            return this.renderNotLoggedIn();
         }
         else {
-            return this._renderLoggedIn();
+            return this.renderLoggedIn();
         }
     }
 
-    _renderNotLoggedIn = (): React.ReactNode => {
+    private renderNotLoggedIn = (): React.ReactNode => {
         return (
             <div id="main-routes">
                 <Header currUser={this.state.currUser} />
@@ -85,7 +86,7 @@ export class MainRoutes extends Component<any, MainStates> {
         );
     }
 
-    _renderLoggedIn = (): React.ReactNode => {
+    private renderLoggedIn = (): React.ReactNode => {
         return (
             <div id="main-routes">
                 <Header currUser={this.state.currUser} />

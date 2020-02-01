@@ -14,11 +14,11 @@ export type ModalStates = {
 };
 
 export class Modal extends Component<ModalProps, ModalStates> {
-    readonly state: Readonly<ModalStates> = {
+    public readonly state: Readonly<ModalStates> = {
         isOpen: this.props.isOpen
     };
 
-    static getDerivedStateFromProps(nextProps: ModalProps, prevState: ModalStates) {
+    public static getDerivedStateFromProps(nextProps: ModalProps, prevState: ModalStates) {
         if (nextProps.isOpen !== prevState.isOpen) {
             return { isOpen: nextProps.isOpen };
         }
@@ -27,24 +27,24 @@ export class Modal extends Component<ModalProps, ModalStates> {
         }
     }
 
-    listenKeyboard = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    private listenKeyboard = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === "Escape" || event.keyCode === 27) {
             this.toggle();
         }
     }
 
-    onDialogClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    private onDialogClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation();
     }
 
-    toggle = () => {
+    private toggle = () => {
         this.setState({
             isOpen: !this.state.isOpen
         });
         this.props.toggle();
     }
 
-    render() {
+    public render() {
         // console.log(this.state);
         return (
             <div
@@ -55,16 +55,16 @@ export class Modal extends Component<ModalProps, ModalStates> {
             >
                 <div className="modal-dialog modal-dialog-centered" role="document" onClick={this.onDialogClick}>
                     <div className="modal-content">
-                        {this._renderModalHead()}
+                        {this.renderModalHead()}
                         <div className="modal-body">{this.props.body}</div>
-                        {this._renderModalFoot()}
+                        {this.renderModalFoot()}
                     </div>
                 </div>
             </div>
         );
     }
 
-    _renderModalHead = (): React.ReactNode => {
+    private renderModalHead = (): React.ReactNode => {
         return (
             <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalLabel">{this.props.title}</h5>
@@ -77,7 +77,7 @@ export class Modal extends Component<ModalProps, ModalStates> {
         );
     }
 
-    _renderModalFoot = (): React.ReactNode => {
+    private renderModalFoot = (): React.ReactNode => {
         return (
             <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-dismiss="modal"

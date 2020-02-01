@@ -1,10 +1,12 @@
-export type IGenericObject<TValue> = {
+import Log from "./Log";
+
+export type TGenericObject<TValue> = {
     [key: string]: TValue;
 };
 
 export class AjaxHandler {
 
-    static getRequest(url: string): Promise<any> {
+    public static getRequest(url: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const response: Response = await fetch(url);
@@ -22,12 +24,12 @@ export class AjaxHandler {
         });
     }
 
-    static putRequest(url: string, data: IGenericObject<any> = {}): Promise<any> {
+    public static putRequest(url: string, data: TGenericObject<any> = {}): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const dataFormated = {};
-                this.assign(dataFormated, ["attributes", data.key], data.val);
-                // console.log(dataFormated);
+                // const dataFormated = {};
+                // this.assign(dataFormated, ["attributes", data.key], data.val);
+                // Log.trace(dataFormated);
 
                 const response: Response = await fetch(url, {
                     method: "PUT", // *GET, POST, PUT, DELETE, etc.
@@ -37,12 +39,13 @@ export class AjaxHandler {
                     headers: {
                         "Content-Type": "application/json",
                         // "Content-Type": "application/x-www-form-urlencoded",
+                        "Accept": "application/json"
                     },
                     // redirect: "follow", // manual, *follow, error
                     // referrer: "no-referrer", // no-referrer, *client
-                    body: JSON.stringify(dataFormated), // body data type must match "Content-Type" header
+                    body: JSON.stringify(data), // body data type must match "Content-Type" header
                 });
-                // console.log(response);
+                // Log.trace(response);
                 if (response.ok) {
                     return resolve(response.json());
                 }
@@ -57,15 +60,16 @@ export class AjaxHandler {
         });
     }
 
-    static postRequest(url: string, data: IGenericObject<any> = {}): Promise<any> {
-        console.log(JSON.stringify(data));
+    public static postRequest(url: string, data: TGenericObject<any> = {}): Promise<any> {
+        // Log.trace(JSON.stringify(data));
         return new Promise(async (resolve, reject) => {
             try {
                 const response: Response = await fetch(url, {
                     method: "POST",
                     mode: "cors",
                     headers: {
-                        "Content-Type": "application/json; charset=utf-8"
+                        "Content-Type": "application/json; charset=utf-8",
+                        "Accept": "application/json"
                     },
                     body: JSON.stringify(data)
                 });
@@ -74,9 +78,8 @@ export class AjaxHandler {
                     return resolve(response.json());
                 }
                 else {
-                    console.log("a");
                     const err = await response.json();
-                    console.log(err);
+                    Log.error(err);
                     if (err instanceof Array) {
                         throw new Error(err[0].msg); // Get only the first express-validator result
                     }
@@ -86,14 +89,13 @@ export class AjaxHandler {
                 }
             }
             catch (err) {
-                console.log("b");
-                console.log(err);
+                Log.error(err);
                 return reject(err);
             }
         });
     }
 
-    static assign(obj: IGenericObject<any>, keyArray: string[], value: string) {
+    private static assign(obj: TGenericObject<any>, keyArray: string[], value: string) {
         const lastKeyIndex = keyArray.length - 1;
         for (let i = 0; i < lastKeyIndex; i++) {
             const key = keyArray[i];

@@ -3,6 +3,7 @@ import { AjaxHandler } from "../../utils/AjaxHandler";
 import { EmptyException, InvalidLengthException } from "../../utils/Exception";
 import { AlertMessage } from "../utils/AlertMessage";
 import { FormGroup } from "../utils/FormGroup";
+import Log from "../../utils/Log";
 
 export type LoginFormProps = {
     idEmail?: string;
@@ -21,14 +22,14 @@ export type LoginFormStates = {
 
 export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
 
-    readonly state: Readonly<LoginFormStates> = {
+    public readonly state: Readonly<LoginFormStates> = {
         isClicked: false,
         message: "",
         valEmail: "",
         valPassword: ""
     };
 
-    static getDerivedStateFromProps(nextProps: LoginFormProps, prevState: LoginFormStates) {
+    public static getDerivedStateFromProps(nextProps: LoginFormProps, prevState: LoginFormStates) {
         if (nextProps.isClicked !== prevState.isClicked) {
             return {
                 isClicked: nextProps.isClicked,
@@ -42,7 +43,7 @@ export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
         }
     }
 
-    render() {
+    public render() {
         return (
             <form onSubmit={this.onSubmit}>
                 <AlertMessage message={this.state.message} />
@@ -61,13 +62,13 @@ export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
         );
     }
 
-    onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    private onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             [field]: event.target.value
         } as Pick<LoginFormStates, any>);
     }
 
-    onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    private onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
             this.checkEmptyFields();
@@ -76,7 +77,7 @@ export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
         catch (err) {
             switch (true) {
                 case err instanceof EmptyException:
-                    console.log(err);
+                    Log.error(err);
                     this.setState({ message: err.message });
                     return;
                 case err instanceof InvalidLengthException:
@@ -94,12 +95,12 @@ export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
                     return;
             }
         }
-        console.log(this.state);
+        Log.info(this.state);
         this.submit();
     }
 
-    async submit(): Promise<any> {
-        console.log("Submitting form to: ", this.props.postToUrl);
+    private async submit(): Promise<any> {
+        Log.trace("Submitting form to: ", this.props.postToUrl);
         const data = {
             email: this.state.valEmail,
             password: this.state.valPassword
@@ -107,13 +108,13 @@ export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
 
         try {
             const response = await AjaxHandler.postRequest(this.props.postToUrl, data);
-            console.log("YAY!!!");
-            console.log(response);
+            Log.info("YAY!!!");
+            Log.trace(response);
             this.setState({ message: response.message });
             window.location = window.location;
         }
         catch (err) {
-            console.log(`NAY: ${err}`);
+            Log.error(`NAY: ${err}`);
             this.setState({
                 message: err.message,
                 valEmail: "",
@@ -122,7 +123,7 @@ export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
         }
     }
 
-    checkEmptyFields(): void {
+    private checkEmptyFields(): void {
         if (this.state.valEmail === "") {
             throw new EmptyException("Please enter an email address!");
         }
@@ -131,7 +132,7 @@ export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
         }
     }
 
-    checkPasswordLength(): void {
+    private checkPasswordLength(): void {
         if (this.state.valPassword.length < 4) {
             throw new InvalidLengthException("Password must be at least 4 characters long");
         }

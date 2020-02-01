@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 
 export default class Auth {
 
-    static hashPassword(
+    public static hashPassword(
         password: string, saltRounds: number, callback: (err: Error, hash: string) => void
     ): void {
         bcrypt.hash(password, saltRounds, (err, hash) => {
@@ -10,7 +10,7 @@ export default class Auth {
         });
     }
 
-    static compare(
+    public static compare(
         password: string, dbHash: string, callback: (err: Error, isMatch: boolean) => void
     ): void {
         bcrypt.compare(password, dbHash, (err, isMatch) => {
