@@ -1,8 +1,9 @@
 import fs from "fs";
 import dotenv from "dotenv";
+import { Logger as Log } from "@overnightjs/logger";
 
 function _setEnvDev(envFile: string) {
-    console.log(`Using file "${envFile}" to supply config environment variables`);
+    Log.Info(`Using file "${envFile}" to supply config environment variables`);
     dotenv.config({ path: envFile });
 }
 

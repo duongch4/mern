@@ -9,6 +9,8 @@ import { NotFoundException, ConflictException } from "./Exception";
 import { TResponse } from "./TypeResponse";
 import { WriteError } from "mongodb";
 
+import { Logger as Log } from "@overnightjs/logger";
+
 type UserPayload = {
     id: string;
     email: string;
@@ -20,7 +22,7 @@ type UserPayload = {
 export class Account {
 
     @Get()
-    getSessionCurrentUser(req: Request, res: Response) {
+    public getSessionCurrentUser(req: Request, res: Response) {
         if (req.user) {
             User.findById(req.user.id, (err, user: UserDoc) => {
                 if (err) {
@@ -49,7 +51,7 @@ export class Account {
     }
 
     @Get(":id")
-    getAccount(req: Request, res: Response) {
+    public getAccount(req: Request, res: Response) {
         User.findById(req.params.id, (err, user: UserDoc) => {
             if (err) {
                 return res.status(404).json(new NotFoundException(err).response);
@@ -67,7 +69,7 @@ export class Account {
     }
 
     @Put("profile/:id")
-    putAccountProfile(req: Request, res: Response, next: NextFunction) {
+    public putAccountProfile(req: Request, res: Response, next: NextFunction) {
         Logger.Info(req.body, true);
 
         check("email", "Email cannot be empty").exists({ checkNull: true, checkFalsy: true });
@@ -77,7 +79,7 @@ export class Account {
             validationResult(req).throw();
         }
         catch (errs) {
-            console.log(errs.array());
+            Logger.Err(errs.array());
             return res.status(422).json(errs.array());
         }
 
@@ -116,7 +118,7 @@ export class Account {
         });
     }
 
-    updateProfile(user: UserDoc, req: Request) {
+    private updateProfile(user: UserDoc, req: Request) {
         user.profile.firstName = req.body.firstName || "";
         user.profile.lastName = req.body.lastName || "";
         user.profile.gender = req.body.gender || "";
@@ -125,7 +127,7 @@ export class Account {
     }
 
     @Delete(":id")
-    deleteAccount(req: Request, res: Response, next: NextFunction) {
+    public deleteAccount(req: Request, res: Response, next: NextFunction) {
         User.findById(req.params.id).exec((errFind, user) => {
             if (errFind) {
                 return next(errFind);
@@ -156,7 +158,7 @@ export class Account {
     }
 
     @Put("password/:id")
-    putAccountPassword(req: Request, res: Response, next: NextFunction) {
+    public putAccountPassword(req: Request, res: Response, next: NextFunction) {
         Logger.Info(req.body, true);
 
         check("password", "Password cannot be empty").exists({ checkNull: true, checkFalsy: true });
@@ -166,7 +168,7 @@ export class Account {
             validationResult(req).throw();
         }
         catch (errs) {
-            console.log(errs.array());
+            Log.Err(errs.array());
             return res.status(422).json(errs.array());
         }
 

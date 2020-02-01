@@ -8,7 +8,7 @@ import { check, sanitize, validationResult } from "express-validator";
 import { UserDoc } from "../models/User";
 
 import { Controller, Post } from "@overnightjs/core";
-import { Logger } from "@overnightjs/logger";
+import { Logger as Log } from "@overnightjs/logger";
 import { NotFoundException } from "./Exception";
 import { TResponse } from "./TypeResponse";
 
@@ -16,8 +16,8 @@ import { TResponse } from "./TypeResponse";
 export class Login {
 
     @Post()
-    postLogin(req: Request, res: Response, next: NextFunction) {
-        Logger.Info(req.body, true);
+    public postLogin(req: Request, res: Response, next: NextFunction) {
+        Log.Info(req.body, true);
 
         check("email", "Email cannot be empty").exists({ checkNull: true, checkFalsy: true });
         check("password", "Password cannot be empty").exists({ checkNull: true, checkFalsy: true });
@@ -29,7 +29,7 @@ export class Login {
             validationResult(req).throw();
         }
         catch (errs) {
-            console.log(errs.array());
+            Log.Err(errs.array());
             return res.status(422).json(errs.array());
         }
 
@@ -52,7 +52,7 @@ export class Login {
                     },
                     message: "Logged In Successfully"
                 };
-                Logger.Info(req.user, true);
+                Log.Info(req.user, true);
                 return res.status(200).json(response);
             });
         })(req, res, next);

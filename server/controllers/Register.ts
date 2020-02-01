@@ -11,7 +11,7 @@ import { TResponse } from "./TypeResponse";
 @Controller("api/register")
 export class Register {
 
-    _makeUser(req: Request): UserDoc {
+    private makeUser(req: Request): UserDoc {
         return new User({
             email: req.body.email,
             password: req.body.password,
@@ -27,7 +27,7 @@ export class Register {
     }
 
     @Post()
-    postRegister(req: Request, res: Response, next: NextFunction) {
+    public postRegister(req: Request, res: Response, next: NextFunction) {
         check("email", "Email is not valid").isEmail();
         check("password", "Password must be at least 4 characters long").isLength({ min: 4 });
         check("confirmPassword", "Passwords do not match").equals(req.body.password);
@@ -42,7 +42,7 @@ export class Register {
             return res.status(422).json(errs.array());
         }
 
-        const user = this._makeUser(req);
+        const user = this.makeUser(req);
         user.profile.picture = user.getGravatar(60);
 
         User.findOne({ email: req.body.email }, (errFind, existingUser) => {

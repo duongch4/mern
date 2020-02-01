@@ -111,6 +111,7 @@ module.exports = {
         "space-before-function-paren": ["error", {"anonymous": "always", "named": "ignore", "asyncArrow": "always"}],
         "use-isnan": "error",
         "valid-typeof": "off",
+        "quote-props": "off",
 
         //----------------------------- TSLint -----------------------------
         "@typescript-eslint/tslint/config": [

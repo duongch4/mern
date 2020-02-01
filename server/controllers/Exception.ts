@@ -1,7 +1,7 @@
 import { TResponse } from "./TypeResponse";
 
 class BaseCustomException extends Error {
-    readonly response: TResponse;
+    public readonly response: TResponse;
 
     constructor(
         message: string, payload: object = {}, status = "Known Exception", code = 400

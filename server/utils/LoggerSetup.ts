@@ -15,7 +15,10 @@ export function setLogger() {
         (function removeFile() {
             try {
                 fs.unlinkSync(logFilePath);
-            } catch (err) { return; }
+            }
+            catch (err) {
+                return;
+            }
         })();
     }
     else if (process.env.NODE_ENV === "production") {

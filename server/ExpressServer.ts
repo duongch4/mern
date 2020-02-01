@@ -39,11 +39,11 @@ export class ExpressServer extends Server {
         this.config();
     }
 
-    getApp(): express.Application {
+    public getApp(): express.Application {
         return this.app;
     }
 
-    config(): void {
+    private config(): void {
         mongoose.connection.close((err: Error) => {
             if (err) {
                 Logger.Err(err, true);
@@ -67,7 +67,7 @@ export class ExpressServer extends Server {
         });
     }
 
-    setMongoStore(): mongo.MongoStoreFactory {
+    private setMongoStore(): mongo.MongoStoreFactory {
         const MongoStore = mongo(session);
         (mongoose as any).Promise = bluebird;
         mongoose.connect(MONGODB_URI as string, { useCreateIndex: true, useNewUrlParser: true }).then(() => {
@@ -83,7 +83,7 @@ export class ExpressServer extends Server {
         return MongoStore;
     }
 
-    listen(port: string): http.Server {
+    public listen(port: string): http.Server {
         const server = this.app.listen(port, () => {
             Logger.Info(`App is running at PORT ${port} in "${this.app.get("env")}" mode`);
             if (process.env.NODE_ENV !== "production") {
@@ -93,12 +93,12 @@ export class ExpressServer extends Server {
         return server;
     }
 
-    setBodyParser() {
+    private setBodyParser() {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: true }));
     }
 
-    setSession(MongoStore: mongo.MongoStoreFactory): void {
+    private setSession(MongoStore: mongo.MongoStoreFactory): void {
         this.app.use(cookieParser(SESSION_SECRET));
         this.app.use(session({
             cookie: { maxAge: 60000 },
@@ -114,12 +114,12 @@ export class ExpressServer extends Server {
         }));
     }
 
-    setPassportSession(): void {
+    private setPassportSession(): void {
         this.app.use(passport.initialize());
         this.app.use(passport.session());
     }
 
-    setFlash(): void {
+    private setFlash(): void {
         this.app.use(flash());
         // Custom flash middleware -- from Ethan Brown's book, 'Web Development with Node & Express'
         this.app.use((req, res, next) => {
@@ -132,12 +132,12 @@ export class ExpressServer extends Server {
         });
     }
 
-    setLusca(): void {
+    private setLusca(): void {
         this.app.use(lusca.xframe("SAMEORIGIN"));
         this.app.use(lusca.xssProtection(true));
     }
 
-    setCORS(): void {
+    private setCORS(): void {
         this.app.use((_, res, next) => {
             res.setHeader("Access-Control-Allow-Origin", "*");
             res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -149,14 +149,14 @@ export class ExpressServer extends Server {
         });
     }
 
-    setCurrUser(): void {
+    private setCurrUser(): void {
         this.app.use((req, res, next) => {
             res.locals.user = req.user;
             next();
         });
     }
 
-    setRoutes(): void {
+    private setRoutes(): void {
         const controllerInstances = [];
         for (const name of Object.keys(controllers)) {
             const controller = (controllers as any)[name];
@@ -167,7 +167,7 @@ export class ExpressServer extends Server {
         super.addControllers(controllerInstances);
     }
 
-    setGraphQL(): void {
+    private setGraphQL(): void {
         this.app.use(
             "/api/graphql",
             graphqlHTTP({
@@ -178,7 +178,7 @@ export class ExpressServer extends Server {
         );
     }
 
-    setStaticFrontend(): void {
+    private setStaticFrontend(): void {
         // Set Static Assets On Frontend: ABSOLUTELY REQUIRED!!!
         this.app.use(
             express.static(path.resolve(__dirname, "client"), { maxAge: 31557600000 })
@@ -194,7 +194,7 @@ export class ExpressServer extends Server {
         });
     }
 
-    logSession(): void {
+    private logSession(): void {
         if (process.env.NODE_ENV !== "production") {
             this.app.use((req, _, next) => {
                 Logger.Info(req.session, true);
@@ -204,7 +204,7 @@ export class ExpressServer extends Server {
         }
     }
 
-    handleError(): void {
+    private handleError(): void {
         // Error Handler. Provides full stack - remove for production
         if (process.env.NODE_ENV !== "production") {
             this.app.use(errorHandler());
