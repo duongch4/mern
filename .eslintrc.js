@@ -271,7 +271,7 @@ module.exports = {
             version: "detect" // Tells eslint-plugin-react to automatically detect the version of React to use
         }
     },
-    ignorePatterns: ["webpack.*.js", "node_modules/", "dist/"],
+    ignorePatterns: ["*config*.js", "node_modules/", "dist/"],
     overrides: [
         {
             "files": ["**/*.spec.ts"],

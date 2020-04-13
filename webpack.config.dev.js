@@ -26,9 +26,10 @@ class WebpackConfig {
     setTranspilationLoader() {
         return {
             test: /\.(ts|js)x?$/,
+            exclude: /node_modules/,
             loader: "babel-loader",
             options: {
-                babelrc: true,
+                rootMode: "upward",
                 cacheDirectory: true
             }
         };
@@ -57,6 +58,14 @@ class WebpackConfig {
                     options: {
                         sourceMap: true
                     }
+                },
+                {
+                    loader: "postcss-loader",
+                    options: {
+                        config: {
+                            path: path.resolve(__dirname, "postcss.config.js")
+                        }
+                    },
                 },
             ]
         };
@@ -171,11 +180,14 @@ class WebpackConfig {
         const allStyles = path.resolve(__dirname, fromDir, "**", "*.scss");
         const outPath = path.resolve(__dirname, toDir);
 
+        const coreJsPath = path.resolve(__dirname, "./node_modules", "core-js/stable"); // polyfill
+        const regenetorRuntimePath = path.resolve(__dirname, "./node_modules", "regenerator-runtime/runtime"); // polyfill
+
         return {
             name: instanceName,
             target: "web",
             ...this.setModeResolve(),
-            entry: [entryTsPath].concat(glob.sync(allStyles)),
+            entry: [coreJsPath, regenetorRuntimePath, entryTsPath].concat(glob.sync(allStyles)),
             output: {
                 filename: "[name].js",
                 path: outPath,

@@ -57,6 +57,14 @@ class WebpackConfig {
                         sourceMap: true
                     }
                 },
+                {
+                    loader: "postcss-loader",
+                    options: {
+                        config: {
+                            path: path.resolve(__dirname, "postcss.config.js")
+                        }
+                    },
+                },
             ]
         };
     }
@@ -133,12 +141,15 @@ class WebpackConfig {
         const allStyles = path.resolve(__dirname, fromDir, "**", "*.scss");
         const outPath = path.resolve(__dirname, toDir);
 
+        const coreJsPath = path.resolve(__dirname, "./node_modules", "core-js/stable"); // polyfill
+        const regenetorRuntimePath = path.resolve(__dirname, "./node_modules", "regenerator-runtime/runtime"); // polyfill
+
         return {
             name: instanceName,
             target: "web",
             ...this.setModeResolve(),
             entry: {
-                main: [entryTsPath].concat(glob.sync(allStyles)),
+                main: [coreJsPath, regenetorRuntimePath, entryTsPath].concat(glob.sync(allStyles)),
                 pageIntro: path.resolve(__dirname, fromDir, "./pages/intro/IntroPage.tsx")
             },
             output: {
