@@ -49,6 +49,7 @@
         "compression": "^1.7.4",
         "connect-mongo": "^3.0.0",
         "cookie-parser": "^1.4.4",
+        "core-js": "^3.6.5",
         "debug": "^4.1.1",
         "dotenv": "^8.0.0",
         "errorhandler": "^1.5.1",
@@ -73,7 +74,8 @@
         "redux": "^4.0.5",
         "redux-devtools-extension": "^2.13.8",
         "redux-localstorage-simple": "^2.1.6",
-        "redux-thunk": "^2.3.0"
+        "redux-thunk": "^2.3.0",
+        "regenerator-runtime": "^0.13.5"
     },
     "devDependencies": {
         "@babel/core": "7.7.4",
@@ -116,6 +118,7 @@
         "concurrently": "^4.1.1",
         "cross-env": "^6.0.3",
         "css-loader": "^3.0.0",
+        "cssnano": "^4.1.10",
         "eslint": "^6.8.0",
         "eslint-plugin-react": "^7.17.0",
         "file-loader": "^4.0.0",
@@ -131,6 +134,10 @@
         "moment-locales-webpack-plugin": "^1.0.7",
         "node-sass": "^4.13.1",
         "optimize-css-assets-webpack-plugin": "^5.0.1",
+        "postcss": "^7.0.27",
+        "postcss-import": "^12.0.1",
+        "postcss-loader": "^3.0.0",
+        "postcss-preset-env": "^6.7.0",
         "redbox-react": "^1.6.0",
         "redux-immutable-state-invariant": "^2.1.0",
         "redux-logger": "^3.0.6",

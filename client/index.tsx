@@ -6,17 +6,12 @@ import {
     BrowserRouter as Router,
     Route,
     Switch,
-    withRouter as _,
+    withRouter as _withRouter,
 } from "react-router-dom";
 
 import { ScrollToTop } from "./components/utils/ScrollToTop";
 import { MainRoutes } from "./pages/MainRoutes";
 import store from "./redux/store";
-
-// Only Logging debug info to console in dev mode
-if (process.env.NODE_ENV !== "production") {
-    localStorage.setItem("debug", "client:*");
-}
 
 const rootElem = document.getElementById("root");
 let render = () => {
