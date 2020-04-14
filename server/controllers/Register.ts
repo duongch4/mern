@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { check, sanitize, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator";
 
 import { User, UserDoc } from "../models/User";
 
@@ -31,7 +31,7 @@ export class Register {
         check("email", "Email is not valid").isEmail();
         check("password", "Password must be at least 4 characters long").isLength({ min: 4 });
         check("confirmPassword", "Passwords do not match").equals(req.body.password);
-        sanitize("email").normalizeEmail({ "gmail_remove_dots": false });
+        check("email").normalizeEmail({ "gmail_remove_dots": false });
 
         try {
             validationResult(req).throw();

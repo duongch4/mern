@@ -3,7 +3,7 @@ import passport from "passport";
 import { IVerifyOptions } from "passport-local";
 
 import { Request, Response, NextFunction } from "express";
-import { check, sanitize, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator";
 
 import { UserDoc } from "../models/User";
 
@@ -23,7 +23,7 @@ export class Login {
         check("password", "Password cannot be empty").exists({ checkNull: true, checkFalsy: true });
         check("email", "Email is not valid").isEmail();
         check("password", "Password must be at least 4 characters long").isLength({ min: 4 });
-        sanitize("email").normalizeEmail({ "gmail_remove_dots": false });
+        check("email").normalizeEmail({ "gmail_remove_dots": false });
 
         try {
             validationResult(req).throw();

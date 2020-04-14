@@ -1,6 +1,6 @@
 import passportLocal from "passport-local";
 import { User, UserDoc } from "../models/User";
-import Auth from "../utils/Auth";
+import Auth from "./Auth";
 
 export const LocalStrategy = new passportLocal.Strategy({ usernameField: "email" }, (email, password, done) => {
     User.findOne({ email: email.toLowerCase() }, (errEmail, user: UserDoc) => {

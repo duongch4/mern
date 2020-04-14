@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Auth from "../utils/Auth";
+import Auth from "../auth/Auth";
 import crypto from "crypto";
 
 export type AuthToken = {

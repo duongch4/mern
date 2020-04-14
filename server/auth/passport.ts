@@ -26,10 +26,13 @@ export const authenticate = (req: Request, res: Response, next: NextFunction): v
     return res.redirect("/");
 };
 
+type UserWithToken = Express.User & { tokens: any };
 /** Authorisation middleware - Required */
 export const authorise = (req: Request, res: Response, next: NextFunction) => {
     const provider = req.path.split("/").slice(-1)[0];
-    if (_.find(req.user.tokens, { kind: provider })) {
+    const user: UserWithToken = req.user as UserWithToken;
+    if (_.find(user.tokens, { kind: provider })) {
+    // if (_.find((req.user?).tokens, { kind: provider })) {
         return next();
     }
     return res.redirect(`/api/${provider}`);
