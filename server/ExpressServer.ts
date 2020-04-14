@@ -16,7 +16,7 @@ import path from "path";
 
 import passport from "passport";
 
-import { MONGODB_URI, SESSION_SECRET } from "./utils/SecretsSetup";
+import { MONGODB_URI, SESSION_SECRET } from "./config/config";
 
 import errorHandler from "errorhandler";
 

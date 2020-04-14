@@ -10,6 +10,8 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin"); //
 const ForkTsCheckerNotifierWebpackPlugin = require("fork-ts-checker-notifier-webpack-plugin");
 const nodeExternals = require("webpack-node-externals"); // for backend
 const path = require("path");
+const dotenv = require("dotenv").config({ path: path.resolve(__dirname, "./.env.dev") });
+const fs = require("fs");
 
 class WebpackConfig {
     setModeResolve() {
@@ -129,7 +131,10 @@ class WebpackConfig {
             new MomentLocalesPlugin({
                 localesToKeep: ["en", "en-ca"],
             }),
-            new webpack.HotModuleReplacementPlugin()
+            new webpack.HotModuleReplacementPlugin(),
+            new webpack.DefinePlugin({
+                "process.env": JSON.stringify(dotenv.parsed)
+            })
         ];
         if (forBuildServerOnceToWatch) {
             return base;
@@ -240,6 +245,10 @@ class WebpackConfig {
         const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
         const outPath = path.resolve(__dirname, toDir);
 
+        if (dotenv.parsed["OVERNIGHT_LOGGER_MODE"] && dotenv.parsed["OVERNIGHT_LOGGER_MODE"] === "FILE") {
+            this.setServerLogPath();
+        }
+
         return {
             name: instanceName,
             target: "node",
@@ -274,6 +283,16 @@ class WebpackConfig {
                 __dirname: false
             }
         };
+    }
+
+    setServerLogPath() {
+        const logFileDir = path.join(__dirname, "log");
+        const today = new Date().toDateString().split(" ").join("_");
+        const logFilePath = path.join(logFileDir, `backend_${today}.log`);
+        if (!fs.existsSync(logFileDir)) {
+            fs.mkdirSync(logFileDir);
+        }
+        dotenv.parsed["OVERNIGHT_LOGGER_FILEPATH"] = logFilePath;
     }
 }
 

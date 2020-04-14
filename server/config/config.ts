@@ -1,8 +1,6 @@
-import { setEnvDev } from "./EnvDevSetup";
-import { setLogger } from "./LoggerSetup";
 import { Logger as Log } from "@overnightjs/logger";
+import { setLogger } from "./LoggerSetup";
 
-setEnvDev();
 setLogger();
 
 export const SESSION_SECRET = process.env["SESSION_SECRET"];
