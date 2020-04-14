@@ -106,12 +106,12 @@ module.exports = {
         "object-shorthand": "off",
         "one-var": "off",
         "prefer-const": "off",
-        "quote-props": ["error", "consistent-as-needed"],
+        "quote-props": "off",
+        // "quote-props": ["error", "consistent-as-needed"],
         "radix": "error",
         "space-before-function-paren": ["error", {"anonymous": "always", "named": "ignore", "asyncArrow": "always"}],
         "use-isnan": "error",
         "valid-typeof": "off",
-        "quote-props": "off",
 
         //----------------------------- TSLint -----------------------------
         "@typescript-eslint/tslint/config": [
@@ -164,6 +164,7 @@ module.exports = {
                         true,
                         "ban-keywords",
                         "check-format",
+                        "allow-leading-underscore",
                         "allow-pascal-case"
                     ],
                     "whitespace": [
@@ -177,7 +178,7 @@ module.exports = {
                     ],
                     "max-func-body-length": [
                         true,
-                        50,
+                        100,
                         {
                             "ignore-comments": true,
                             "ignore-parameters-to-function-regex": "^describe$"
@@ -185,7 +186,7 @@ module.exports = {
                     ],
                     "max-line-length": [
                         true,
-                        120
+                        150
                     ],
                     "no-console": false,
                     "class-name": true,
