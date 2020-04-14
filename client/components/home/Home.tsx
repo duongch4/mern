@@ -3,7 +3,6 @@ import homeImg from "../../assets/png/titleImg.png";
 import { AjaxHandler, TGenericObject } from "../../utils/AjaxHandler";
 import { AlertMessage } from "../utils/AlertMessage";
 import { JsonPrint } from "../utils/JsonPrint";
-import { ProgressBar } from "../utils/ProgressBar";
 
 type HomeState = {
     message: string;
@@ -34,7 +33,6 @@ export class Home extends Component<any, HomeState> {
                     </div>
                     <div className="col-md-8 d-none d-md-block">
                         Request Body
-                        <ProgressBar percentage={this.state.loading} />
                         <JsonPrint data={this.state.reqBody} />
                         <hr />
                         Response Data
