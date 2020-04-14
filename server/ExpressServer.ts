@@ -85,7 +85,7 @@ export class ExpressServer extends Server {
 
     public listen(port: string): http.Server {
         const server = this.app.listen(port, () => {
-            Logger.Info(`App is running at PORT ${port} in "${this.app.get("env")}" mode`);
+            Logger.Info(`App is running at PORT ${port} in "${process.env.NODE_ENV}" mode`);
             if (process.env.NODE_ENV !== "production") {
                 Logger.Info("Press CTRL-C to stop");
             }
