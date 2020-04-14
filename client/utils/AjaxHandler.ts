@@ -9,7 +9,16 @@ export class AjaxHandler {
     public static getRequest(url: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const response: Response = await fetch(url);
+                const opts: RequestInit = {
+                    method: "GET",
+                    mode: "cors",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Cache-Control": "no-cache, no-store",
+                        "Pragma": "no-cache" // Prevent IE11 from using cache constantly
+                    },
+                };
+                const response: Response = await fetch(url, opts);
                 if (response.ok) {
                     return resolve(response.json());
                 }
@@ -27,11 +36,7 @@ export class AjaxHandler {
     public static putRequest(url: string, data: TGenericObject<any> = {}): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                // const dataFormated = {};
-                // this.assign(dataFormated, ["attributes", data.key], data.val);
-                // Log.trace(dataFormated);
-
-                const response: Response = await fetch(url, {
+                const opts: RequestInit = {
                     method: "PUT", // *GET, POST, PUT, DELETE, etc.
                     mode: "cors", // no-cors, cors, *same-origin
                     // cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -39,12 +44,15 @@ export class AjaxHandler {
                     headers: {
                         "Content-Type": "application/json",
                         // "Content-Type": "application/x-www-form-urlencoded",
-                        "Accept": "application/json"
+                        "Accept": "application/json",
+                        "Cache-Control": "no-cache, no-store",
+                        "Pragma": "no-cache"
                     },
                     // redirect: "follow", // manual, *follow, error
                     // referrer: "no-referrer", // no-referrer, *client
                     body: JSON.stringify(data), // body data type must match "Content-Type" header
-                });
+                };
+                const response: Response = await fetch(url, opts);
                 // Log.trace(response);
                 if (response.ok) {
                     return resolve(response.json());
@@ -64,15 +72,18 @@ export class AjaxHandler {
         // Log.trace(JSON.stringify(data));
         return new Promise(async (resolve, reject) => {
             try {
-                const response: Response = await fetch(url, {
+                const opts: RequestInit = {
                     method: "POST",
                     mode: "cors",
                     headers: {
                         "Content-Type": "application/json; charset=utf-8",
-                        "Accept": "application/json"
+                        "Accept": "application/json",
+                        "Cache-Control": "no-cache, no-store",
+                        "Pragma": "no-cache"
                     },
                     body: JSON.stringify(data)
-                });
+                };
+                const response: Response = await fetch(url, opts);
 
                 if (response.ok) {
                     return resolve(response.json());
@@ -95,6 +106,9 @@ export class AjaxHandler {
         });
     }
 
+    // Example usage:
+    // const dataFormated = {};
+    // this.assign(dataFormated, ["attributes", data.key], data.val);
     private static assign(obj: TGenericObject<any>, keyArray: string[], value: string) {
         const lastKeyIndex = keyArray.length - 1;
         for (let i = 0; i < lastKeyIndex; i++) {
