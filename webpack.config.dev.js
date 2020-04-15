@@ -167,7 +167,7 @@ class WebpackConfig {
             stats: "minimal", // errors-only, errors-warnings
             proxy: [
                 {
-                    context: ["/api/*"],
+                    context: ["/api/**"],
                     target: "http://localhost:3000"
                 }
             ]
