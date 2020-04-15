@@ -43,6 +43,7 @@
     "dependencies": {
         "@overnightjs/core": "^1.6.9",
         "@overnightjs/logger": "^1.1.9",
+        "axios": "^0.19.2",
         "bcryptjs": "^2.4.3",
         "bluebird": "^3.5.5",
         "body-parser": "^1.19.0",
@@ -160,5 +161,11 @@
     "engines": {
         "node": "10.16.0",
         "npm": "6.9.0"
-    }
+    },
+    "browserslist": [
+        "defaults",
+        "IE 11",
+        "IE_Mob 11",
+        "maintained node versions"
+    ]
 }
