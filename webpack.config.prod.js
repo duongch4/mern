@@ -118,7 +118,7 @@ class WebpackConfig {
     }
 
     setCommonPlugins(tsconfigPath) {
-        return [
+        const plugins = [
             new webpack.optimize.OccurrenceOrderPlugin(),
             new webpack.HashedModuleIdsPlugin(), // so that file hashes dont change unexpectedly
             new MomentLocalesPlugin({
@@ -132,6 +132,13 @@ class WebpackConfig {
             }),
             new webpack.EnvironmentPlugin(envkeys.ENV_KEYS) // For CI production process!!!
         ];
+        if (require("fs").existsSync(path.resolve(__dirname, "./.env"))) {
+            const fromDotEnv = new webpack.DefinePlugin({
+                "process.env": JSON.stringify(require("dotenv").config({ path: path.resolve(__dirname, "./.env") }).parsed)
+            })
+            return [...plugins, fromDotEnv];
+        }
+        return plugins;
     }
 
     setClientConfig(
