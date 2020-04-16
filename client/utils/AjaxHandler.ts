@@ -1,10 +1,18 @@
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import Log from "./Log";
 
 export type TGenericObject<TValue> = {
     [key: string]: TValue;
 };
 
-export class AjaxHandler {
+export abstract class AjaxHandlerAbstract {
+    public static getRequest: (url: string) => Promise<any>;
+    public static putRequest: (url: string, data: TGenericObject<any>) => Promise<any>;
+    public static postRequest: (url: string, data: TGenericObject<any>) => Promise<any>;
+    public static delRequest: (url: string) => Promise<any>;
+}
+
+export class AjaxHandler extends AjaxHandlerAbstract {
 
     public static getRequest(url: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
@@ -119,5 +127,51 @@ export class AjaxHandler {
             obj = obj[key];
         }
         obj[keyArray[lastKeyIndex]] = value;
+    }
+}
+
+export class AjaxHandlerAxios extends AjaxHandlerAbstract {
+
+    public static getRequest(url: string): Promise<any> {
+        const opts: AxiosRequestConfig = {
+            url: url,
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Cache-Control": "no-cache, no-store",
+                "Pragma": "no-cache" // Prevent IE11 from using cache constantly
+            }
+        };
+        return axios.request(opts).then((response: AxiosResponse<any>) => response.data).catch((err: any) => err);
+    }
+
+    public static putRequest(url: string, data: TGenericObject<any>): Promise<any> {
+        const opts: AxiosRequestConfig = {
+            url: url,
+            method: "PUT",
+            data: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json",
+                "Cache-Control": "no-cache, no-store",
+                "Pragma": "no-cache"
+            },
+        };
+        return axios.request(opts).then((response: AxiosResponse<any>) => response.data).catch((err: any) => err);
+    }
+
+    public static postRequest(url: string, data: TGenericObject<any>): Promise<any> {
+        const opts: AxiosRequestConfig = {
+            url: url,
+            method: "POST",
+            data: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json",
+                "Cache-Control": "no-cache, no-store",
+                "Pragma": "no-cache"
+            },
+        };
+        return axios.request(opts).then((response: AxiosResponse<any>) => response.data).catch((err: any) => err);
     }
 }
