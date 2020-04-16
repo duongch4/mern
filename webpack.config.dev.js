@@ -16,7 +16,7 @@ const webpackConstants = require("./webpack.config.const");
 class WebpackConfig {
 
     constructor() {
-        this.common = webpackConstants.common;
+        this.common = { ...webpackConstants.envFilePathDev, ...webpackConstants.common };
         this.client = webpackConstants.client;
         this.server = webpackConstants.server;
     }

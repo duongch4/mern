@@ -1,8 +1,11 @@
 const path = require("path");
 
 module.exports = Object.freeze({
+    envFilePathDev: path.resolve(__dirname, "./.env.dev"),
+    
+    envFilePathProd: path.resolve(__dirname, "./.env"),
+
     common: {
-        envFilePath: path.resolve(__dirname, "./.env"),
         babelConfigPath: path.resolve(__dirname, "babel.config.js"),
         nodeModulesPath: path.resolve(__dirname, "node_modules")
     },
