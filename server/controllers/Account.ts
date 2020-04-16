@@ -5,8 +5,8 @@ import { User, UserProfile, UserDoc } from "../models/User";
 
 import { Controller, Get, Put, Delete } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
-import { NotFoundException, ConflictException } from "./Exception";
-import { TResponse } from "./TypeResponse";
+import { NotFoundException, ConflictException } from "../communication/Exception";
+import { TResponse } from "../communication/TResponse";
 import { WriteError } from "mongodb";
 
 import { Logger as Log } from "@overnightjs/logger";

@@ -1,4 +1,4 @@
-import { TResponse } from "./TypeResponse";
+import { TResponse } from "./TResponse";
 
 class BaseCustomException extends Error {
     public readonly response: TResponse;

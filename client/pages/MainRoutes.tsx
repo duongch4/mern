@@ -5,14 +5,14 @@ import {
     Redirect as _,
 } from "react-router-dom";
 
-import { IntroPage } from "./intro/IntroPage";
+import { HomePage } from "./home/HomePage";
 import { Header } from "../components/header/Header";
 import { Footer } from "../components/footer/Footer";
 import { AjaxHandler } from "../utils/AjaxHandler";
 import { AuthPage } from "./auth/AuthPage";
 import { PropsRoute } from "../utils/CustomRoute";
 import { AccountPage } from "./auth/AccountPage";
-import { NotFoundPage } from "./404/NotFoundPage";
+import { NotFoundPage } from "./notfound/NotFoundPage";
 import Log from "../utils/Log";
 
 export type UserProfile = {
@@ -78,7 +78,7 @@ export class MainRoutes extends Component<any, MainStates> {
             <div id="main-routes">
                 <Header currUser={this.state.currUser} />
                 <Switch>
-                    <Route exact path={`/`} component={IntroPage} />
+                    <Route exact path={`/`} component={HomePage} />
                     <Route component={NotFoundPage} />
                 </Switch>
                 <Footer />

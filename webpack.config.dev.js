@@ -10,16 +10,55 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin"); //
 const ForkTsCheckerNotifierWebpackPlugin = require("fork-ts-checker-notifier-webpack-plugin");
 const nodeExternals = require("webpack-node-externals"); // for backend
 const path = require("path");
-const dotenv = require("dotenv").config({ path: path.resolve(__dirname, "./.env.dev") });
+const fs = require("fs");
+const dotenv = require("dotenv");
 
 class WebpackConfig {
+
+    constructor() {
+        this.common = {
+            envFilePath: path.resolve(__dirname, "./.env"),
+            babelConfigPath: path.resolve(__dirname, "babel.config.js"),
+            nodeModulesPath: path.resolve(__dirname, "node_modules")
+        };
+
+        this.client = {
+            instanceName: "client",
+
+            htmlTitle: "MERN",
+            faviconPath: path.resolve(__dirname, "./client/assets/png/titleImg.png"),
+
+            entryTsPath: path.resolve(__dirname, "./client/index.tsx"),
+            entryHtmlPath: path.resolve(__dirname, "./client/index.html"),
+            allStylingPaths: path.resolve(__dirname, "./client/**/*.scss"),
+            distPath: path.resolve(__dirname, "./dist/client"),
+
+            coreJsPath: path.resolve(__dirname, "./node_modules", "core-js/stable"), // polyfill
+            regenetorRuntimePath: path.resolve(__dirname, "./node_modules", "regenerator-runtime/runtime"), // polyfill
+
+            tsconfigPath: path.resolve(__dirname, "./tsconfig.client.json"),
+            postcssConfigPath: path.resolve(__dirname, "postcss.config.js")
+        };
+
+        this.server = {
+            instanceName: "server",
+
+            entryTsPath: path.resolve(__dirname, "./server/server.ts"),
+            distPath: path.resolve(__dirname, "./dist"),
+
+            tsconfigPath: path.resolve(__dirname, "./tsconfig.server.json"),
+
+            toServerFile: "server.js"
+        };
+    }
+
     setModeResolve() {
         return {
             mode: "development",
             devtool: "source-map",
             resolve: {
                 extensions: [".ts", ".tsx", ".js", ".json"],
-                modules: [path.resolve(__dirname, "node_modules")]
+                modules: [this.common.nodeModulesPath]
             },
         };
     }
@@ -31,7 +70,7 @@ class WebpackConfig {
             loader: "babel-loader",
             options: {
                 rootMode: "upward",
-                configFile: path.resolve(__dirname, "babel.config.js"),
+                configFile: this.common.babelConfigPath,
                 cacheDirectory: true
             }
         };
@@ -65,7 +104,7 @@ class WebpackConfig {
                     loader: "postcss-loader",
                     options: {
                         config: {
-                            path: path.resolve(__dirname, "postcss.config.js")
+                            path: this.client.postcssConfigPath
                         }
                     },
                 },
@@ -126,16 +165,19 @@ class WebpackConfig {
     }
 
     setCommonPlugins(tsconfigPath, forBuildServerOnceToWatch = false) {
-        const base = [
+        let base = [
             new webpack.optimize.OccurrenceOrderPlugin(),
             new MomentLocalesPlugin({
                 localesToKeep: ["en", "en-ca"],
             }),
-            new webpack.HotModuleReplacementPlugin(),
-            new webpack.DefinePlugin({
-                "process.env": JSON.stringify(dotenv.parsed)
-            })
+            new webpack.HotModuleReplacementPlugin()
         ];
+        if (fs.existsSync(this.common.envFilePath)) {
+            const fromDotEnv = new webpack.DefinePlugin({
+                "process.env": JSON.stringify(dotenv.config({ path: this.common.envFilePath }).parsed)
+            });
+            base = [...base, fromDotEnv];
+        }
         if (forBuildServerOnceToWatch) {
             return base;
         }
@@ -154,12 +196,12 @@ class WebpackConfig {
         }
     }
 
-    setDevServer(outPath) {
+    setDevServer() {
         return {
             open: true,
             port: 8000,
             hot: true,
-            contentBase: outPath,
+            contentBase: this.client.distPath,
             // watchContentBase: true, // watch the static shell html
             compress: true,
             historyApiFallback: true,
@@ -174,31 +216,21 @@ class WebpackConfig {
         };
     }
 
-    setClientConfig(
-        fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html",
-        toDir = "./dist/client", instanceName = "client", forBuild = false,
-        htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png",
-        tsconfigPath = "./tsconfig.client.json"
-    ) {
-        const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
-        const entryHtmlPath = path.resolve(__dirname, fromDir, entryHtml);
-        const allStyles = path.resolve(__dirname, fromDir, "**", "*.scss");
-        const outPath = path.resolve(__dirname, toDir);
-
-        const coreJsPath = path.resolve(__dirname, "./node_modules", "core-js/stable"); // polyfill
-        const regenetorRuntimePath = path.resolve(__dirname, "./node_modules", "regenerator-runtime/runtime"); // polyfill
-
+    setClientConfig(forBuild = false) {
         return {
-            name: instanceName,
+            name: this.client.instanceName,
             target: "web",
             ...this.setModeResolve(),
-            entry: [coreJsPath, regenetorRuntimePath, entryTsPath].concat(glob.sync(allStyles)),
+            entry: [
+                this.client.coreJsPath, this.client.regenetorRuntimePath,
+                this.client.entryTsPath
+            ].concat(glob.sync(this.client.allStylingPaths)),
             output: {
                 filename: "[name].js",
-                path: outPath,
+                path: this.client.distPath,
                 publicPath: "/" // (this + historyApiFallBack) fix client-side routing in dev mode
             },
-            devServer: this.setDevServer(outPath),
+            devServer: this.setDevServer(),
             module: {
                 rules: [
                     this.setJavascriptSourceMapLoader(),
@@ -215,12 +247,12 @@ class WebpackConfig {
                 ]
             },
             plugins: [
-                ...this.setCommonPlugins(tsconfigPath),
+                ...this.setCommonPlugins(this.client.tsconfigPath),
                 new HtmlWebpackPlugin({
                     inject: true,
-                    template: entryHtmlPath,
-                    title: htmlTitle,
-                    favicon: faviconPath
+                    template: this.client.entryHtmlPath,
+                    title: this.client.htmlTitle,
+                    favicon: this.client.faviconPath
                 }),
                 new MiniCssExtractPlugin({
                     filename: "[name].css",
@@ -237,22 +269,15 @@ class WebpackConfig {
         };
     }
 
-    setServerConfig(
-        fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
-        toServerFile = "server.js", instanceName = "server",
-        tsconfigPath = "./tsconfig.server.json", forBuildServerOnceToWatch = false
-    ) {
-        const entryTsPath = path.resolve(__dirname, fromDir, entryTs);
-        const outPath = path.resolve(__dirname, toDir);
-
+    setServerConfig(forBuildServerOnceToWatch = false) {
         return {
-            name: instanceName,
+            name: this.server.instanceName,
             target: "node",
             ...this.setModeResolve(),
-            entry: ["webpack/hot/poll?1000", entryTsPath],
+            entry: ["webpack/hot/poll?1000", this.server.entryTsPath],
             output: {
-                filename: toServerFile,
-                path: outPath,
+                filename: this.server.toServerFile,
+                path: this.server.distPath,
             },
             module: {
                 rules: [
@@ -264,7 +289,7 @@ class WebpackConfig {
             optimization: {
                 minimizer: [this.setOptMinimizerUglifyJs()]
             },
-            plugins: this.setCommonPlugins(tsconfigPath, forBuildServerOnceToWatch),
+            plugins: this.setCommonPlugins(this.server.tsconfigPath, forBuildServerOnceToWatch),
             externals: [
                 nodeExternals({
                     whitelist: ["webpack/hot/poll?1000"]
@@ -286,45 +311,20 @@ module.exports = (env, argv) => {
     const webpackConfig = new WebpackConfig();
 
     if (argv["stack"] === "client") {
-        const client = webpackConfig.setClientConfig(
-            fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html",
-            toDir = "./dist/client", instanceName = "client", forBuild = false,
-            htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png",
-            tsconfigPath = path.resolve(__dirname, "./tsconfig.client.json")
-        );
+        const client = webpackConfig.setClientConfig(forBuild = false);
         return client;
     }
     else if (argv["stack"] === "server-build-once") {
-        const server = webpackConfig.setServerConfig(
-            fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
-            toServerFile = "server.js", instanceName = "server",
-            tsconfigPath = path.resolve(__dirname, "./tsconfig.server.json"),
-            forBuildServerOnceToWatch = true
-        );
+        const server = webpackConfig.setServerConfig(forBuildServerOnceToWatch = true);
         return server;
     }
     else if (argv["stack"] === "server") {
-        const server = webpackConfig.setServerConfig(
-            fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
-            toServerFile = "server.js", instanceName = "server",
-            tsconfigPath = path.resolve(__dirname, "./tsconfig.server.json"),
-            forBuildServerOnceToWatch = false
-        );
+        const server = webpackConfig.setServerConfig(forBuildServerOnceToWatch = false);
         return server;
     }
     else { // build both
-        const client = webpackConfig.setClientConfig(
-            fromDir = "./client", entryTs = "index.tsx", entryHtml = "index.html",
-            toDir = "./dist/client", instanceName = "client", forBuild = true,
-            htmlTitle = "MERN", faviconPath = "./client/assets/png/titleImg.png",
-            tsconfigPath = path.resolve(__dirname, "./tsconfig.client.json")
-        );
-        const server = webpackConfig.setServerConfig(
-            fromDir = "./server", entryTs = "server.ts", toDir = "./dist",
-            toServerFile = "server.js", instanceName = "server",
-            tsconfigPath = path.resolve(__dirname, "./tsconfig.server.json"),
-            forBuildServerOnceToWatch = false
-        );
+        const client = webpackConfig.setClientConfig(forBuild = true);
+        const server = webpackConfig.setServerConfig(forBuildServerOnceToWatch = false);
         return [client, server];
     }
 };
