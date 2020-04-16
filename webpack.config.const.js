@@ -22,7 +22,7 @@ module.exports = Object.freeze({
         regenetorRuntimePath: path.resolve(__dirname, "./node_modules", "regenerator-runtime/runtime"), // polyfill
     
         tsconfigPath: path.resolve(__dirname, "./tsconfig.client.json"),
-        postcssConfigPath: path.resolve(__dirname, "postcss.config.js"),
+        postcssConfigPath: path.resolve(__dirname, "postcss.config.js")
     },
     
     clientPages: {
