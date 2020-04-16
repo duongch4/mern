@@ -12,7 +12,7 @@ import { AjaxHandler } from "../utils/AjaxHandler";
 import { AuthPage } from "./auth/AuthPage";
 import { PropsRoute } from "../utils/CustomRoute";
 import { AccountPage } from "./auth/AccountPage";
-import { NotFoundPage } from "./404/NotFoundPage";
+import { NotFoundPage } from "./notfound/NotFoundPage";
 import Log from "../utils/Log";
 
 export type UserProfile = {
