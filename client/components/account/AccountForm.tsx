@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { AjaxHandler } from "../../utils/AjaxHandler";
-import { EmptyException, InvalidLengthException } from "../../utils/Exception";
+import { EmptyException, InvalidLengthException } from "../../communication/Exception";
 import { AlertMessage } from "../utils/AlertMessage";
 import { FormGroup } from "../utils/FormGroup";
 import Log from "../../utils/Log";

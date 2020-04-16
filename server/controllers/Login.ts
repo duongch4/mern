@@ -9,8 +9,8 @@ import { UserDoc } from "../models/User";
 
 import { Controller, Post } from "@overnightjs/core";
 import { Logger as Log } from "@overnightjs/logger";
-import { NotFoundException } from "./Exception";
-import { TResponse } from "./TypeResponse";
+import { NotFoundException } from "../communication/Exception";
+import { TResponse } from "../communication/TResponse";
 
 @Controller("api/login")
 export class Login {

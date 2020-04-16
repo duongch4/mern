@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { AjaxHandler } from "../../utils/AjaxHandler";
 import { LoginFormProps, LoginFormStates } from "./LoginForm";
-import { EmptyException, InvalidLengthException, NotMatchException } from "../../utils/Exception";
+import { EmptyException, InvalidLengthException, NotMatchException } from "../../communication/Exception";
 import { AlertMessage } from "../utils/AlertMessage";
 import { FormGroup } from "../utils/FormGroup";
 import Log from "../../utils/Log";

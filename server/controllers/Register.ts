@@ -5,8 +5,8 @@ import { User, UserDoc } from "../models/User";
 
 import { Controller, Post } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
-import { ConflictException } from "./Exception";
-import { TResponse } from "./TypeResponse";
+import { ConflictException } from "../communication/Exception";
+import { TResponse } from "../communication/TResponse";
 
 @Controller("api/register")
 export class Register {
