@@ -8,50 +8,17 @@ const ImageminPlugin = require("imagemin-webpack-plugin").default;
 const MomentLocalesPlugin = require("moment-locales-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin"); // to use with transpileOnly in ts-loader
 const nodeExternals = require("webpack-node-externals"); // for backend
-const path = require("path");
 const envkeys = require("./envkeys.config");
 const fs = require("fs");
 const dotenv = require("dotenv");
+const webpackConstants = require("./webpack.config.const");
 
 class WebpackConfig {
 
     constructor() {
-        this.common = {
-            envFilePath: path.resolve(__dirname, "./.env.dev"),
-            babelConfigPath: path.resolve(__dirname, "babel.config.js"),
-            nodeModulesPath: path.resolve(__dirname, "node_modules")
-        };
-    
-        this.client = {
-            instanceName: "client",
-    
-            htmlTitle: "MERN",
-            faviconPath: path.resolve(__dirname, "./client/assets/png/titleImg.png"),
-    
-            entryTsPath: path.resolve(__dirname, "./client/index.tsx"),
-            entryHtmlPath: path.resolve(__dirname, "./client/index.html"),
-            allStylingPaths: path.resolve(__dirname, "./client/**/*.scss"),
-            distPath: path.resolve(__dirname, "./dist/client"),
-    
-            coreJsPath: path.resolve(__dirname, "./node_modules", "core-js/stable"), // polyfill
-            regenetorRuntimePath: path.resolve(__dirname, "./node_modules", "regenerator-runtime/runtime"), // polyfill
-    
-            tsconfigPath: path.resolve(__dirname, "./tsconfig.client.json"),
-            postcssConfigPath: path.resolve(__dirname, "postcss.config.js"),
-    
-            homePagePath: path.resolve(__dirname, "./client/pages/home/HomePage.tsx")
-        };
-
-        this.server = {
-            instanceName: "server",
-
-            entryTsPath: path.resolve(__dirname, "./server/server.ts"),
-            distPath: path.resolve(__dirname, "./dist"),
-
-            tsconfigPath: path.resolve(__dirname, "./tsconfig.server.json"),
-
-            toServerFile: "server.js"
-        };
+        this.common = webpackConstants.common;
+        this.client = {...webpackConstants.client, ...webpackConstants.clientPages};
+        this.server = webpackConstants.server;
     }
 
     setModeResolve() {
