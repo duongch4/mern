@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import { UserPayload } from "../../pages/MainRoutes";
 
-type AuthPageProps = {
+type ProfileInfoProps = {
     currUser: UserPayload;
 };
 
-export class AuthPage extends Component<AuthPageProps, any> {
+export class ProfileInfo extends Component<ProfileInfoProps, any> {
     public render() {
         return (
-            <div id="auth-page">
-                <h1>Only Authenticated Users See This Page.</h1>
+            <div id="profile-info">
+                <h1>Only Authenticated Users See Their Info Here!</h1>
                 <h2>Hello: {this.props.currUser.email}</h2>
             </div>
         );

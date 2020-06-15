@@ -9,9 +9,9 @@ import { HomePage } from "./home/HomePage";
 import { Header } from "../components/header/Header";
 import { Footer } from "../components/footer/Footer";
 import { AjaxHandler } from "../utils/AjaxHandler";
-import { AuthPage } from "./auth/AuthPage";
 import { PropsRoute } from "../utils/CustomRoute";
-import { AccountPage } from "./auth/AccountPage";
+import { AccountPage } from "./account/AccountPage";
+import { StatusPage } from "./status/StatusPage";
 import { NotFoundPage } from "./notfound/NotFoundPage";
 import Log from "../utils/Log";
 
@@ -65,35 +65,13 @@ export class MainRoutes extends Component<any, MainStates> {
 
     public render() {
         Log.trace(this.state);
-        if (!this.state.currUser) {
-            return this.renderNotLoggedIn();
-        }
-        else {
-            return this.renderLoggedIn();
-        }
-    }
-
-    private renderNotLoggedIn = (): React.ReactNode => {
         return (
             <div id="main-routes">
                 <Header currUser={this.state.currUser} />
                 <Switch>
-                    <Route exact path={`/`} component={HomePage} />
-                    <Route component={NotFoundPage} />
-                </Switch>
-                <Footer />
-            </div>
-        );
-    }
-
-    private renderLoggedIn = (): React.ReactNode => {
-        return (
-            <div id="main-routes">
-                <Header currUser={this.state.currUser} />
-                <Switch>
-                    <PropsRoute exact path={`/`} component={AuthPage} currUser={this.state.currUser} />
+                    <PropsRoute exact path={`/`} component={HomePage} currUser={this.state.currUser} />
                     <Route path={`/account`} component={AccountPage} />
-                    {/* <Redirect to={"/"} /> */}
+                    <Route path={`/status`} component={StatusPage} />
                     <Route component={NotFoundPage} />
                 </Switch>
                 <Footer />
