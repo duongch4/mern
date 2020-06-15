@@ -116,7 +116,7 @@
         "@typescript-eslint/eslint-plugin-tslint": "^2.16.0",
         "@typescript-eslint/parser": "^2.13.0",
         "babel-loader": "8.0.6",
-        "concurrently": "^4.1.1",
+        "concurrently": "^5.2.0",
         "cross-env": "^6.0.3",
         "css-loader": "^3.0.0",
         "cssnano": "^4.1.10",
@@ -134,7 +134,7 @@
         "mini-css-extract-plugin": "^0.7.0",
         "moment": "^2.24.0",
         "moment-locales-webpack-plugin": "^1.0.7",
-        "node-sass": "^4.13.1",
+        "node-sass": "^4.14.1",
         "optimize-css-assets-webpack-plugin": "^5.0.1",
         "postcss": "^7.0.27",
         "postcss-import": "^12.0.1",
@@ -155,7 +155,7 @@
         "typescript": "^3.5.3",
         "webpack": "^4.28.3",
         "webpack-cli": "^3.1.2",
-        "webpack-dev-server": "^3.1.14",
+        "webpack-dev-server": "^3.11.0",
         "webpack-node-externals": "^1.7.2"
     },
     "engines": {
