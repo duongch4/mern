@@ -41,6 +41,7 @@ export class Header extends Component<HeaderProps, HeaderStates> {
                                 <li className="nav-item"><a className="nav-link" href="/">Profile</a></li>
                                 <li className="nav-item"><a className="nav-link" href="/">Projects</a></li>
                                 <li className="nav-item"><a className="nav-link" href="/">Contact</a></li>
+                                <li className="nav-item"><a className="nav-link" href="/status">Status</a></li>
                             </ul>
                             <div className="dropdown-divider"></div>
                             {this.renderTopRightCorner()}

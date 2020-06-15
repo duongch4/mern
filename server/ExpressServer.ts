@@ -2,8 +2,10 @@ import http from "http";
 import express from "express";
 import session from "express-session";
 import cookieParser from "cookie-parser";
+
 import flash from "express-flash";
 
+import expressStatusMonitor from "express-status-monitor";
 import compression from "compression";  // compresses requests
 import bodyParser from "body-parser";
 import lusca from "lusca";
@@ -51,6 +53,7 @@ export class ExpressServer extends Server {
                 process.exit(1);
             }
             const MongoStore = this.setMongoStore();
+            this.setExpressStatusMonitor();
             this.setRequestCompression();
             this.setBodyParser();
             this.setExpressSession(MongoStore);
@@ -67,6 +70,10 @@ export class ExpressServer extends Server {
             this.setStaticFrontend();
             this.handleError();
         });
+    }
+
+    private setExpressStatusMonitor() {
+        this.app.use(expressStatusMonitor());
     }
 
     private setRequestCompression() {
