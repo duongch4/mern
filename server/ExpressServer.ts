@@ -7,6 +7,7 @@ import flash from "express-flash";
 import compression from "compression";  // compresses requests
 import bodyParser from "body-parser";
 import lusca from "lusca";
+import helmet from "helmet";
 
 import mongo from "connect-mongo";
 import mongoose from "mongoose";
@@ -43,20 +44,21 @@ export class ExpressServer extends Server {
         return this.app;
     }
 
-    private config(): void {
+    private config() {
         mongoose.connection.close((err: Error) => {
             if (err) {
                 Logger.Err(err, true);
                 process.exit(1);
             }
             const MongoStore = this.setMongoStore();
-            this.app.use(compression());
+            this.setRequestCompression();
             this.setBodyParser();
-            this.setSession(MongoStore);
+            this.setExpressSession(MongoStore);
             this.setPassportSession();
             this.logSession();
             // this.setFlash();
             this.setLusca();
+            this.setHelmet();
             this.setCORS();
             // this.setCurrUser();
             /** No leading slashes for @overnightjs: @Controller("api"), not @Controller("/api") */
@@ -65,6 +67,10 @@ export class ExpressServer extends Server {
             this.setStaticFrontend();
             this.handleError();
         });
+    }
+
+    private setRequestCompression() {
+        this.app.use(compression());
     }
 
     private setMongoStore(): mongo.MongoStoreFactory {
@@ -98,10 +104,18 @@ export class ExpressServer extends Server {
         this.app.use(bodyParser.urlencoded({ extended: true }));
     }
 
-    private setSession(MongoStore: mongo.MongoStoreFactory): void {
+    private setExpressSession(MongoStore: mongo.MongoStoreFactory) {
         this.app.use(cookieParser(SESSION_SECRET));
-        this.app.use(session({
-            cookie: { maxAge: 60000 },
+        this.app.use(session(this.getExpressSession(MongoStore)));
+    }
+
+    private getExpressSession(MongoStore: mongo.MongoStoreFactory): session.SessionOptions {
+        const sess: session.SessionOptions = {
+            name: "sessionID",
+            cookie: {
+                maxAge: 60000,
+                httpOnly: true
+            },
             secret: SESSION_SECRET as string,
             resave: true,
             saveUninitialized: false,
@@ -111,15 +125,23 @@ export class ExpressServer extends Server {
                     autoReconnect: true
                 } as mongo.MongoUrlOptions
             )
-        }));
+        };
+
+        if (process.env.NODE_ENV === "production") {
+            this.app.set("trust proxy", 1);
+            if (sess.cookie) {
+                sess.cookie.secure = true;
+            }
+        }
+        return sess;
     }
 
-    private setPassportSession(): void {
+    private setPassportSession() {
         this.app.use(passport.initialize());
         this.app.use(passport.session());
     }
 
-    private setFlash(): void {
+    private setFlash() {
         this.app.use(flash());
         // Custom flash middleware -- from Ethan Brown's book, 'Web Development with Node & Express'
         this.app.use((req, res, next) => {
@@ -132,12 +154,16 @@ export class ExpressServer extends Server {
         });
     }
 
-    private setLusca(): void {
+    private setLusca() {
         this.app.use(lusca.xframe("SAMEORIGIN"));
         this.app.use(lusca.xssProtection(true));
     }
 
-    private setCORS(): void {
+    private setHelmet() {
+        this.app.use(helmet());
+    }
+
+    private setCORS() {
         this.app.use((_, res, next) => {
             res.setHeader("Access-Control-Allow-Origin", "*");
             res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -149,14 +175,14 @@ export class ExpressServer extends Server {
         });
     }
 
-    private setCurrUser(): void {
+    private setCurrUser() {
         this.app.use((req, res, next) => {
             res.locals.user = req.user;
             next();
         });
     }
 
-    private setRoutes(): void {
+    private setRoutes() {
         const controllerInstances = [];
         for (const name of Object.keys(controllers)) {
             const controller = (controllers as any)[name];
@@ -167,7 +193,7 @@ export class ExpressServer extends Server {
         super.addControllers(controllerInstances);
     }
 
-    private setGraphQL(): void {
+    private setGraphQL() {
         this.app.use(
             "/api/graphql",
             graphqlHTTP({
@@ -178,7 +204,7 @@ export class ExpressServer extends Server {
         );
     }
 
-    private setStaticFrontend(): void {
+    private setStaticFrontend() {
         // Set Static Assets On Frontend: ABSOLUTELY REQUIRED!!!
         this.app.use(
             express.static(path.resolve(__dirname, "client"), { maxAge: 31557600000 })
@@ -194,7 +220,7 @@ export class ExpressServer extends Server {
         });
     }
 
-    private logSession(): void {
+    private logSession() {
         if (process.env.NODE_ENV !== "production") {
             this.app.use((req, _, next) => {
                 Logger.Info(req.session, true);
@@ -204,7 +230,7 @@ export class ExpressServer extends Server {
         }
     }
 
-    private handleError(): void {
+    private handleError() {
         // Error Handler. Provides full stack - remove for production
         if (process.env.NODE_ENV !== "production") {
             this.app.use(errorHandler());
