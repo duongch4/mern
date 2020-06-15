@@ -6,8 +6,8 @@ import { FormGroup } from "../utils/FormGroup";
 import Log from "../../utils/Log";
 
 export type LoginFormProps = {
-    idEmail?: string;
-    idPassword?: string;
+    idEmail: string;
+    idPassword: string;
     isClicked: boolean;
     textButton: string;
     postToUrl: string;

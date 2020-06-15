@@ -16,7 +16,7 @@ const getBody = (title: string, form: React.ReactNode): React.ReactNode => {
 
 export const LoginModal = (props: ModalProps): React.ReactElement => {
     const title: string = "Log In to Access Site";
-    const form = <LoginForm isClicked={props.isOpen} textButton="Login" postToUrl="/api/login" />;
+    const form = <LoginForm idEmail={"id-email"} idPassword={"id-password"} isClicked={props.isOpen} textButton="Login" postToUrl="/api/login" />;
     return (
         <Modal
             id={props.id} isOpen={props.isOpen} toggle={props.toggle}
@@ -27,7 +27,9 @@ export const LoginModal = (props: ModalProps): React.ReactElement => {
 
 export const RegisterModal = (props: ModalProps): React.ReactElement => {
     const title: string = "Create an account";
-    const form = <RegisterForm isClicked={props.isOpen} textButton="Register" postToUrl="/api/register" />;
+    const form = <RegisterForm
+        idEmail={"id-email"} idPassword={"id-password"} idConfirmPassword={"id-confirmPassword"}
+        isClicked={props.isOpen} textButton="Register" postToUrl="/api/register" />;
     return (
         <Modal id={props.id} isOpen={props.isOpen} toggle={props.toggle}
             title="Register" body={getBody(title, form)} closeTitle="Close"

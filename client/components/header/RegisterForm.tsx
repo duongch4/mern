@@ -7,7 +7,7 @@ import { FormGroup } from "../utils/FormGroup";
 import Log from "../../utils/Log";
 
 export type RegisterFormProps = {
-    idConfirmPassword?: string;
+    idConfirmPassword: string;
 } & LoginFormProps;
 
 export type RegisterFormStates = {
