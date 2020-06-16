@@ -25,7 +25,7 @@ export class Header extends Component<HeaderProps, HeaderStates> {
     public render() {
         return (
             <div id="navigation">
-                <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
                     <div className="container">
                         <Link className="navbar-brand" to="/">BCD<span className="sr-only">(current)</span></Link>
 
