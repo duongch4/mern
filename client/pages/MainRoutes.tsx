@@ -9,7 +9,7 @@ import { HomePage } from "./home/HomePage";
 import { Header } from "../components/header/Header";
 import { Footer } from "../components/footer/Footer";
 import { AjaxHandler } from "../utils/AjaxHandler";
-import { PropsRoute } from "../utils/CustomRoute";
+import { PropsRoute, PrivateRoute } from "../utils/CustomRoute";
 import { AccountPage } from "./account/AccountPage";
 import { StatusPage } from "./status/StatusPage";
 import { NotFoundPage } from "./notfound/NotFoundPage";
@@ -64,13 +64,12 @@ export class MainRoutes extends Component<any, MainStates> {
     }
 
     public render() {
-        Log.trace(this.state);
         return (
             <div id="main-routes">
                 <Header currUser={this.state.currUser} />
                 <Switch>
                     <PropsRoute exact path={`/`} component={HomePage} currUser={this.state.currUser} />
-                    <Route path={`/account`} component={AccountPage} />
+                    <PrivateRoute isLoggedIn={this.state.currUser} redirectTo={`/`} path={`/account`} component={AccountPage} />
                     <Route path={`/status`} component={StatusPage} />
                     <Route component={NotFoundPage} />
                 </Switch>

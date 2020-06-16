@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
+import Log from "./Log";
 
 const renderMergedProps = (component: any, ...rest: any) => {
     const finalProps = Object.assign({}, ...rest);

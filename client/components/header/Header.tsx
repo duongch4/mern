@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { LoginModal, RegisterModal } from "./AuthModal";
 import { UserPayload } from "../../pages/MainRoutes";
+import { Link } from "react-router-dom";
 
 export type HeaderProps = {
     currUser?: UserPayload;
@@ -26,7 +27,7 @@ export class Header extends Component<HeaderProps, HeaderStates> {
             <div id="navigation">
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <div className="container">
-                        <a className="navbar-brand" href="/">BCD<span className="sr-only">(current)</span></a>
+                        <Link className="navbar-brand" to="/">BCD<span className="sr-only">(current)</span></Link>
 
                         <button
                             className="navbar-toggler" type="button" data-toggle="collapse"
@@ -38,10 +39,10 @@ export class Header extends Component<HeaderProps, HeaderStates> {
 
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="navbar-nav mr-auto">
-                                <li className="nav-item"><a className="nav-link" href="/">Profile</a></li>
-                                <li className="nav-item"><a className="nav-link" href="/">Projects</a></li>
-                                <li className="nav-item"><a className="nav-link" href="/">Contact</a></li>
-                                <li className="nav-item"><a className="nav-link" href="/status">Status</a></li>
+                                <li className="nav-item"><Link className="nav-link" to="/">Profile</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/">Projects</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/">Contact</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/status">Status</Link></li>
                             </ul>
                             <div className="dropdown-divider"></div>
                             {this.renderTopRightCorner()}
@@ -57,7 +58,7 @@ export class Header extends Component<HeaderProps, HeaderStates> {
             return this.renderNotLoggedIn();
         }
         else {
-            return this.renderLoggedIn();
+            return this.renderLoggedIn(this.props.currUser);
         }
     }
 
@@ -82,26 +83,24 @@ export class Header extends Component<HeaderProps, HeaderStates> {
         );
     }
 
-    private renderLoggedIn = (): React.ReactNode => {
-        const user = this.props.currUser;
-        if (user) {
-            return (
-                <div className="navbar-nav">
-                    <li id="account" className="nav-item dropdown">
-                        <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                            <img className="avatar" src={user.profile.picture}
-                                alt={user.profile.firstName || user.email} />
-                            <span>&emsp;</span>
-                            <span>{user.profile.firstName || user.email}</span>
-                        </a>
-                        <ul className="dropdown-menu">
-                            <li className="nav-item"><a className="nav-link" href="/account">My Account</a></li>
-                            <li className="dropdown-divider"></li>
-                            <li className="nav-item"><a className="nav-link" href="/api/logout">Logout</a></li>
-                        </ul>
-                    </li>
-                </div>
-            );
-        }
+    private renderLoggedIn = (user: UserPayload): React.ReactNode => {
+        return (
+            <div className="navbar-nav">
+                <li id="account" className="nav-item dropdown">
+                    <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                        <img className="avatar" src={user.profile.picture}
+                            alt={user.profile.firstName || user.email} />
+                        <span>&emsp;</span>
+                        <span>{user.profile.firstName || user.email}</span>
+                    </a>
+                    <ul className="dropdown-menu">
+                        {/* Use <Link> so that the page is not refreshed which causes constant not logged in state! */}
+                        <li className="nav-item"><Link className="nav-link" to="/account">My Account</Link></li>
+                        <li className="dropdown-divider"></li>
+                        <li className="nav-item"><a className="nav-link" href="/api/logout">Logout</a></li>
+                    </ul>
+                </li>
+            </div>
+        );
     }
 }

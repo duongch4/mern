@@ -5,7 +5,6 @@ import { Provider } from "react-redux";
 import {
     BrowserRouter as Router,
     Route,
-    Switch,
     withRouter as _withRouter,
 } from "react-router-dom";
 
@@ -23,9 +22,7 @@ let render = () => {
         <Provider store={store}>
             <Router>
                 <ScrollToTop>
-                    <Switch>
-                        <Route path={"/"} component={MainRoutes} />
-                    </Switch>
+                    <Route path={"/"} component={MainRoutes} />
                 </ScrollToTop>
             </Router>
         </Provider>
