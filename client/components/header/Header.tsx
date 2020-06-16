@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { LoginModal, RegisterModal } from "./AuthModal";
-import { UserPayload } from "../../pages/MainRoutes";
+import { UserPayload } from "../../models/User";
 import { Link } from "react-router-dom";
 
 export type HeaderProps = {

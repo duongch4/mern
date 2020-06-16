@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { check, validationResult } from "express-validator";
 
-import { User, UserProfile, UserDoc } from "../models/User";
+import { User, UserPayload, UserDoc } from "../models/User";
 
 import { Controller, Get, Put, Delete, ClassMiddleware } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
@@ -11,13 +11,6 @@ import { isAuthenticated } from "../auth/passport";
 import { NotFoundException, ConflictException } from "../communication/Exception";
 import { TResponse } from "../communication/TResponse";
 import { WriteError } from "mongodb";
-
-type UserPayload = {
-    id: string;
-    email: string;
-    facebook: string;
-    profile: UserProfile;
-};
 
 type UserWithId = Express.User & { id: any };
 

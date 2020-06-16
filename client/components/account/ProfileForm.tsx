@@ -4,8 +4,9 @@ import { EmptyException, InvalidLengthException } from "../../communication/Exce
 import { AlertMessage } from "../utils/AlertMessage";
 import { FormGroupText } from "../utils/FormGroupText";
 import { FormGroupRadio } from "../utils/FormGroupRadio";
+import { UserPayload } from "../../models/User";
+
 import Log from "../../utils/Log";
-import { UserPayload } from "../../pages/MainRoutes";
 
 export type ProfileFormProps = {
     currUser: UserPayload;

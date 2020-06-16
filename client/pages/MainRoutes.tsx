@@ -5,31 +5,20 @@ import {
     Redirect as _,
 } from "react-router-dom";
 
-import { HomePage } from "./home/HomePage";
+
 import { Header } from "../components/header/Header";
 import { Footer } from "../components/footer/Footer";
 import { AjaxHandler } from "../utils/AjaxHandler";
 import { PropsRoute, PrivateRoute } from "../utils/CustomRoute";
+
+import { HomePage } from "./home/HomePage";
 import { AccountPage } from "./account/AccountPage";
 import { StatusPage } from "./status/StatusPage";
 import { NotFoundPage } from "./notfound/NotFoundPage";
+
+import { UserPayload } from "../models/User";
+
 import Log from "../utils/Log";
-
-export type UserProfile = {
-    firstName: string;
-    lastName: string;
-    gender: string;
-    location: string;
-    website: string;
-    picture: string;
-};
-
-export type UserPayload = {
-    id: string;
-    email: string;
-    facebook: string;
-    profile: UserProfile;
-};
 
 type MainStates = {
     currUser?: UserPayload;

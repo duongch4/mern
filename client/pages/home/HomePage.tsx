@@ -4,7 +4,7 @@ import { Home } from "../../components/home/Home";
 import { Notes } from "../../components/note/Notes";
 import { ProfileInfo } from "../../components/account/ProfileInfo";
 
-import { UserPayload } from "../../pages/MainRoutes";
+import { UserPayload } from "../../models/User";
 
 type HomePageProps = {
     currUser: UserPayload;

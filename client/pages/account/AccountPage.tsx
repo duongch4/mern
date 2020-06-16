@@ -1,7 +1,7 @@
 import React from "react";
 import { ProfileForm } from "../../components/account/ProfileForm";
 
-import { UserPayload } from "../../pages/MainRoutes";
+import { UserPayload } from "../../models/User";
 
 type AccountPageProps = {
     currUser: UserPayload;

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { UserPayload } from "../../pages/MainRoutes";
+import { UserPayload } from "../../models/User";
 
 type ProfileInfoProps = {
     currUser: UserPayload;
