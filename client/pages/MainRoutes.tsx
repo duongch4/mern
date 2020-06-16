@@ -68,8 +68,12 @@ export class MainRoutes extends Component<any, MainStates> {
             <div id="main-routes">
                 <Header currUser={this.state.currUser} />
                 <Switch>
+                    {/* <Route exact path={`/`} component={AccountPage} /> */}
                     <PropsRoute exact path={`/`} component={HomePage} currUser={this.state.currUser} />
-                    <PrivateRoute isLoggedIn={this.state.currUser} redirectTo={`/`} path={`/account`} component={AccountPage} />
+                    <PrivateRoute
+                        isLoggedIn={this.state.currUser} redirectTo={`/`}
+                        path={`/account`} component={AccountPage} currUser={this.state.currUser}
+                    />
                     <Route path={`/status`} component={StatusPage} />
                     <Route component={NotFoundPage} />
                 </Switch>
