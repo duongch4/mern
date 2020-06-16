@@ -4,11 +4,11 @@
     --navbar-background-color: #696969;
 
     --section-font-family: "Roboto Slab";
-    --section-margin-top: 0em;
+    --section-margin-top: 0rem;
     --section-font-weight: 700;
 
-    --line-height: 1.75em;
-    --letter-spacing: 0.02em;
+    --line-height: 1.75rem;
+    --letter-spacing: 0.02rem;
 
     --headers-font-family: "Roboto Slab";
     --headers-font-weight: 700;
@@ -21,15 +21,24 @@
 
     --body-strong-font-family: "Roboto";
     --body-strong-font-weight: 500;
-    
+
     --link-font-family: "Roboto Slab";
     --link-font-weight: 700;
 
-    --padding-section: 2em 10%;
-    --padding-navbar:  0    9%;
-  
-    --font-size-navbar-brand: 2em;
+    --font-size-navbar-brand: 2rem;
 }
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+// body {
+//     padding-top: 75px;
+// }
+// @media screen and (max-width: 768px) {
+//     body { padding-top: 0px; }
+// }
 
 body h1, h2, h3, h4, h5, h6 {
 	line-height: var(--line-height);
@@ -92,4 +101,26 @@ body .btn {
         -webkit-box-shadow: 0 0 0 0.2rem darken($color, 20%);
         box-shadow: 0 0 0 0.2rem darken($color, 20%);
     }
+}
+
+/* margin of every main container is the height of the navigation menu + 50px */
+.container-main {
+    margin: 70px 0;
+    padding: 25px 10%;
+}
+
+.container-main-no-padding {
+    margin: 50px 0;
+}
+
+.font-weight-bold {
+    font-weight: 700;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
 }
