@@ -2,10 +2,13 @@ import React, { Component } from "react";
 import { AjaxHandler } from "../../utils/AjaxHandler";
 import { EmptyException, InvalidLengthException } from "../../communication/Exception";
 import { AlertMessage } from "../utils/AlertMessage";
-import { FormGroup } from "../utils/FormGroup";
+import { FormGroupText } from "../utils/FormGroupText";
+import { FormGroupRadio } from "../utils/FormGroupRadio";
 import Log from "../../utils/Log";
+import { UserPayload } from "../../pages/MainRoutes";
 
 export type ProfileFormProps = {
+    currUser: UserPayload;
     textButton: string;
     postToUrl: string;
 };
@@ -13,7 +16,7 @@ export type ProfileFormProps = {
 export type ProfileFormStates = {
     message: string;
     email: string;
-    password: string;
+    // password: string;
     firstName: string;
     lastName: string;
     gender: string;
@@ -25,59 +28,66 @@ export class ProfileForm extends Component<ProfileFormProps, ProfileFormStates> 
 
     public readonly state: Readonly<ProfileFormStates> = {
         message: "",
-        email: "",
-        password: "",
-        firstName: "",
-        lastName: "",
-        gender: "",
-        location: "",
-        website: ""
+        email: this.props.currUser.email,
+        // password: "",
+        firstName: this.props.currUser.profile.firstName,
+        lastName: this.props.currUser.profile.lastName,
+        gender: this.props.currUser.profile.gender,
+        location: this.props.currUser.profile.location,
+        website: this.props.currUser.profile.website
     };
 
     public render() {
         return (
             <form onSubmit={this.onSubmit}>
                 <AlertMessage message={this.state.message} />
-                <form className="form-row">
-                    <div className="col-md-6 mb-3">{this._renderFormGroupEmail()}</div>
-                    <div className="col-md-6 mb-3">{this._renderFormGroupPassword()}</div>
+                <form>
+                    <FormGroupText
+                        type={"email"} id={"profile-id-email"} value={this.state.email}
+                        onChange={this.onInputChange("email")}
+                        label={"Email"}
+                    />
+                    <FormGroupText
+                        type={"text"} id={"profile-id-firstName"} value={this.state.firstName}
+                        onChange={this.onInputChange("firstName")}
+                        label={"First Name"}
+                    />
+                    <FormGroupText
+                        type={"text"} id={"profile-id-lastName"} value={this.state.lastName}
+                        onChange={this.onInputChange("lastName")}
+                        label={"Last Name"}
+                    />
+                    <FormGroupText
+                        type={"text"} id={"profile-id-location"} value={this.state.location}
+                        onChange={this.onInputChange("location")}
+                        label={"Location"}
+                    />
+                    <FormGroupText
+                        type={"text"} id={"profile-id-website"} value={this.state.website}
+                        onChange={this.onInputChange("website")}
+                        label={"Website"}
+                    />
+                    <FormGroupRadio
+                        label="Gender" values={["Male", "Female", "Other"]}
+                        currValue={this.state.gender} onChange={this.onInputChange("gender")}
+                    />
                 </form>
                 <button type="submit" className="btn">{this.props.textButton}</button>
             </form>
         );
     }
 
-    private _renderFormGroupEmail = (): React.ReactElement => {
-        return (
-            <FormGroup
-                type={"email"} id={"profile-id-email"} value={this.state.email}
-                placeholder={"Enter Email"} onChange={this.onInputChange("email")}
-                label={"Email"}
-            />
-        );
-    }
-
-    private _renderFormGroupPassword = (): React.ReactElement => {
-        return (
-            <FormGroup
-                type={"password"} id={"profile-id-password"} value={this.state.password}
-                placeholder={"Password"} onChange={this.onInputChange("password")}
-                label={"Password"}
-            />
-        );
-    }
-
-    public onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    private onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             [field]: event.target.value
         } as Pick<ProfileFormStates, any>);
     }
 
-    public onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    private onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
-            this.checkEmptyFields();
-            this.checkPasswordLength();
+            // this.checkEmptyFields();
+            // this.checkPasswordLength();
         }
         catch (err) {
             switch (true) {
@@ -87,14 +97,14 @@ export class ProfileForm extends Component<ProfileFormProps, ProfileFormStates> 
                     return;
                 case err instanceof InvalidLengthException:
                     this.setState({
-                        password: "",
+                        // password: "",
                         message: err.message
                     });
                     return;
                 default:
                     this.setState({
                         email: "",
-                        password: "",
+                        // password: "",
                         message: err.message
                     });
                     return;
@@ -104,11 +114,11 @@ export class ProfileForm extends Component<ProfileFormProps, ProfileFormStates> 
         this.submit();
     }
 
-    public async submit(): Promise<any> {
+    private async submit(): Promise<any> {
         Log.trace("Submitting form to: ", this.props.postToUrl);
         const data = {
             email: this.state.email,
-            password: this.state.password
+            // password: this.state.password
         };
 
         try {
@@ -123,23 +133,23 @@ export class ProfileForm extends Component<ProfileFormProps, ProfileFormStates> 
             this.setState({
                 message: err.message,
                 email: "",
-                password: ""
+                // password: ""
             });
         }
     }
 
-    public checkEmptyFields(): void {
-        if (this.state.email === "") {
-            throw new EmptyException("Please enter an email address!");
-        }
-        if (this.state.password === "") {
-            throw new EmptyException("Please enter a password!");
-        }
-    }
+    // private checkEmptyFields(): void {
+    //     if (this.state.email === "") {
+    //         throw new EmptyException("Please enter an email address!");
+    //     }
+    //     if (this.state.password === "") {
+    //         throw new EmptyException("Please enter a password!");
+    //     }
+    // }
 
-    public checkPasswordLength(): void {
-        if (this.state.password.length < 4) {
-            throw new InvalidLengthException("Password must be at least 4 characters long");
-        }
-    }
+    // private checkPasswordLength(): void {
+    //     if (this.state.password.length < 4) {
+    //         throw new InvalidLengthException("Password must be at least 4 characters long");
+    //     }
+    // }
 }

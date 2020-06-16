@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { AjaxHandler } from "../../utils/AjaxHandler";
 import { EmptyException, InvalidLengthException } from "../../communication/Exception";
 import { AlertMessage } from "../utils/AlertMessage";
-import { FormGroup } from "../utils/FormGroup";
+import { FormGroupText } from "../utils/FormGroupText";
 import Log from "../../utils/Log";
 
 export type LoginFormProps = {
@@ -45,13 +45,13 @@ export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
         return (
             <form onSubmit={this.onSubmit}>
                 <AlertMessage message={this.state.message} />
-                <FormGroup
+                <FormGroupText
                     type={"email"} id={"login-id-email"} value={this.state.valEmail}
                     placeholder={"Enter Email"} onChange={this.onInputChange("valEmail")}
                     smallHelpId={"email-small-help"}
                     smallHelp={"We'll never share your email with anyone else. LIES!!"}
                 />
-                <FormGroup
+                <FormGroupText
                     type={"password"} id={"login-id-password"} value={this.state.valPassword}
                     placeholder={"Password"} onChange={this.onInputChange("valPassword")}
                 />
