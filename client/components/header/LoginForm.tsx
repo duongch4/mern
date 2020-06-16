@@ -6,8 +6,6 @@ import { FormGroup } from "../utils/FormGroup";
 import Log from "../../utils/Log";
 
 export type LoginFormProps = {
-    idEmail: string;
-    idPassword: string;
     isClicked: boolean;
     textButton: string;
     postToUrl: string;
@@ -48,13 +46,13 @@ export class LoginForm extends Component<LoginFormProps, LoginFormStates> {
             <form onSubmit={this.onSubmit}>
                 <AlertMessage message={this.state.message} />
                 <FormGroup
-                    type={"email"} id={this.props.idEmail} value={this.state.valEmail}
+                    type={"email"} id={"login-id-email"} value={this.state.valEmail}
                     placeholder={"Enter Email"} onChange={this.onInputChange("valEmail")}
                     smallHelpId={"email-small-help"}
                     smallHelp={"We'll never share your email with anyone else. LIES!!"}
                 />
                 <FormGroup
-                    type={"password"} id={this.props.idPassword} value={this.state.valPassword}
+                    type={"password"} id={"login-id-password"} value={this.state.valPassword}
                     placeholder={"Password"} onChange={this.onInputChange("valPassword")}
                 />
                 <button type="submit" className="btn">{this.props.textButton}</button>

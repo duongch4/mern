@@ -6,8 +6,6 @@ import { FormGroup } from "../utils/FormGroup";
 import Log from "../../utils/Log";
 
 export type ProfileFormProps = {
-    idEmail: string;
-    idPassword: string;
     textButton: string;
     postToUrl: string;
 };
@@ -42,11 +40,8 @@ export class ProfileForm extends Component<ProfileFormProps, ProfileFormStates> 
                 <AlertMessage message={this.state.message} />
                 <form className="form-row">
                     <div className="col-md-6 mb-3">{this._renderFormGroupEmail()}</div>
-                    <div className="col-md-6 mb-3">{this._renderFormGroupEmail()}</div>
+                    <div className="col-md-6 mb-3">{this._renderFormGroupPassword()}</div>
                 </form>
-                {this._renderFormGroupEmail()}
-                {this._renderFormGroupEmail()}
-                {this._renderFormGroupPassword()}
                 <button type="submit" className="btn">{this.props.textButton}</button>
             </form>
         );
@@ -55,7 +50,7 @@ export class ProfileForm extends Component<ProfileFormProps, ProfileFormStates> 
     private _renderFormGroupEmail = (): React.ReactElement => {
         return (
             <FormGroup
-                type={"email"} id={this.props.idEmail} value={this.state.email}
+                type={"email"} id={"profile-id-email"} value={this.state.email}
                 placeholder={"Enter Email"} onChange={this.onInputChange("email")}
                 label={"Email"}
             />
@@ -65,8 +60,9 @@ export class ProfileForm extends Component<ProfileFormProps, ProfileFormStates> 
     private _renderFormGroupPassword = (): React.ReactElement => {
         return (
             <FormGroup
-                type={"password"} id={this.props.idPassword} value={this.state.password}
+                type={"password"} id={"profile-id-password"} value={this.state.password}
                 placeholder={"Password"} onChange={this.onInputChange("password")}
+                label={"Password"}
             />
         );
     }

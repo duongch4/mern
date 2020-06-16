@@ -6,7 +6,7 @@ export class AccountPage extends Component<any, any> {
         return (
             <div id="account-page" className="container-fluid">
                 <h1>AuthPage2: Only Authenticated Users See This Page.</h1>
-                <ProfileForm idEmail={"id-email"} idPassword={"id-password"} textButton={"Update Profile"} postToUrl={"/api/account/profile"} />
+                <ProfileForm textButton={"Update Profile"} postToUrl={"/api/account/profile"} />
             </div>
         );
     }

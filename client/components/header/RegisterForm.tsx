@@ -6,9 +6,7 @@ import { AlertMessage } from "../utils/AlertMessage";
 import { FormGroup } from "../utils/FormGroup";
 import Log from "../../utils/Log";
 
-export type RegisterFormProps = {
-    idConfirmPassword: string;
-} & LoginFormProps;
+export type RegisterFormProps = LoginFormProps;
 
 export type RegisterFormStates = {
     valConfirmPassword: string;
@@ -43,17 +41,17 @@ export class RegisterForm extends Component<RegisterFormProps, RegisterFormState
             <form onSubmit={this.onSubmit}>
                 <AlertMessage message={this.state.message} />
                 <FormGroup
-                    type={"email"} id={this.props.idEmail} value={this.state.valEmail}
+                    type={"email"} id={"register-id-email"} value={this.state.valEmail}
                     placeholder={"Enter Email"} onChange={this.onInputChange("valEmail")}
                     smallHelpId={"email-small-help"}
                     smallHelp={"We'll never share your email with anyone else. LIES!!"}
                 />
                 <FormGroup
-                    type={"password"} id={this.props.idPassword} value={this.state.valPassword}
+                    type={"password"} id={"register-id-password"} value={this.state.valPassword}
                     placeholder={"Password"} onChange={this.onInputChange("valPassword")}
                 />
                 <FormGroup
-                    type={"password"} id={this.props.idConfirmPassword} value={this.state.valConfirmPassword}
+                    type={"password"} id={"register-id-confirmPassword"} value={this.state.valConfirmPassword}
                     placeholder={"Confirm Password"} onChange={this.onInputChange("valConfirmPassword")}
                 />
                 <button type="submit" className="btn">{this.props.textButton}</button>
