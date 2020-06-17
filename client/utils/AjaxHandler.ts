@@ -142,7 +142,13 @@ export class AjaxHandlerAxios extends AjaxHandlerAbstract {
                 "Pragma": "no-cache" // Prevent IE11 from using cache constantly
             }
         };
-        return axios.request(opts).then((response: AxiosResponse<any>) => response.data).catch((err: any) => err);
+        return axios.request(
+            opts
+        ).then(
+            (response: AxiosResponse<any>) => response
+        ).catch((err: any) => {
+            throw new Error(err);
+        });
     }
 
     public static putRequest(url: string, data: TGenericObject<any>): Promise<any> {
@@ -157,7 +163,13 @@ export class AjaxHandlerAxios extends AjaxHandlerAbstract {
                 "Pragma": "no-cache"
             },
         };
-        return axios.request(opts).then((response: AxiosResponse<any>) => response.data).catch((err: any) => err);
+        return axios.request(
+            opts
+        ).then(
+            (response: AxiosResponse<any>) => response
+        ).catch((err: any) => {
+            throw new Error(err);
+        });
     }
 
     public static postRequest(url: string, data: TGenericObject<any>): Promise<any> {
@@ -172,6 +184,12 @@ export class AjaxHandlerAxios extends AjaxHandlerAbstract {
                 "Pragma": "no-cache"
             },
         };
-        return axios.request(opts).then((response: AxiosResponse<any>) => response.data).catch((err: any) => err);
+        return axios.request(
+            opts
+        ).then(
+            (response: AxiosResponse<any>) => response
+        ).catch((err: any) => {
+            throw new Error(err);
+        });
     }
 }

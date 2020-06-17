@@ -23,7 +23,7 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
     if (req.isAuthenticated()) {
         return next();
     }
-    return res.redirect("/");
+    return res.redirect(401, "/");
 };
 
 type UserWithToken = Express.User & { tokens: any };
@@ -35,5 +35,5 @@ export const isAuthorized = (req: Request, res: Response, next: NextFunction) =>
     // if (_.find((req.user?).tokens, { kind: provider })) {
         return next();
     }
-    return res.redirect(`/api/${provider}`);
+    return res.redirect(403, `/api/${provider}`);
 };
