@@ -27,16 +27,14 @@ import { Footer } from "../components/footer/Footer";
 // import Log from "../utils/Log";
 // import { AuthProvider } from "../context/AuthContext";
 
-const UnauthenticatedRoutes = () => {
-    return (
-        <ModalProvider>
-            <div id="main-routes">
-                <HeaderTest renderTopRightCorner={renderNotLoggedIn} />
-                <div className="container-main">NOT Authenticated: 401</div>
-                <Footer />
-            </div>
-        </ModalProvider>
-    );
-};
+const UnauthenticatedRoutes = () => (
+    <ModalProvider>
+        <div id="main-routes">
+            <HeaderTest renderTopRightCorner={renderNotLoggedIn} />
+            <div className="container-main">NOT Authenticated: 401</div>
+            <Footer />
+        </div>
+    </ModalProvider>
+);
 
 export default UnauthenticatedRoutes;

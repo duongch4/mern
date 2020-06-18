@@ -6,30 +6,30 @@ export type AddNoteAction = {
     content: string;
 } & ReduxBaseAction;
 
-export function addNote(title: string, content: string): AddNoteAction {
-    return {
+export const addNote = (title: string, content: string): AddNoteAction => (
+    {
         type: EReduxActionType.ADD_NOTE,
         title: title,
         content: content
-    };
-}
+    }
+);
 
 export type DelNoteAction = {
     type: EReduxActionType.DEL_NOTE;
     id: number;
 } & ReduxBaseAction;
 
-export function delNote(id: number): DelNoteAction {
-    return {
+export const delNote = (id: number): DelNoteAction => (
+    {
         type: EReduxActionType.DEL_NOTE,
         id: id
-    };
-}
+    }
+);
 
 export type ShowAllAction = {
     type: EReduxActionType.SHOW_ALL;
 } & ReduxBaseAction;
 
-export function showAll(): ShowAllAction {
-    return { type: EReduxActionType.SHOW_ALL };
-}
+export const showAll = (): ShowAllAction => (
+    { type: EReduxActionType.SHOW_ALL }
+);

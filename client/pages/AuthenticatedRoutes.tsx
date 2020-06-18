@@ -27,26 +27,24 @@ import { Footer } from "../components/footer/Footer";
 // import { AuthProvider } from "../context/AuthContext";
 // import { useUser } from "../context/UserContext";
 
-const AuthenticatedRoutes = () => {
-    return (
-        <div id="main-routes">
-            <HeaderTest renderTopRightCorner={renderLoggedIn} />
-            <div className="container-main">Authenticated</div>
-            {/* <Switch>
+const AuthenticatedRoutes = () => (
+    <div id="main-routes">
+        <HeaderTest renderTopRightCorner={renderLoggedIn} />
+        <div className="container-main">Authenticated</div>
+        {/* <Switch>
 
-                <Route exact path={`/`} component={AccountPage} />
+            <Route exact path={`/`} component={AccountPage} />
 
-                <PropsRoute exact path={`/`} component={HomePage} currUser={currUser} />
-                <PrivateRoute
-                    isLoggedIn={currUser} redirectTo={`/`}
-                    path={`/account`} component={AccountPage} currUser={currUser}
-                />
-                <Route path={`/status`} component={StatusPage} />
-                <Route component={NotFoundPage} />
-            </Switch> */}
-            <Footer />
-        </div>
-    );
-};
+            <PropsRoute exact path={`/`} component={HomePage} currUser={currUser} />
+            <PrivateRoute
+                isLoggedIn={currUser} redirectTo={`/`}
+                path={`/account`} component={AccountPage} currUser={currUser}
+            />
+            <Route path={`/status`} component={StatusPage} />
+            <Route component={NotFoundPage} />
+        </Switch> */}
+        <Footer />
+    </div>
+);
 
 export default AuthenticatedRoutes;

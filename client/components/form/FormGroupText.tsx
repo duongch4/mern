@@ -11,20 +11,18 @@ type FormGroupProps = {
     label?: string;
 };
 
-const setInputFormControl = (props: FormGroupProps): React.ReactElement => {
-    return (
-        <input
-            className="form-control"
-            type={props.type}
-            id={props.id}
-            value={props.value}
-            aria-describedby={props.smallHelpId}
-            placeholder={props.placeholder}
-            onChange={props.onChange}
-            required
-        />
-    );
-};
+const setInputFormControl = (props: FormGroupProps): React.ReactElement => (
+    <input
+        className="form-control"
+        type={props.type}
+        id={props.id}
+        value={props.value}
+        aria-describedby={props.smallHelpId}
+        placeholder={props.placeholder}
+        onChange={props.onChange}
+        required
+    />
+);
 
 const setSmallHelpMessage = (props: FormGroupProps): React.ReactElement => {
     if (props.smallHelp) {

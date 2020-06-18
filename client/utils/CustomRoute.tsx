@@ -8,40 +8,37 @@ const renderMergedProps = (component: any, ...rest: any) => {
     );
 };
 
-export const PropsRoute = ({ component, ...rest }: any) => {
-    return (
-        <Route
-            {...rest}
-            render={
-                (routeProps) => {
+export const PropsRoute = ({ component, ...rest }: any) => (
+    <Route
+        {...rest}
+        render={
+            (routeProps) => {
+                return renderMergedProps(component, routeProps, rest);
+            }
+        }
+    />
+);
+
+
+export const PrivateRoute = ({ isLoggedIn, component, redirectTo, ...rest }: any) => (
+    <Route
+        {...rest}
+        render={
+            (routeProps) => {
+                if (isLoggedIn) {
                     return renderMergedProps(component, routeProps, rest);
                 }
-            }
-        />
-    );
-};
-
-export const PrivateRoute = ({ isLoggedIn, component, redirectTo, ...rest }: any) => {
-    return (
-        <Route
-            {...rest}
-            render={
-                (routeProps) => {
-                    if (isLoggedIn) {
-                        return renderMergedProps(component, routeProps, rest);
-                    }
-                    else {
-                        return (
-                            <Redirect to={
-                                {
-                                    pathname: redirectTo,
-                                    state: { from: routeProps.location }
-                                }
-                            } />
-                        );
-                    }
+                else {
+                    return (
+                        <Redirect to={
+                            {
+                                pathname: redirectTo,
+                                state: { from: routeProps.location }
+                            }
+                        } />
+                    );
                 }
             }
-        />
-    );
-};
+        }
+    />
+);

@@ -3,16 +3,14 @@ import { Modal, ModalProps } from "./Modal";
 import { LoginForm } from "../form/LoginForm";
 // import { RegisterForm } from "../form/RegisterForm";
 
-const getBody = (title: string, form: React.ReactElement): React.ReactElement => {
-    return (
-        <div>
-            <p className="text-left">
-                <strong>{title}</strong>
-            </p>
-            {form}
-        </div>
-    );
-};
+const getBody = (title: string, form: React.ReactElement): React.ReactElement => (
+    <div>
+        <p className="text-left">
+            <strong>{title}</strong>
+        </p>
+        {form}
+    </div>
+);
 
 export const LoginModal = (props: ModalProps): React.ReactElement => {
     const title: string = "Log In to Access Site";

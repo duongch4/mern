@@ -4,11 +4,6 @@ type AlertMessageProps = {
     message: string;
 };
 
-export const AlertMessage = (props: AlertMessageProps): React.ReactElement => {
-    if (props.message) {
-        return <div className="alert alert-warning">{props.message}</div>;
-    }
-    else {
-        return <div>{undefined}</div>;
-    }
-};
+export const AlertMessage = (props: AlertMessageProps): React.ReactElement => (
+    <div className="alert alert-warning">{props.message ? props.message : undefined}</div>
+);
