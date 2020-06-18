@@ -1,7 +1,7 @@
 import React from "react";
-import { Modal, ModalProps } from "./Modal";
+import { Modal } from "./Modal";
 import { LoginForm } from "../form/LoginForm";
-// import { RegisterForm } from "../form/RegisterForm";
+import { RegisterForm } from "../form/RegisterForm";
 
 const getBody = (title: string, form: React.ReactElement): React.ReactElement => (
     <div>
@@ -12,23 +12,16 @@ const getBody = (title: string, form: React.ReactElement): React.ReactElement =>
     </div>
 );
 
-export const LoginModal = (props: ModalProps): React.ReactElement => {
-    const title: string = "Log In to Access Site";
-    const form = <LoginForm textButton="Login" postToUrl="/api/login" />;
+export const AuthModal = ({ id }: { id: string }): React.ReactElement => {
+    const titleLogin: string = "Log In To Access Site";
+    const titleRegister: string = "Create An Account";
+    const formLogin = <LoginForm textButton="Login" postToUrl="/api/login" />;
+    const formRegister = <RegisterForm textButton="Register" postToUrl="/api/register" />;
     return (
         <Modal
-            id={props.id}
-            title="Log In" body={getBody(title, form)} closeTitle="Close"
+            id={id} closeTitle="Close"
+            titles={["Log In", "Register"]}
+            bodies={[getBody(titleLogin, formLogin), getBody(titleRegister, formRegister)]}
         />
     );
 };
-
-// export const RegisterModal = (props: ModalProps): React.ReactElement => {
-//     const title: string = "Create an account";
-//     const form = <RegisterForm isClicked={props.isOpen} textButton="Register" postToUrl="/api/register" />;
-//     return (
-//         <Modal id={props.id} isOpen={props.isOpen} toggle={props.toggle}
-//             title="Register" body={getBody(title, form)} closeTitle="Close"
-//         />
-//     );
-// };
