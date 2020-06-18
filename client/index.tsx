@@ -2,15 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { Provider } from "react-redux";
-import {
-    BrowserRouter as Router,
-    Route,
-    withRouter as _withRouter,
-} from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 
 import { ScrollToTop } from "./components/utils/ScrollToTop";
 import { MainRoutes } from "./pages/MainRoutes";
 import store from "./redux/store";
+import { ContextProviders } from "./context/context";
 
 import { disableConsoleWindowIfNotSupported } from "./utils/NoConsoleSupport";
 
@@ -22,7 +19,9 @@ let render = () => {
         <Provider store={store}>
             <Router>
                 <ScrollToTop>
-                    <Route path={"/"} component={MainRoutes} />
+                    <ContextProviders>
+                        <MainRoutes />
+                    </ContextProviders>
                 </ScrollToTop>
             </Router>
         </Provider>
