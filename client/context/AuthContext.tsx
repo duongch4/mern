@@ -10,20 +10,26 @@ type AuthState = {
     data: TResponse|undefined;
 };
 
+type AuthContextValue = {
+    state: AuthState;
+    setState: React.Dispatch<React.SetStateAction<AuthState>>;
+};
+
 const initialState: AuthState = {
     status: "loading",
     error: undefined,
     data: undefined
 };
 
-const AuthContext = React.createContext<AuthState|undefined>(undefined);
+const AuthContext = React.createContext<AuthContextValue|undefined>(undefined);
 
 export const AuthProvider = (props: any) => {
     const [state, setState] = React.useState(initialState);
+    const url = "/api/account";
 
-    const sideEffect = () => {
+    const fetchUserData = () => {
         AjaxHandlerAxios.getRequest(
-            "/api/account"
+            url
         ).then((response: AxiosResponse) =>
             setState({
                 status: "success",
@@ -41,10 +47,10 @@ export const AuthProvider = (props: any) => {
         );
     };
 
-    React.useEffect(sideEffect, []);
+    React.useEffect(fetchUserData, []);
 
     return (
-        <AuthContext.Provider value={state}>
+        <AuthContext.Provider value={{state, setState}}>
             {props.children}
             {/* {
                 state.status === "loading" ? (
@@ -58,13 +64,13 @@ export const AuthProvider = (props: any) => {
 };
 
 export const useAuth = () => {
-    const state = React.useContext(AuthContext);
-    if (typeof state === "undefined") {
+    const contextValue = React.useContext(AuthContext);
+    if (typeof contextValue === "undefined") {
         throw new Error("AuthContext value is 'undefined' => Must Be Set!");
     }
-    const isLoading = state.status === "loading";
-    const isError = state.status === "error";
-    const isSuccess = state.status === "success";
-    const isAuthenticated = state.data && isSuccess;
-    return { ...state, isLoading, isError, isSuccess, isAuthenticated };
+    const isLoading = contextValue.state.status === "loading";
+    const isError = contextValue.state.status === "error";
+    const isSuccess = contextValue.state.status === "success";
+    const isAuthenticated = contextValue.state.data && isSuccess;
+    return { ...contextValue, isLoading, isError, isSuccess, isAuthenticated };
 };

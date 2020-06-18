@@ -18,10 +18,10 @@ export const ModalProvider = (props: any) => {
 };
 
 export const useModal = (): ContextValue => {
-    const context = React.useContext(ModalContext);
-    if (typeof context === "undefined") {
+    const contextValue = React.useContext(ModalContext);
+    if (typeof contextValue === "undefined") {
         throw new Error("Context Value is 'undefined' => Must Be Set!");
     }
-    return context;
+    return contextValue;
 };
 
