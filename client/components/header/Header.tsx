@@ -2,8 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { AuthModal } from "../modal/AuthModal";
-import { useUser } from "../../context/UserContext";
-import { UserPayload } from "../../models/User";
+import { useUserAuthenticated } from "../../context/UserContext";
 
 import { useModal } from "../../context/ModalContext";
 
@@ -41,7 +40,7 @@ export const Header = (props: HeaderProps) => (
 );
 
 export const renderLoggedIn = (): React.ReactElement => {
-    const user = useUser() as UserPayload;
+    const user = useUserAuthenticated().state;
     return (
         <div className="navbar-nav">
             <li id="account" className="nav-item dropdown">
