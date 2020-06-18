@@ -1,37 +1,29 @@
 import React from "react";
 import {
-    // Route,
-    // Switch,
+    Route,
+    Switch,
     Redirect as _,
 } from "react-router-dom";
 
-// import { AxiosResponse } from "axios";
-
 import { ModalProvider } from "../context/ModalContext";
 
-// import { Header } from "../components/header/Header";
 import { Header, renderNotLoggedIn } from "../components/header/Header";
 import { Footer } from "../components/footer/Footer";
 
-// import { AjaxHandlerAxios } from "../utils/AjaxHandler";
-// import { PropsRoute, PrivateRoute } from "../utils/CustomRoute";
-
-// import { HomePage } from "./home/HomePage";
-// import { AccountPage } from "./account/AccountPage";
-// import { StatusPage } from "./status/StatusPage";
-// import { NotFoundPage } from "./notfound/NotFoundPage";
-
-// import { UserPayload } from "../models/User";
-// import { useGetRequest } from "../hooks/hooks";
-
-// import Log from "../utils/Log";
-// import { AuthProvider } from "../context/AuthContext";
+import { UnauthenticatedHomePage } from "./home/UnauthenticatedHomePage";
+import { StatusPage } from "./status/StatusPage";
+import { NotFoundPage } from "./notfound/NotFoundPage";
 
 const UnauthenticatedRoutes = () => (
     <ModalProvider>
         <div id="main-routes">
             <Header renderTopRightCorner={renderNotLoggedIn} />
             <div className="container-main">NOT Authenticated: 401</div>
+            <Switch>
+                <Route exact path={`/`} component={UnauthenticatedHomePage} />
+                <Route path={`/status`} component={StatusPage} />
+                <Route component={NotFoundPage} />
+            </Switch>
             <Footer />
         </div>
     </ModalProvider>

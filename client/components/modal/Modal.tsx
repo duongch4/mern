@@ -28,7 +28,7 @@ export const Modal = (props: ModalProps) => {
             result.push(
                 <li className={count === 0 ? "active" : undefined}>
                     <a data-toggle="pill" href={`#tab-${count}`}>
-                        <h5 className="modal-title text-center col-12">{title}</h5>
+                        <h5 className="modal-title btn">{title}</h5>
                     </a>
                 </li>
             );
