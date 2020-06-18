@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { AjaxHandler } from "../../utils/AjaxHandler";
 import { EmptyException, InvalidLengthException } from "../../communication/Exception";
 import { AlertMessage } from "../utils/AlertMessage";
-import { FormGroupText } from "../utils/FormGroupText";
-import { FormGroupRadio } from "../utils/FormGroupRadio";
+import { FormGroupText } from "../form/FormGroupText";
+import { FormGroupRadio } from "../form/FormGroupRadio";
 import { UserPayload } from "../../models/User";
 
 import Log from "../../utils/Log";
