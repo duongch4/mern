@@ -1,10 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { LoginModal } from "../modal/AuthModal";
-
-import { UserPayload } from "../../models/User";
+import { AuthModal } from "../modal/AuthModal";
 import { useUser } from "../../context/UserContext";
+import { UserPayload } from "../../models/User";
 
 import { useModal } from "../../context/ModalContext";
 
@@ -12,36 +11,34 @@ export type HeaderProps = {
     renderTopRightCorner: () => React.ReactElement;
 };
 
-export const HeaderTest = (props: HeaderProps) => {
-    return (
-        <div id="navigation">
-            <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-                <div className="container">
-                    <Link className="navbar-brand" to="/">BCD<span className="sr-only">(current)</span></Link>
+export const HeaderTest = (props: HeaderProps) => (
+    <div id="navigation">
+        <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+            <div className="container">
+                <Link className="navbar-brand" to="/">BCD<span className="sr-only">(current)</span></Link>
 
-                    <button
-                        className="navbar-toggler" type="button" data-toggle="collapse"
-                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation"
-                    >
-                        <span className="fas fa-bars burger-icon" />
-                    </button>
+                <button
+                    className="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation"
+                >
+                    <span className="fas fa-bars burger-icon" />
+                </button>
 
-                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul className="navbar-nav mr-auto">
-                            <li className="nav-item"><Link className="nav-link" to="/">Profile</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/">Projects</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/">Contact</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/status">Status</Link></li>
-                        </ul>
-                        <div className="dropdown-divider"></div>
-                        {props.renderTopRightCorner()}
-                    </div>
+                <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul className="navbar-nav mr-auto">
+                        <li className="nav-item"><Link className="nav-link" to="/">Profile</Link></li>
+                        <li className="nav-item"><Link className="nav-link" to="/">Projects</Link></li>
+                        <li className="nav-item"><Link className="nav-link" to="/">Contact</Link></li>
+                        <li className="nav-item"><Link className="nav-link" to="/status">Status</Link></li>
+                    </ul>
+                    <div className="dropdown-divider"></div>
+                    {props.renderTopRightCorner()}
                 </div>
-            </nav>
-        </div>
-    );
-};
+            </div>
+        </nav>
+    </div>
+);
 
 export const renderLoggedIn = (): React.ReactElement => {
     const user = useUser() as UserPayload;
@@ -68,22 +65,16 @@ export const renderLoggedIn = (): React.ReactElement => {
 export const renderNotLoggedIn = (): React.ReactElement => {
     const { state, setState } = useModal();
     const toggleButton = () => setState({ isOpen: !state.isOpen });
+    const id = "auth-modal";
     return (
         <div className="navbar-nav">
             <div>
                 <button
                     type="button" className="btn" onClick={toggleButton}
-                    data-toggle="modal" data-target="#loginModal"
-                >Log In</button>
-                <LoginModal id="loginModal" />
+                    data-toggle="modal" data-target={`#${id}`}
+                >Log In / Register</button>
+                <AuthModal id={id} />
             </div>
-            {/* <div>
-                <button
-                    type="button" className="btn" // onClick={this.toggleModal}
-                    data-toggle="modal" data-target="#registerModal"
-                >Register</button>
-                <RegisterModal id="registerModal" isOpen={this.state.isOpen} toggle={this.toggleModal} />
-            </div> */}
         </div>
     );
 };
