@@ -9,7 +9,7 @@ import {
 // import { AxiosResponse } from "axios";
 
 // import { Header } from "../components/header/Header";
-import { HeaderTest, renderLoggedIn } from "../components/header/HeaderTest";
+import { HeaderTest, renderLoggedIn } from "../components/header/Header";
 import { Footer } from "../components/footer/Footer";
 
 // import { AjaxHandlerAxios } from "../utils/AjaxHandler";

@@ -10,7 +10,7 @@ import {
 import { ModalProvider } from "../context/ModalContext";
 
 // import { Header } from "../components/header/Header";
-import { HeaderTest, renderNotLoggedIn } from "../components/header/HeaderTest";
+import { HeaderTest, renderNotLoggedIn } from "../components/header/Header";
 import { Footer } from "../components/footer/Footer";
 
 // import { AjaxHandlerAxios } from "../utils/AjaxHandler";
