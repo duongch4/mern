@@ -18,7 +18,7 @@ const initState: NoteStates = {
     vis: "AWESOME_TAG"
 };
 
-export function notesReducer(state: NoteStates = initState, action: NoteAction) {
+export const notesReducer = (state: NoteStates = initState, action: NoteAction) => {
     switch (action.type) {
         case EReduxActionType.ADD_NOTE:
             return {
@@ -47,4 +47,4 @@ export function notesReducer(state: NoteStates = initState, action: NoteAction) 
         default:
             return state;
     }
-}
+};

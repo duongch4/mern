@@ -6,9 +6,9 @@ type MatchParams = {
 };
 
 export const NotFoundPage = (props: RouteComponentProps<MatchParams>) => (
-    <div id="not-found-page" className="App">
+    <div id="not-found-page" className="container-fluid container-main text-center">
         <h1>HTTP ERROR 404</h1>
         <h1>Requested Path: "{props.location.pathname}" Does Not Exist</h1>
-        <button type="button" className="btn"><Link className="not-found-link" to="/">Back To Home Page</Link></button>
+        <Link className="btn not-found-link" to="/">Back To Home Page</Link>
     </div>
 );

@@ -4,15 +4,14 @@ type JsonPrintProps = {
     data: any;
 };
 
-const isEmptyObj = (obj: any): boolean => {
-    return typeof obj === "undefined" || Object.keys(obj).length === 0;
-};
+const isEmptyObj = (obj: any): boolean => (typeof obj === "undefined" || Object.keys(obj).length) === 0;
 
-export const JsonPrint = (props: JsonPrintProps): React.ReactElement => {
-    if (!isEmptyObj(props.data)) {
-        return <div className="text-left"><pre>{JSON.stringify(props.data, undefined, 2)}</pre></div>;
-    }
-    else {
-        return <div>{undefined}</div>;
-    }
-};
+export const JsonPrint = (props: JsonPrintProps): React.ReactElement => (
+    <div className="text-left">
+        {
+            !isEmptyObj(props.data)
+            ? <pre>{JSON.stringify(props.data, undefined, 2)}</pre>
+            : undefined
+        }
+    </div>
+);
