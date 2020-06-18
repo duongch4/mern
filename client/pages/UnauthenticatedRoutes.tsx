@@ -10,7 +10,7 @@ import {
 import { ModalProvider } from "../context/ModalContext";
 
 // import { Header } from "../components/header/Header";
-import { HeaderTest, renderNotLoggedIn } from "../components/header/Header";
+import { Header, renderNotLoggedIn } from "../components/header/Header";
 import { Footer } from "../components/footer/Footer";
 
 // import { AjaxHandlerAxios } from "../utils/AjaxHandler";
@@ -30,7 +30,7 @@ import { Footer } from "../components/footer/Footer";
 const UnauthenticatedRoutes = () => (
     <ModalProvider>
         <div id="main-routes">
-            <HeaderTest renderTopRightCorner={renderNotLoggedIn} />
+            <Header renderTopRightCorner={renderNotLoggedIn} />
             <div className="container-main">NOT Authenticated: 401</div>
             <Footer />
         </div>

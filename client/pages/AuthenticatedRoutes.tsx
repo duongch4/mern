@@ -9,7 +9,7 @@ import {
 // import { AxiosResponse } from "axios";
 
 // import { Header } from "../components/header/Header";
-import { HeaderTest, renderLoggedIn } from "../components/header/Header";
+import { Header, renderLoggedIn } from "../components/header/Header";
 import { Footer } from "../components/footer/Footer";
 
 // import { AjaxHandlerAxios } from "../utils/AjaxHandler";
@@ -29,7 +29,7 @@ import { Footer } from "../components/footer/Footer";
 
 const AuthenticatedRoutes = () => (
     <div id="main-routes">
-        <HeaderTest renderTopRightCorner={renderLoggedIn} />
+        <Header renderTopRightCorner={renderLoggedIn} />
         <div className="container-main">Authenticated</div>
         {/* <Switch>
 

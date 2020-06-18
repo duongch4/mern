@@ -11,7 +11,7 @@ export type HeaderProps = {
     renderTopRightCorner: () => React.ReactElement;
 };
 
-export const HeaderTest = (props: HeaderProps) => (
+export const Header = (props: HeaderProps) => (
     <div id="navigation">
         <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
             <div className="container">
