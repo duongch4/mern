@@ -5,5 +5,7 @@ type AlertMessageProps = {
 };
 
 export const AlertMessage = (props: AlertMessageProps): React.ReactElement => (
-    <div className="alert alert-warning">{props.message ? props.message : undefined}</div>
+    props.message
+    ? <div className="alert alert-warning">{props.message}</div>
+    : <div>{undefined}</div>
 );
