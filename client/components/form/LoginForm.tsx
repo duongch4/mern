@@ -1,13 +1,18 @@
 import React from "react";
 
-import { AjaxHandler } from "../../utils/AjaxHandler";
+import { TResponse } from "../../communication/TResponse";
 import { EmptyException, InvalidLengthException } from "../../communication/Exception";
+
+import { AjaxHandler } from "../../utils/AjaxHandler";
 import { AlertMessage } from "../utils/AlertMessage";
+
 import { FormGroupText } from "./FormGroupText";
 import { checkEmptyFields, checkPasswordLength } from "./FormCheck";
 
-import Log from "../../utils/Log";
 import { useModal } from "../../contexts/ModalContext";
+import { UserPayload } from "../../models/User";
+
+import Log from "../../utils/Log";
 
 export type LoginFormProps = {
     textButton: string;
@@ -49,7 +54,7 @@ export const LoginForm = (props: LoginFormProps) => {
         };
 
         try {
-            const response = await AjaxHandler.postRequest(props.postToUrl, data);
+            const response = await AjaxHandler.postRequest(props.postToUrl, data) as TResponse<UserPayload>;
             Log.info("YAY!!!");
             Log.trace(response);
             setState({
