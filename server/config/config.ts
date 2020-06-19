@@ -3,15 +3,20 @@ import { setLogger } from "./LoggerSetup";
 
 setLogger();
 
-export const SESSION_SECRET = process.env["SESSION_SECRET"];
-export const MONGODB_URI = process.env["MONGODB_URI"];
+export const getSessionSecret = () => {
+    const SESSION_SECRET = process.env["SESSION_SECRET"];
+    if (typeof SESSION_SECRET === "undefined") {
+        Log.Info("No client secret => Require Setting SESSION_SECRET environment variable.");
+        process.exit(1);
+    }
+    return SESSION_SECRET;
+};
 
-if (!SESSION_SECRET) {
-    Log.Info("No client secret => Require Setting SESSION_SECRET environment variable.");
-    process.exit(1);
-}
-
-if (!MONGODB_URI) {
-    Log.Info("No mongo connection string => Require Setting MONGODB_URI environment variable.");
-    process.exit(1);
-}
+export const getMongoDbUri = () => {
+    const MONGODB_URI = process.env["MONGODB_URI"];
+    if (!MONGODB_URI) {
+        Log.Info("No mongo connection string => Require Setting MONGODB_URI environment variable.");
+        process.exit(1);
+    }
+    return MONGODB_URI;
+};

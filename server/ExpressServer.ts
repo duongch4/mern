@@ -19,7 +19,7 @@ import path from "path";
 
 import passport from "passport";
 
-import { MONGODB_URI, SESSION_SECRET } from "./config/config";
+import { getSessionSecret, getMongoDbUri } from "./config/config";
 
 import errorHandler from "errorhandler";
 
@@ -33,6 +33,9 @@ import { root as graphqlResolver } from "./graphql/resolver";
 
 // API keys and Passport configuration
 // import passportConfig from "./auth/passport";
+
+const SESSION_SECRET = getSessionSecret();
+const MONGODB_URI = getMongoDbUri();
 
 // Create Express server
 export class ExpressServer extends Server {
@@ -83,7 +86,8 @@ export class ExpressServer extends Server {
     private setMongoStore(): mongo.MongoStoreFactory {
         const MongoStore = mongo(session);
         (mongoose as any).Promise = bluebird;
-        mongoose.connect(MONGODB_URI as string, { useCreateIndex: true, useNewUrlParser: true }).then(() => {
+        const mongooseConnectionOptions = { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true };
+        mongoose.connect(MONGODB_URI, mongooseConnectionOptions).then(() => {
             if (this.app.get("env") !== "production") {
                 Logger.Info(`MongoDB is connected at: ${MONGODB_URI}`);
             }
