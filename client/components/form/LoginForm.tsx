@@ -7,7 +7,7 @@ import { FormGroupText } from "./FormGroupText";
 import { checkEmptyFields, checkPasswordLength } from "./FormCheck";
 
 import Log from "../../utils/Log";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../contexts/ModalContext";
 
 export type LoginFormProps = {
     textButton: string;

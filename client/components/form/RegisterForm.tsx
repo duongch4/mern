@@ -8,7 +8,7 @@ import { checkEmptyFields, checkPasswordLength, checkConfirmPassword } from "./F
 import { LoginFormProps, LoginFormStates } from "./LoginForm";
 
 import Log from "../../utils/Log";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../contexts/ModalContext";
 
 export type RegisterFormProps = LoginFormProps;
 

@@ -4,7 +4,7 @@ import { AjaxHandler } from "../../utils/AjaxHandler";
 import { AlertMessage } from "../utils/AlertMessage";
 import { FormGroupText } from "./FormGroupText";
 import { FormGroupRadio } from "./FormGroupRadio";
-import { useUserAuthenticated } from "../../context/UserContext";
+import { useUserAuthenticated } from "../../contexts/UserContext";
 
 import Log from "../../utils/Log";
 

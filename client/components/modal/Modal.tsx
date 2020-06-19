@@ -1,5 +1,5 @@
 import React from "react";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../contexts/ModalContext";
 
 export type ModalProps = {
     id: string;

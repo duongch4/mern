@@ -2,9 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { AuthModal } from "../modal/AuthModal";
-import { useUserAuthenticated } from "../../context/UserContext";
+import { useUserAuthenticated } from "../../contexts/UserContext";
 
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../contexts/ModalContext";
 
 export type HeaderProps = {
     renderTopRightCorner: () => React.ReactElement;

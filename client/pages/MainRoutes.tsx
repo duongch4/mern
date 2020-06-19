@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useUserCheck } from "../context/UserContext";
+import { useUserCheck } from "../contexts/UserContext";
 import { StatusPage } from "./status/StatusPage";
 
 import Log from "../utils/Log";

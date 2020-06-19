@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useUserAuthenticated } from "../../context/UserContext";
+import { useUserAuthenticated } from "../../contexts/UserContext";
 import { JsonPrint } from "../../components/utils/JsonPrint";
 
 export const ProfileInfo = () => {

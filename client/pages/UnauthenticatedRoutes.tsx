@@ -5,7 +5,7 @@ import {
     Redirect as _,
 } from "react-router-dom";
 
-import { ModalProvider } from "../context/ModalContext";
+import { ModalProvider } from "../contexts/ModalContext";
 
 import { Header, renderNotLoggedIn } from "../components/header/Header";
 import { Footer } from "../components/footer/Footer";

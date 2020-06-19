@@ -5,9 +5,9 @@ import Log from "../utils/Log";
 import { TResponse } from "../communication/TResponse";
 
 type AuthState = {
-    status: string;
-    error: any;
-    data: TResponse|undefined;
+    isLoading: boolean;
+    error?: any;
+    data?: TResponse;
 };
 
 type AuthContextValue = {
@@ -16,7 +16,7 @@ type AuthContextValue = {
 };
 
 const initialState: AuthState = {
-    status: "loading",
+    isLoading: true,
     error: undefined,
     data: undefined
 };
@@ -32,14 +32,14 @@ export const AuthProvider = (props: any) => {
             url
         ).then((response: AxiosResponse) =>
             setState({
-                status: "success",
+                isLoading: false,
                 error: undefined,
                 data: response.data
             })
         ).catch((err) => {
             Log.error(err);
             setState({
-                status: "error",
+                isLoading: false,
                 error: err,
                 data: undefined
             });
@@ -53,9 +53,9 @@ export const AuthProvider = (props: any) => {
         <AuthContext.Provider value={{state, setState}}>
             {props.children}
             {/* {
-                state.status === "loading" ? (
+                state.isLoading === "loading" ? (
                     <div>Loading...</div>
-                ) : state.status === "error" ? (
+                ) : state.isLoading === "error" ? (
                     <div>Error</div>
                 ) : {...props}
             } */}
@@ -68,9 +68,8 @@ export const useAuth = () => {
     if (typeof contextValue === "undefined") {
         throw new Error("AuthContext value is 'undefined' => Must Be Set!");
     }
-    const isLoading = contextValue.state.status === "loading";
-    const isError = contextValue.state.status === "error";
-    const isSuccess = contextValue.state.status === "success";
-    const isAuthenticated = contextValue.state.data && isSuccess;
-    return { ...contextValue, isLoading, isError, isSuccess, isAuthenticated };
+    const isError = typeof contextValue.state.error !== "undefined" && contextValue.state.isLoading;
+    const isSuccess = typeof contextValue.state.data !== "undefined" && contextValue.state.isLoading;
+    const isAuthenticated = contextValue.state.data && !contextValue.state.isLoading;
+    return { ...contextValue, isError, isSuccess, isAuthenticated };
 };
