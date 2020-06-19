@@ -1,8 +1,11 @@
 import React from "react";
 import { AxiosResponse } from "axios";
 import { AjaxHandlerAxios } from "../utils/AjaxHandler";
-import Log from "../utils/Log";
 import { TResponse } from "../communication/TResponse";
+import { UserPayload } from "../models/User";
+import { FullPageSpinner } from "../pages/spinner/SpinnerPage";
+
+import Log from "../utils/Log";
 
 export enum AuthStatusType {
     EMPTY = "EMPTY",
@@ -15,11 +18,30 @@ type AuthState =
     | { status: AuthStatusType.EMPTY }
     | { status: AuthStatusType.LOADING }
     | { status: AuthStatusType.FAILURE; error: any }
-    | { status: AuthStatusType.SUCCESS; data: TResponse };
+    | { status: AuthStatusType.SUCCESS; data: TResponse<UserPayload> };
+
+export enum AuthActionType {
+    REQUEST = "REQUEST",
+    SUCCESS = "SUCCESS",
+    FAILURE = "FAILURE"
+}
+
+type AuthAction =
+    | { type: AuthActionType.REQUEST }
+    | { type: AuthActionType.FAILURE; error: any }
+    | { type: AuthActionType.SUCCESS; data: TResponse<UserPayload> };
+
+const reducer = (_state: AuthState, action: AuthAction): AuthState => {
+    switch (action.type) {
+        case AuthActionType.REQUEST: return { status: AuthStatusType.LOADING };
+        case AuthActionType.FAILURE: return { status: AuthStatusType.FAILURE, error: action.error };
+        case AuthActionType.SUCCESS: return { status: AuthStatusType.SUCCESS, data: action.data };
+    }
+};
 
 type AuthContextValue = {
     state: AuthState;
-    setState: React.Dispatch<React.SetStateAction<AuthState>>;
+    dispatch: React.Dispatch<AuthAction>;
 };
 
 const initialState: AuthState = {
@@ -29,35 +51,34 @@ const initialState: AuthState = {
 const AuthContext = React.createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider = (props: any) => {
-    const [state, setState] = React.useState<AuthState>(initialState);
-    const url = "/api/account";
+    const [state, dispatch] = React.useReducer(reducer, initialState);
 
+    const url = "/api/login/check";
     const fetchUserData = () => {
         AjaxHandlerAxios.getRequest(
             url
         ).then((response: AxiosResponse) =>
-            setState({
-                status: AuthStatusType.SUCCESS,
+            dispatch({
+                type: AuthActionType.SUCCESS,
                 data: response.data
             })
         ).catch((err) => {
             Log.error(err);
-            setState({
-                status: AuthStatusType.FAILURE,
+            dispatch({
+                type: AuthActionType.FAILURE,
                 error: err
             });
-        }
-        );
+        });
     };
 
     React.useEffect(fetchUserData, []);
 
+    // TODO: Add ErrorFallBackPage
     return (
-        <AuthContext.Provider value={{ state, setState }}>
-            {/* {state.status === AuthStatusType.LOADING && <div>Loading...</div>}
+        <AuthContext.Provider value={{ state, dispatch }}>
+            {state.status === AuthStatusType.LOADING && <FullPageSpinner />}
             {state.status === AuthStatusType.FAILURE && <div>Error...</div>}
-            {state.status === AuthStatusType.SUCCESS && props.children} */}
-            {props.children}
+            {state.status === AuthStatusType.SUCCESS && props.children}
         </AuthContext.Provider>
     );
 };
@@ -69,6 +90,6 @@ export const useAuth = () => {
     }
     const isError = contextValue.state.status === AuthStatusType.FAILURE;
     const isSuccess = contextValue.state.status === AuthStatusType.SUCCESS;
-    const isAuthenticated = contextValue.state.status === AuthStatusType.SUCCESS && contextValue.state.data;
+    const isAuthenticated = contextValue.state.status === AuthStatusType.SUCCESS && contextValue.state.data.payload;
     return { ...contextValue, isError, isSuccess, isAuthenticated };
 };
