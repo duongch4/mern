@@ -6,8 +6,8 @@ import { useUserAuthenticated } from "../../contexts/UserContext";
 
 import { useModal } from "../../contexts/ModalContext";
 
-export type HeaderProps = {
-    renderTopRightCorner: () => React.ReactElement;
+type HeaderProps = {
+    TopRightCorner: () => React.ReactElement;
 };
 
 export const Header = (props: HeaderProps) => (
@@ -32,14 +32,14 @@ export const Header = (props: HeaderProps) => (
                         <li className="nav-item"><Link className="nav-link" to="/status">Status</Link></li>
                     </ul>
                     <div className="dropdown-divider"></div>
-                    {props.renderTopRightCorner()}
+                    {props.TopRightCorner()}
                 </div>
             </div>
         </nav>
     </div>
 );
 
-export const renderLoggedIn = (): React.ReactElement => {
+export const AuthenticatedCorner = () => {
     const user = useUserAuthenticated().state;
     return (
         <div className="navbar-nav">
@@ -61,7 +61,7 @@ export const renderLoggedIn = (): React.ReactElement => {
     );
 };
 
-export const renderNotLoggedIn = (): React.ReactElement => {
+export const UnauthenticatedCorner = () => {
     const { state, setState } = useModal();
     const toggleButton = () => setState({ isOpen: !state.isOpen });
     const id = "auth-modal";
