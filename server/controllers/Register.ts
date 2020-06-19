@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { check, validationResult } from "express-validator";
 
-import { User, UserDoc } from "../models/User";
+import { User, UserDoc, UserPayload } from "../models/User";
 
 import { Controller, Post } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
@@ -61,11 +61,14 @@ export class Register {
                     if (errLogin) {
                         return next(errLogin);
                     }
-                    const response: TResponse = {
+                    const response: TResponse<UserPayload> = {
                         status: "OK",
                         code: 200,
                         payload: {
-                            redirect: "/"
+                            id: user.id,
+                            email: user.email,
+                            facebook: user.facebook,
+                            profile: user.profile
                         },
                         message: "Registration is successful."
                     };

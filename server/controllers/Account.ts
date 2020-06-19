@@ -1,51 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import { check, validationResult } from "express-validator";
-
-import { User, UserPayload, UserDoc } from "../models/User";
+import { WriteError } from "mongodb";
 
 import { Controller, Get, Put, Delete, ClassMiddleware } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 
+import { User, UserDoc } from "../models/User";
 import { isAuthenticated } from "../auth/passport";
 
 import { NotFoundException, ConflictException } from "../communication/Exception";
 import { TResponse } from "../communication/TResponse";
-import { WriteError } from "mongodb";
-
-type UserWithId = Express.User & { id: any };
 
 @Controller("api/account")
 @ClassMiddleware([isAuthenticated])
 export class Account {
-
-    @Get()
-    public getSessionCurrentUser(req: Request, res: Response) {
-        if (req.user) {
-            User.findById((req.user as UserWithId).id, (err, user: UserDoc) => {
-                if (err) {
-                    return res.status(404).json(new NotFoundException(err).response);
-                }
-                else {
-                    const userPayload: UserPayload = {
-                        id: user.id,
-                        email: user.email,
-                        facebook: user.facebook,
-                        profile: user.profile
-                    };
-                    const response: TResponse = {
-                        status: "OK",
-                        code: 200,
-                        payload: userPayload,
-                        message: "Account info found"
-                    };
-                    return res.status(200).json(response);
-                }
-            });
-        }
-        else {
-            return res.status(404).json(new NotFoundException("Session has no user").response);
-        }
-    }
 
     @Get(":id")
     public getAccount(req: Request, res: Response) {
@@ -54,7 +22,7 @@ export class Account {
                 return res.status(404).json(new NotFoundException(err).response);
             }
             else {
-                const response: TResponse = {
+                const response: TResponse<UserDoc> = {
                     status: "OK",
                     code: 200,
                     payload: user,
@@ -101,14 +69,11 @@ export class Account {
                     }
                     return next(err);
                 }
-                const response: TResponse = {
+                const response: TResponse<UserDoc> = {
                     status: "OK",
                     code: 200,
                     message: "Profile information has been updated.",
-                    payload: {
-                        data: user,
-                        redirect: "/account"
-                    }
+                    payload: user
                 };
                 res.status(200).json(response);
             });
@@ -139,7 +104,7 @@ export class Account {
                     return next(errRemove);
                 }
                 else {
-                    const response: TResponse = {
+                    const response: TResponse<any> = {
                         status: "OK",
                         code: 200,
                         payload: {
@@ -184,14 +149,11 @@ export class Account {
                 if (err) {
                     return next(err);
                 }
-                const response: TResponse = {
+                const response: TResponse<UserDoc> = {
                     status: "OK",
                     code: 200,
                     message: "Password has been updated.",
-                    payload: {
-                        data: user,
-                        redirect: "/account"
-                    }
+                    payload: user
                 };
                 res.status(200).json(response);
             });
