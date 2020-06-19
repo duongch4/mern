@@ -4,11 +4,18 @@ import { AjaxHandlerAxios } from "../utils/AjaxHandler";
 import Log from "../utils/Log";
 import { TResponse } from "../communication/TResponse";
 
-type AuthState = {
-    isLoading: boolean;
-    error?: any;
-    data?: TResponse;
-};
+export enum AuthStatusType {
+    EMPTY = "EMPTY",
+    LOADING = "LOADING",
+    FAILURE = "FAILURE",
+    SUCCESS = "SUCCESS"
+}
+
+type AuthState =
+    | { status: AuthStatusType.EMPTY }
+    | { status: AuthStatusType.LOADING }
+    | { status: AuthStatusType.FAILURE; error: any }
+    | { status: AuthStatusType.SUCCESS; data: TResponse };
 
 type AuthContextValue = {
     state: AuthState;
@@ -16,15 +23,13 @@ type AuthContextValue = {
 };
 
 const initialState: AuthState = {
-    isLoading: true,
-    error: undefined,
-    data: undefined
+    status: AuthStatusType.EMPTY
 };
 
-const AuthContext = React.createContext<AuthContextValue|undefined>(undefined);
+const AuthContext = React.createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider = (props: any) => {
-    const [state, setState] = React.useState(initialState);
+    const [state, setState] = React.useState<AuthState>(initialState);
     const url = "/api/account";
 
     const fetchUserData = () => {
@@ -32,16 +37,14 @@ export const AuthProvider = (props: any) => {
             url
         ).then((response: AxiosResponse) =>
             setState({
-                isLoading: false,
-                error: undefined,
+                status: AuthStatusType.SUCCESS,
                 data: response.data
             })
         ).catch((err) => {
             Log.error(err);
             setState({
-                isLoading: false,
-                error: err,
-                data: undefined
+                status: AuthStatusType.FAILURE,
+                error: err
             });
         }
         );
@@ -50,15 +53,11 @@ export const AuthProvider = (props: any) => {
     React.useEffect(fetchUserData, []);
 
     return (
-        <AuthContext.Provider value={{state, setState}}>
+        <AuthContext.Provider value={{ state, setState }}>
+            {/* {state.status === AuthStatusType.LOADING && <div>Loading...</div>}
+            {state.status === AuthStatusType.FAILURE && <div>Error...</div>}
+            {state.status === AuthStatusType.SUCCESS && props.children} */}
             {props.children}
-            {/* {
-                state.isLoading === "loading" ? (
-                    <div>Loading...</div>
-                ) : state.isLoading === "error" ? (
-                    <div>Error</div>
-                ) : {...props}
-            } */}
         </AuthContext.Provider>
     );
 };
@@ -68,8 +67,8 @@ export const useAuth = () => {
     if (typeof contextValue === "undefined") {
         throw new Error("AuthContext value is 'undefined' => Must Be Set!");
     }
-    const isError = typeof contextValue.state.error !== "undefined" && contextValue.state.isLoading;
-    const isSuccess = typeof contextValue.state.data !== "undefined" && contextValue.state.isLoading;
-    const isAuthenticated = contextValue.state.data && !contextValue.state.isLoading;
+    const isError = contextValue.state.status === AuthStatusType.FAILURE;
+    const isSuccess = contextValue.state.status === AuthStatusType.SUCCESS;
+    const isAuthenticated = contextValue.state.status === AuthStatusType.SUCCESS && contextValue.state.data;
     return { ...contextValue, isError, isSuccess, isAuthenticated };
 };

@@ -2,6 +2,7 @@ import React from "react";
 
 import { useAuth } from "./AuthContext";
 import { UserPayload } from "../models/User";
+import { AuthStatusType } from "./AuthContext";
 
 type UserContextValue = {
     state: UserPayload;
@@ -12,9 +13,9 @@ const UserContext = React.createContext<UserContextValue|undefined>(undefined);
 
 export const UserProvider = (props: any) => {
     const authContextValue = useAuth();
-    const user = authContextValue.state.data?.payload as UserPayload;
-    const [_state, setState] = React.useState(user);
-    return <UserContext.Provider value={{ state: authContextValue.state.data?.payload, setState }} {...props} />;
+    const user = authContextValue.state.status === AuthStatusType.SUCCESS ? authContextValue.state.data.payload : undefined;
+    const [_state, setState] = React.useState(user as UserPayload);
+    return <UserContext.Provider value={{ state: user, setState }} {...props} />;
 };
 
 export const useUserAuthenticated = () => {
