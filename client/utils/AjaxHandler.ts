@@ -145,7 +145,7 @@ export class AjaxHandlerAxios extends AjaxHandlerAbstract {
         return axios.request(
             opts
         ).then(
-            (response: AxiosResponse<any>) => response
+            (response: AxiosResponse<any>) => response.data
         ).catch((err: any) => {
             throw new Error(err);
         });
@@ -166,7 +166,7 @@ export class AjaxHandlerAxios extends AjaxHandlerAbstract {
         return axios.request(
             opts
         ).then(
-            (response: AxiosResponse<any>) => response
+            (response: AxiosResponse<any>) => response.data
         ).catch((err: any) => {
             throw new Error(err);
         });
@@ -187,7 +187,7 @@ export class AjaxHandlerAxios extends AjaxHandlerAbstract {
         return axios.request(
             opts
         ).then(
-            (response: AxiosResponse<any>) => response
+            (response: AxiosResponse<any>) => response.data
         ).catch((err: any) => {
             throw new Error(err);
         });
