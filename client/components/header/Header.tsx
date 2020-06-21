@@ -25,7 +25,7 @@ export const Header = (props: HeaderProps) => (
                 </button>
 
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav mr-auto">
+                    <ul className="navbar-nav mr-auto text-upper">
                         <li className="nav-item"><Link className="nav-link" to="/">Profile</Link></li>
                         <li className="nav-item"><Link className="nav-link" to="/">Projects</Link></li>
                         <li className="nav-item"><Link className="nav-link" to="/">Contact</Link></li>

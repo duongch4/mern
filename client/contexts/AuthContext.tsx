@@ -1,5 +1,4 @@
 import React from "react";
-import { AxiosResponse } from "axios";
 import { AjaxHandlerAxios } from "../utils/AjaxHandler";
 import { TResponse } from "../communication/TResponse";
 import { UserPayload } from "../models/User";
@@ -10,8 +9,8 @@ import { useAsync, AsyncState, AsyncStatusType } from "../hooks/hooks";
 // import Log from "../utils/Log";
 
 type AuthContextValue = {
-    state: AsyncState<AxiosResponse<TResponse<UserPayload>>>;
-    dispatchData: (data: AxiosResponse<TResponse<UserPayload>>) => void;
+    state: AsyncState<TResponse<UserPayload>>;
+    dispatchData: (data: TResponse<UserPayload>) => void;
 };
 
 const AuthContext = React.createContext<AuthContextValue | undefined>(undefined);
@@ -22,15 +21,11 @@ const AuthContext = React.createContext<AuthContextValue | undefined>(undefined)
 // };
 
 export const AuthProvider = (props: any) => {
-    const { state, run, dispatchData } = useAsync<AxiosResponse<TResponse<UserPayload>>>();
+    const { state, run, dispatchData } = useAsync<TResponse<UserPayload>>();
 
-    const url = "/api/login/check";
-
-    const fetchUserData = () => {
-        run(AjaxHandlerAxios.getRequest(url));
-    };
-
-    React.useEffect(fetchUserData, [run]);
+    React.useEffect(() => {
+        run(AjaxHandlerAxios.getRequest("/api/login/check"));
+    }, [run]);
 
     // TODO: Add ErrorFallBackPage
     return (
@@ -38,6 +33,7 @@ export const AuthProvider = (props: any) => {
             {state.status === AsyncStatusType.LOADING && <FullPageSpinner />}
             {state.status === AsyncStatusType.FAILURE && <div>Error...</div>}
             {state.status === AsyncStatusType.SUCCESS && props.children}
+            {state.status === AsyncStatusType.EMPTY && props.children}
         </AuthContext.Provider>
     );
 };
@@ -49,6 +45,6 @@ export const useAuth = () => {
     }
     const isError = contextValue.state.status === AsyncStatusType.FAILURE;
     const isSuccess = contextValue.state.status === AsyncStatusType.SUCCESS;
-    const isAuthenticated = contextValue.state.status === AsyncStatusType.SUCCESS && contextValue.state.data.data.payload;
+    const isAuthenticated = contextValue.state.status === AsyncStatusType.SUCCESS && contextValue.state.data.payload;
     return { ...contextValue, isError, isSuccess, isAuthenticated };
 };

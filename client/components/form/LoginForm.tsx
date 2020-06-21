@@ -33,7 +33,7 @@ const initialState: LoginFormStates = {
 
 export const LoginForm = (props: LoginFormProps) => {
     const [state, setState] = React.useState<LoginFormStates>(initialState);
-    const modalState = useModal().state;
+    const { state: modalState } = useModal();
 
     React.useEffect(() => {
         return () => setState(initialState); // Return a function => Cleanup work
@@ -61,14 +61,13 @@ export const LoginForm = (props: LoginFormProps) => {
                 ...state,
                 message: response.message
             });
-            window.location = window.location;
+            window.location.reload();
         }
         catch (err) {
             Log.error(`NAY: ${err}`);
             setState({
                 ...state,
                 message: err.message,
-                valEmail: "",
                 valPassword: ""
             });
         }
@@ -98,7 +97,6 @@ export const LoginForm = (props: LoginFormProps) => {
                     return;
                 default:
                     setState({
-                        ...state,
                         valEmail: "",
                         valPassword: "",
                         message: err.message
@@ -123,7 +121,9 @@ export const LoginForm = (props: LoginFormProps) => {
                 type={"password"} id={"login-id-password"} value={state.valPassword}
                 placeholder={"Password"} onChange={onInputChange("valPassword")}
             />
-            <button type="submit" className="btn">{props.textButton}</button>
+            <button type="submit" className="btn">
+                {props.textButton}
+            </button>
         </form>
     );
 };
