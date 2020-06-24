@@ -19,7 +19,7 @@ import path from "path";
 
 import passport from "passport";
 
-import { getSessionSecret, getMongoDbUri } from "./config/config";
+import { setLogger, getSessionSecret, getMongoDbUri } from "./config/config";
 
 import errorHandler from "errorhandler";
 
@@ -34,14 +34,17 @@ import { root as graphqlResolver } from "./graphql/resolver";
 // API keys and Passport configuration
 // import passportConfig from "./auth/passport";
 
-const SESSION_SECRET = getSessionSecret();
-const MONGODB_URI = getMongoDbUri();
-
 // Create Express server
 export class ExpressServer extends Server {
 
+    private SESSION_SECRET: string;
+    private MONGODB_URI: string;
+
     constructor() {
         super(true);
+        setLogger();
+        this.SESSION_SECRET = getSessionSecret();
+        this.MONGODB_URI = getMongoDbUri();
         this.config();
     }
 
@@ -87,9 +90,9 @@ export class ExpressServer extends Server {
         const MongoStore = mongo(session);
         (mongoose as any).Promise = bluebird;
         const mongooseConnectionOptions = { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true };
-        mongoose.connect(MONGODB_URI, mongooseConnectionOptions).then(() => {
+        mongoose.connect(this.MONGODB_URI, mongooseConnectionOptions).then(() => {
             if (this.app.get("env") !== "production") {
-                Logger.Info(`MongoDB is connected at: ${MONGODB_URI}`);
+                Logger.Info(`MongoDB is connected at: ${this.MONGODB_URI}`);
             }
             else {
                 Logger.Info(`MongoDB is connected successfully`);
@@ -116,7 +119,7 @@ export class ExpressServer extends Server {
     }
 
     private setExpressSession(MongoStore: mongo.MongoStoreFactory) {
-        this.app.use(cookieParser(SESSION_SECRET));
+        this.app.use(cookieParser(this.SESSION_SECRET));
         this.app.use(session(this.getExpressSession(MongoStore)));
     }
 
@@ -127,12 +130,12 @@ export class ExpressServer extends Server {
                 maxAge: 60000,
                 httpOnly: true
             },
-            secret: SESSION_SECRET as string,
+            secret: this.SESSION_SECRET as string,
             resave: true,
             saveUninitialized: false,
             store: new MongoStore(
                 {
-                    url: MONGODB_URI,
+                    url: this.MONGODB_URI,
                     autoReconnect: true
                 } as mongo.MongoUrlOptions
             )

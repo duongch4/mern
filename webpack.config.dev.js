@@ -141,12 +141,18 @@ class WebpackConfig {
             }),
             new webpack.HotModuleReplacementPlugin()
         ];
+
         if (fs.existsSync(this.common.envFilePath)) {
             const fromDotEnv = new webpack.DefinePlugin({
                 "process.env": JSON.stringify(dotenv.config({ path: this.common.envFilePath }).parsed)
             });
             base = [...base, fromDotEnv];
         }
+        else {
+            console.error(`Development Environment: ${this.common.envFilePath} file is not provided! => Provide the file!`);
+            process.exit(1);
+        }
+
         if (forBuildServerOnceToWatch) {
             return base;
         }

@@ -48,7 +48,7 @@ export const Modal = (props: ModalProps) => {
 
     const renderModalFoot = (): React.ReactElement => (
         <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={toggle}>
+            <button type="button" className="btn" data-dismiss="modal" onClick={toggle}>
                 {props.closeTitle}
             </button>
         </div>
