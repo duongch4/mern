@@ -68,7 +68,7 @@ const useAsync = <DataType, >(initialState: AsyncState<DataType> = { status: Asy
         (error: any) => safeDisPatch({ type: AsyncActionType.FAILURE, error }),
         [safeDisPatch],
     );
-    const dispatchOnReset = React.useCallback(
+    const dispatchReset = React.useCallback(
         () => safeDisPatch({ type: AsyncActionType.REQUEST }),
         [safeDisPatch]
     );
@@ -105,7 +105,7 @@ const useAsync = <DataType, >(initialState: AsyncState<DataType> = { status: Asy
         state,
         dispatchData,
         dispatchError,
-        dispatchOnReset,
+        dispatchReset,
         run
     };
 };
