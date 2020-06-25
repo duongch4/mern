@@ -19,7 +19,7 @@ export type ProfileFormStates = {
 };
 
 export const ProfileForm = () => {
-    const {state: user, setState: setUser} = useUserAuthenticated();
+    const { user, setUser } = useUserAuthenticated();
     const url = `/api/account/profile/${user.id}`;
     const textButton = "Update Profile";
 
@@ -71,7 +71,6 @@ export const ProfileForm = () => {
                     website: state.website
                 }
             });
-            window.location = window.location;
         }
         catch (err) {
             Log.error(`NAY: ${err}`);

@@ -54,7 +54,7 @@ export const RegisterForm = (props: RegisterFormProps) => {
                 ...state,
                 message: response.message
             });
-            window.location = window.location;
+            window.location.href = response.extra ? response.extra.redirect : "/";
         }
         catch (err) {
             Log.error(`NAY: ${err}`);

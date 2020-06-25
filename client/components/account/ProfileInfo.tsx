@@ -4,7 +4,7 @@ import { useUserAuthenticated } from "../../contexts/UserContext";
 import { JsonPrint } from "../../components/utils/JsonPrint";
 
 export const ProfileInfo = () => {
-    const user = useUserAuthenticated().state;
+    const { user } = useUserAuthenticated();
     return (
         <div id="profile-info">
             <h1>Only Authenticated Users See Their Info Here!</h1>

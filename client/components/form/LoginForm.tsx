@@ -33,11 +33,11 @@ const initialState: LoginFormStates = {
 
 export const LoginForm = (props: LoginFormProps) => {
     const [state, setState] = React.useState<LoginFormStates>(initialState);
-    const { state: modalState } = useModal();
+    const { state: modal } = useModal();
 
     React.useEffect(() => {
         return () => setState(initialState); // Return a function => Cleanup work
-    }, [modalState.isOpen]);
+    }, [modal.isOpen]);
 
     const onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         setState({
@@ -61,7 +61,8 @@ export const LoginForm = (props: LoginFormProps) => {
                 ...state,
                 message: response.message
             });
-            window.location.reload();
+            window.location.href = response.extra ? response.extra.redirect : "/";
+            // window.location.reload();
         }
         catch (err) {
             Log.error(`NAY: ${err}`);

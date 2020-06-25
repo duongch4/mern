@@ -5,25 +5,35 @@ import { UserPayload } from "../models/User";
 import { AsyncStatusType } from "../hooks/hooks";
 
 type UserContextValue = {
-    state: UserPayload;
-    setState: React.Dispatch<React.SetStateAction<UserPayload>>;
+    user: UserPayload | undefined;
+    setUser: (data: UserPayload) => void;
 };
 
-const UserContext = React.createContext<UserContextValue|undefined>(undefined);
+const UserContext = React.createContext<UserContextValue | undefined>(undefined);
 
 export const UserProvider = (props: any) => {
-    const authContextValue = useAuth();
-    const user = authContextValue.state.status === AsyncStatusType.SUCCESS ? authContextValue.state.data.payload : undefined;
-    const [_state, setState] = React.useState(user as UserPayload);
-    return <UserContext.Provider value={{ state: user, setState }} {...props} />;
+    const { state, dispatchData } = useAuth();
+    const user = state.status === AsyncStatusType.SUCCESS ? state.data : undefined;
+    return (
+        <UserContext.Provider value={{ user, setUser: dispatchData }}>
+            {props.children}
+        </UserContext.Provider>
+    );
 };
 
-export const useUserAuthenticated = () => {
+export const useUser = () => {
     const contextValue = React.useContext(UserContext);
-    if (typeof contextValue?.state === "undefined") {
-        throw new Error("User is 'undefined' => User Should ALREADY Be Authenticated!");
+    if (typeof contextValue === "undefined") {
+        throw new Error("UserContextValue is 'undefined' => Must Be Set!");
     }
     return contextValue;
 };
 
-export const useUserCheck = () => React.useContext(UserContext);
+export const useUserAuthenticated = () => {
+    const { user, setUser } = useUser();
+    if (typeof user === "undefined") {
+        throw new Error("User is 'undefined' => User Should ALREADY Be Authenticated!");
+    }
+    return { user, setUser };
+};
+

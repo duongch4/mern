@@ -40,7 +40,7 @@ export const Header = (props: HeaderProps) => (
 );
 
 export const AuthenticatedCorner = () => {
-    const user = useUserAuthenticated().state;
+    const { user } = useUserAuthenticated();
     return (
         <div className="navbar-nav">
             <li id="account" className="nav-item dropdown">

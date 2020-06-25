@@ -9,8 +9,8 @@ import { useAsync, AsyncState, AsyncStatusType } from "../hooks/hooks";
 // import Log from "../utils/Log";
 
 type AuthContextValue = {
-    state: AsyncState<TResponse<UserPayload>>;
-    dispatchData: (data: TResponse<UserPayload>) => void;
+    state: AsyncState<UserPayload>;
+    dispatchData: (data: UserPayload) => void;
 };
 
 const AuthContext = React.createContext<AuthContextValue | undefined>(undefined);
@@ -21,10 +21,14 @@ const AuthContext = React.createContext<AuthContextValue | undefined>(undefined)
 // };
 
 export const AuthProvider = (props: any) => {
-    const { state, run, dispatchData } = useAsync<TResponse<UserPayload>>();
+    const { state, run, dispatchData } = useAsync<UserPayload>();
 
     React.useEffect(() => {
-        run(AjaxHandlerAxios.getRequest("/api/login/check"));
+        const getUser = () => AjaxHandlerAxios.getRequest("/api/login/check").then(
+            (res: TResponse<UserPayload>) => res.payload,
+            (err: any) => err
+        );
+        run(getUser());
     }, [run]);
 
     // TODO: Add ErrorFallBackPage
@@ -41,10 +45,11 @@ export const AuthProvider = (props: any) => {
 export const useAuth = () => {
     const contextValue = React.useContext(AuthContext);
     if (typeof contextValue === "undefined") {
-        throw new Error("AuthContext value is 'undefined' => Must Be Set!");
+        throw new Error("AuthContextValue is 'undefined' => Must Be Set!");
     }
-    const isError = contextValue.state.status === AsyncStatusType.FAILURE;
-    const isSuccess = contextValue.state.status === AsyncStatusType.SUCCESS;
-    const isAuthenticated = contextValue.state.status === AsyncStatusType.SUCCESS && contextValue.state.data.payload;
-    return { ...contextValue, isError, isSuccess, isAuthenticated };
+    // const isError = contextValue.state.status === AsyncStatusType.FAILURE;
+    // const isSuccess = contextValue.state.status === AsyncStatusType.SUCCESS;
+    // const isAuthenticated = contextValue.state.status === AsyncStatusType.SUCCESS && contextValue.state.data;
+    // return { ...contextValue, isError, isSuccess, isAuthenticated };
+    return contextValue;
 };
