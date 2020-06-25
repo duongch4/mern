@@ -90,7 +90,10 @@ export class Login {
                         facebook: user.facebook,
                         profile: user.profile
                     },
-                    message: "Logged In Successfully"
+                    message: "Logged In Successfully",
+                    extra: {
+                        redirect: "/"
+                    }
                 };
                 Log.Imp(response.payload, true);
                 return res.status(200).json(response);

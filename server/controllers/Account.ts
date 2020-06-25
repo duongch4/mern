@@ -64,8 +64,7 @@ export class Account {
                 if (err) {
                     if (err.code === 11000) {
                         const message = "The email address you have entered is already associated with an account.";
-                        const payload = { redirect: "/account" };
-                        return res.status(409).json(new ConflictException(message, payload).response);
+                        return res.status(409).json(new ConflictException(message).response);
                     }
                     return next(err);
                 }

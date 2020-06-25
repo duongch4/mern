@@ -1,10 +1,10 @@
 import { TResponse } from "./TResponse";
 
 class BaseCustomException extends Error {
-    public readonly response: TResponse<any>;
+    public readonly response: TResponse<undefined>;
 
     constructor(
-        message: string, payload: any = undefined, status = "Known Exception", code = 400
+        message: string, extra = { redirect: "/" }, status = "Known Exception", code = 400
     ) {
         super(message);
         this.name = this.constructor.name;
@@ -12,24 +12,24 @@ class BaseCustomException extends Error {
         this.response = {
             status: status,
             code: code,
-            payload: payload,
-            message: message
+            message: message,
+            extra: extra
         };
     }
 }
 
 export class NotFoundException extends BaseCustomException {
     constructor(
-        message: string, payload: any = undefined, status = "Not Found Exception", code = 404
+        message: string, extra = undefined, status = "Not Found Exception", code = 404
     ) {
-        super(message, payload, status, code);
+        super(message, extra, status, code);
     }
 }
 
 export class ConflictException extends BaseCustomException {
     constructor(
-        message: string, payload: any = undefined, status = "Conflict Exception", code = 409
+        message: string, extra = undefined, status = "Conflict Exception", code = 409
     ) {
-        super(message, payload, status, code);
+        super(message, extra, status, code);
     }
 }

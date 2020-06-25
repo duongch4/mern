@@ -70,7 +70,10 @@ export class Register {
                             facebook: user.facebook,
                             profile: user.profile
                         },
-                        message: "Registration is successful."
+                        message: "Registered Successfully",
+                        extra: {
+                            redirect: "/"
+                        }
                     };
                     return res.status(200).json(response);
                 });
