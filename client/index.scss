@@ -79,12 +79,6 @@ body #profile .header, #projects .header, #contact .header, #credit .header  {
     margin-top: var(--section-margin-top);
 }
 
-body a {
-    color: var(--main-color);
-    font-family: var(--link-font-family);
-    font-weight: var(--link-font-weight);
-}
-
 body .btn {
     $color: #DCAF68;
     background-color: var(--main-color);
@@ -117,6 +111,10 @@ body .btn {
     font-weight: 700;
 }
 
+.font-italic {
+    font-style: italic;
+}
+
 .text-right {
     text-align: right;
 }
@@ -127,4 +125,10 @@ body .btn {
 
 .text-upper {
     text-transform: uppercase;
+}
+
+.a-bold {
+    color: var(--main-color);
+    font-family: var(--link-font-family);
+    font-weight: var(--link-font-weight);
 }
