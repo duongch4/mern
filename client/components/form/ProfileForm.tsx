@@ -94,6 +94,18 @@ export const ProfileForm = () => {
         }
     };
 
+    const EmailVerification = () => (
+        <div className="offset-sm-3 col-sm-5 col-md-5 pl-3">
+            {
+                state.website
+                    ? <div className="font-italic text-success">Verified</div>
+                    : <div className="font-italic text-danger">
+                        Unverified: &nbsp; <a href="/api/account/verify">Send verification email</a>
+                    </div>
+            }
+        </div>
+    );
+
     return (
         <form onSubmit={onSubmit}>
             <AlertMessage message={state.message} />
@@ -102,6 +114,7 @@ export const ProfileForm = () => {
                     type={"email"} id={"profile-id-email"} value={state.email}
                     onChange={onInputChange("email")}
                     label={"Email"}
+                    smallHelpDiv={EmailVerification()}
                 />
                 <FormGroupText
                     type={"text"} id={"profile-id-firstName"} value={state.firstName}

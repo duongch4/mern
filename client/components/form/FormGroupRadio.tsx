@@ -26,8 +26,8 @@ const setInputFormControl = (props: FormGroupRadioProps): React.ReactElement[] =
 
 export const FormGroupRadio = (props: FormGroupRadioProps): React.ReactElement => (
     <div className="form-group row">
-        <legend className="col-md-3 pt-0 col-form-label font-weight-bold text-right">{props.label}</legend>
-        <div className="col-md-6">
+        <legend className="col-sm-3 col-md-3 pt-0 col-form-label font-weight-bold text-center">{props.label}</legend>
+        <div className="col-sm-5 col-md-5">
             {setInputFormControl(props)}
         </div>
     </div>

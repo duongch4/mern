@@ -118,8 +118,6 @@ export const RegisterForm = (props: RegisterFormProps) => {
             <FormGroupText
                 type={"email"} id={"register-id-email"} value={state.valEmail}
                 placeholder={"Enter Email"} onChange={onInputChange("valEmail")}
-                smallHelpId={"email-small-help"}
-                smallHelp={"We'll never share your email with anyone else. LIES!!"}
             />
             <FormGroupText
                 type={"password"} id={"register-id-password"} value={state.valPassword}
