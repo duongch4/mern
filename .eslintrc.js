@@ -31,7 +31,7 @@ module.exports = {
         // "plugin:prettier/recommended" // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
     ],
     rules: {
-        // Overwrite rules specified from the extended configs e.g. 
+        // Overwrite rules specified from the extended configs e.g.
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }],
         "@typescript-eslint/no-explicit-any": "off",
@@ -179,7 +179,7 @@ module.exports = {
                     ],
                     "max-func-body-length": [
                         true,
-                        100,
+                        150,
                         {
                             "ignore-comments": true,
                             "ignore-parameters-to-function-regex": "^describe$"
@@ -257,7 +257,7 @@ module.exports = {
         // "import/no-extraneous-dependencies": [
         //     "warn",
         //     {
-        //         devDependencies: ["./client/**/test.tsx", "./server/**/test.ts"] 
+        //         devDependencies: ["./client/**/test.tsx", "./server/**/test.ts"]
         //     }
         // ],
         "react/prop-types": "off" // Is this incompatible with TS props type?

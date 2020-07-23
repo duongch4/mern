@@ -16,6 +16,13 @@ export type UserProfile = {
     picture: string;
 };
 
+export type UserPayload = {
+    id: string;
+    email: string;
+    facebook: string;
+    profile: UserProfile;
+};
+
 export type UserDoc = mongoose.Document & {
     _id: string;
     email: string;

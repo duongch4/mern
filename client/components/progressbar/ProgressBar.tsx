@@ -12,11 +12,9 @@ export const ProgressBar = (props: ProgressBarProps) => {
         visibility: (props.hide) ? "hidden" : "visible" as "visible" | "hidden"
     };
 
-    const progressBarWidth = (barWidth: number) => {
-        return {
-            width: `${barWidth}%`
-        };
-    };
+    const progressBarWidth = (barWidth: number) => (
+        { width: `${barWidth}%` }
+    );
 
     return (
         <div className="progress fixed-top" style={progressStyle}>

@@ -1,25 +1,15 @@
-import React, { Component } from "react";
+import React from "react";
 
-import { Home } from "../../components/home/Home";
-import { Notes } from "../../components/note/Notes";
 import { ProfileInfo } from "../../components/account/ProfileInfo";
+import { useUserAuthenticated } from "../../context/UserContext";
+import { JsonPrint } from "../../components/utils/JsonPrint";
 
-import { UserPayload } from "../../pages/MainRoutes";
-
-type HomePageProps = {
-    currUser: UserPayload;
+export const HomePage = () => {
+    const user = useUserAuthenticated().state;
+    return (
+        <div id="home-page" className="container-fluid container-main text-center">
+            <ProfileInfo currUser={user} />
+            <JsonPrint data={user} />
+        </div>
+    );
 };
-
-export class HomePage extends Component<HomePageProps, any> {
-    public render() {
-        return (
-            <div id="home-page">
-                {
-                    this.props.currUser ? <ProfileInfo currUser={this.props.currUser} /> : undefined
-                }
-                <Home />
-                <Notes />
-            </div>
-        );
-    }
-}

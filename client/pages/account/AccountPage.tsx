@@ -1,13 +1,11 @@
-import React, { Component } from "react";
-import { ProfileForm } from "../../components/account/ProfileForm";
+import React from "react";
+import { ProfileForm } from "../../components/form/ProfileForm";
 
-export class AccountPage extends Component<any, any> {
-    public render() {
-        return (
-            <div id="account-page" className="container-fluid">
-                <h1>AuthPage2: Only Authenticated Users See This Page.</h1>
-                <ProfileForm textButton={"Update Profile"} postToUrl={"/api/account/profile"} />
-            </div>
-        );
-    }
-}
+export const AccountPage = () => {
+    return (
+        <div id="account-page" className="container-fluid container-main">
+            <div className="pb-2 mt-2 mb-4 border-bottom"><h3>Profile Information</h3></div>
+            <ProfileForm />
+        </div>
+    );
+};

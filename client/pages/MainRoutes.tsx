@@ -1,80 +1,22 @@
-import React, { Component } from "react";
-import {
-    Route,
-    Switch,
-    Redirect as _,
-} from "react-router-dom";
+import React from "react";
 
-import { HomePage } from "./home/HomePage";
-import { Header } from "../components/header/Header";
-import { Footer } from "../components/footer/Footer";
-import { AjaxHandler } from "../utils/AjaxHandler";
-import { PropsRoute, PrivateRoute } from "../utils/CustomRoute";
-import { AccountPage } from "./account/AccountPage";
+import { useUserCheck } from "../context/UserContext";
 import { StatusPage } from "./status/StatusPage";
-import { NotFoundPage } from "./notfound/NotFoundPage";
+
 import Log from "../utils/Log";
 
-export type UserProfile = {
-    firstName: string;
-    lastName: string;
-    gender: string;
-    location: string;
-    website: string;
-    picture: string;
+const AuthenticatedRoutes = React.lazy(() => import("./AuthenticatedRoutes"));
+const UnauthenticatedRoutes = React.lazy(() => import("./UnauthenticatedRoutes"));
+
+export const MainRoutes = () => {
+    const user = useUserCheck()?.state;
+    Log.info("In MainRoutes");
+    Log.info(user);
+
+    // TODO: FALL BACK to LOADING/SPINNER
+    return (
+        <React.Suspense fallback={<StatusPage />}>
+            {user ? <AuthenticatedRoutes /> : <UnauthenticatedRoutes />}
+        </React.Suspense>
+    );
 };
-
-export type UserPayload = {
-    id: string;
-    email: string;
-    facebook: string;
-    profile: UserProfile;
-};
-
-type MainStates = {
-    currUser?: UserPayload;
-};
-
-export class MainRoutes extends Component<any, MainStates> {
-    public readonly state: Readonly<MainStates> = {
-        currUser: undefined
-    };
-
-    public componentDidMount = () => {
-        this.getUser();
-    }
-
-    private updateUser = (states: MainStates) => {
-        this.setState(states);
-    }
-
-    private getUser = async () => {
-        try {
-            const response = await AjaxHandler.getRequest("/api/account");
-            this.setState({
-                currUser: response.payload
-            });
-        }
-        catch (err) {
-            Log.error(err);
-            this.setState({
-                currUser: undefined
-            });
-        }
-    }
-
-    public render() {
-        return (
-            <div id="main-routes">
-                <Header currUser={this.state.currUser} />
-                <Switch>
-                    <PropsRoute exact path={`/`} component={HomePage} currUser={this.state.currUser} />
-                    <PrivateRoute isLoggedIn={this.state.currUser} redirectTo={`/`} path={`/account`} component={AccountPage} />
-                    <Route path={`/status`} component={StatusPage} />
-                    <Route component={NotFoundPage} />
-                </Switch>
-                <Footer />
-            </div>
-        );
-    }
-}
