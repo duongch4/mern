@@ -29,6 +29,8 @@ export type UserDoc = mongoose.Document & {
     password: string;
     passwordResetToken: string;
     passwordResetExpires: Date;
+    emailVerificationToken: string;
+    emailVerified: boolean;
 
     facebook: string;
     tokens: AuthToken[];
@@ -45,6 +47,8 @@ const UserSchema: mongoose.Schema = new mongoose.Schema(
         password: String,
         passwordResetToken: String,
         passwordResetExpires: Date,
+        emailVerificationToken: String,
+        emailVerified: Boolean,
 
         facebook: String,
         twitter: String,
