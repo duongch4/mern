@@ -40,12 +40,20 @@ const useSafeDispatch = <A, >(dispatch: React.Dispatch<A>) => {
 
 const reducer = <DataType, >(_state: AsyncState<DataType>, action: AsyncAction<DataType>): AsyncState<DataType> => {
     switch (action.type) {
-        case AsyncActionType.REQUEST: return { status: AsyncStatusType.LOADING };
-        case AsyncActionType.FAILURE: return { status: AsyncStatusType.FAILURE, error: action.error };
-        case AsyncActionType.SUCCESS: return { status: AsyncStatusType.SUCCESS, data: action.data };
-        default: throw new Error();
+        case AsyncActionType.REQUEST:
+            return { status: AsyncStatusType.LOADING };
+        case AsyncActionType.FAILURE:
+            return { status: AsyncStatusType.FAILURE, error: action.error };
+        case AsyncActionType.SUCCESS:
+            return { status: AsyncStatusType.SUCCESS, data: action.data };
+        default:
+            throw new Error("Not implemented action type");
     }
 };
+
+const actionRequest = <DataType, >(): AsyncAction<DataType> => ({ type: AsyncActionType.REQUEST });
+const actionSuccess = <DataType, >(data: DataType): AsyncAction<DataType> => ({ type: AsyncActionType.SUCCESS, data });
+const actionFailure = <DataType, >(error: any): AsyncAction<DataType> => ({ type: AsyncActionType.FAILURE, error });
 
 // Example usage:
 // const {data, error, status, run} = useAsync()
@@ -61,15 +69,15 @@ const useAsync = <DataType, >(initialState: AsyncState<DataType> = { status: Asy
     const safeDisPatch = useSafeDispatch(dispatch);
 
     const dispatchData = React.useCallback(
-        (data: DataType) => safeDisPatch({ type: AsyncActionType.SUCCESS, data }),
+        (data: DataType) => safeDisPatch(actionSuccess(data)),
         [safeDisPatch],
     );
     const dispatchError = React.useCallback(
-        (error: any) => safeDisPatch({ type: AsyncActionType.FAILURE, error }),
+        (error: any) => safeDisPatch(actionFailure(error)),
         [safeDisPatch],
     );
     const dispatchReset = React.useCallback(
-        () => safeDisPatch({ type: AsyncActionType.REQUEST }),
+        () => safeDisPatch(actionRequest()),
         [safeDisPatch]
     );
 
@@ -80,7 +88,7 @@ const useAsync = <DataType, >(initialState: AsyncState<DataType> = { status: Asy
                     `The argument passed to useAsync().run must be a promise. Maybe a function that's passed isn't returning anything?`,
                 );
             }
-            safeDisPatch({ type: AsyncActionType.REQUEST });
+            safeDisPatch(actionRequest());
             return promise.then(
                 (data: DataType) => {
                     dispatchData(data);
