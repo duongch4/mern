@@ -33,3 +33,19 @@ export class ConflictException extends BaseCustomException {
         super(message, extra, status, code);
     }
 }
+
+export class InternalServerException extends BaseCustomException {
+    constructor(
+        message: string, extra = undefined, status = "Internal Server Exception", code = 500
+    ) {
+        super(message, extra, status, code);
+    }
+}
+
+export class BadRequestException extends BaseCustomException {
+    constructor(
+        message: string, extra = undefined, status = "Bad Request Exception", code = 400
+    ) {
+        super(message, extra, status, code);
+    }
+}
