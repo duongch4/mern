@@ -6,7 +6,7 @@ import { User, UserDoc, UserPayload } from "../models/User";
 import { Controller, Post } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import { ConflictException } from "../communication/Exception";
-import { TResponse } from "../communication/TResponse";
+import { getResponse200 } from "../communication/TResponse";
 
 @Controller("api/register")
 export class Register {
@@ -61,21 +61,15 @@ export class Register {
                     if (errLogin) {
                         return next(errLogin);
                     }
-                    const response: TResponse<UserPayload> = {
-                        status: "OK",
-                        code: 200,
-                        payload: {
-                            id: user.id,
-                            email: user.email,
-                            facebook: user.facebook,
-                            profile: user.profile
-                        },
-                        message: "Registered Successfully",
-                        extra: {
-                            redirect: "/"
-                        }
+                    const payload: UserPayload = {
+                        id: user.id,
+                        email: user.email,
+                        facebook: user.facebook,
+                        profile: user.profile
                     };
-                    return res.status(200).json(response);
+                    const message = "Registered Successfully";
+                    const extra = { redirect: "/" };
+                    return res.status(200).json(getResponse200(payload, message, extra));
                 });
             });
         });
