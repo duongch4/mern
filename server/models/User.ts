@@ -19,6 +19,7 @@ export type UserProfile = {
 export type UserPayload = {
     id: string;
     email: string;
+    emailVerified: boolean;
     facebook: string;
     profile: UserProfile;
 };
