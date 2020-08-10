@@ -1,13 +1,18 @@
 import React from "react";
 
-import { AjaxHandler } from "../../utils/AjaxHandler";
+import { TResponse } from "../../communication/TResponse";
 import { EmptyException, InvalidLengthException } from "../../communication/Exception";
+
+import { AjaxHandler } from "../../utils/AjaxHandler";
 import { AlertMessage } from "../utils/AlertMessage";
+
 import { FormGroupText } from "./FormGroupText";
 import { checkEmptyFields, checkPasswordLength } from "./FormCheck";
 
+import { useModal } from "../../contexts/ModalContext";
+import { UserPayload } from "../../models/User";
+
 import Log from "../../utils/Log";
-import { useModal } from "../../context/ModalContext";
 
 export type LoginFormProps = {
     textButton: string;
@@ -28,11 +33,11 @@ const initialState: LoginFormStates = {
 
 export const LoginForm = (props: LoginFormProps) => {
     const [state, setState] = React.useState<LoginFormStates>(initialState);
-    const modalState = useModal().state;
+    const { state: modal } = useModal();
 
     React.useEffect(() => {
         return () => setState(initialState); // Return a function => Cleanup work
-    }, [modalState.isOpen]);
+    }, [modal.isOpen]);
 
     const onInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         setState({
@@ -49,21 +54,21 @@ export const LoginForm = (props: LoginFormProps) => {
         };
 
         try {
-            const response = await AjaxHandler.postRequest(props.postToUrl, data);
+            const response = await AjaxHandler.postRequest(props.postToUrl, data) as TResponse<UserPayload>;
             Log.info("YAY!!!");
             Log.trace(response);
             setState({
                 ...state,
                 message: response.message
             });
-            window.location = window.location;
+            window.location.href = response.extra ? response.extra.redirect : "/";
+            // window.location.reload();
         }
         catch (err) {
             Log.error(`NAY: ${err}`);
             setState({
                 ...state,
                 message: err.message,
-                valEmail: "",
                 valPassword: ""
             });
         }
@@ -93,7 +98,6 @@ export const LoginForm = (props: LoginFormProps) => {
                     return;
                 default:
                     setState({
-                        ...state,
                         valEmail: "",
                         valPassword: "",
                         message: err.message
@@ -111,14 +115,16 @@ export const LoginForm = (props: LoginFormProps) => {
             <FormGroupText
                 type={"email"} id={"login-id-email"} value={state.valEmail}
                 placeholder={"Enter Email"} onChange={onInputChange("valEmail")}
-                smallHelpId={"email-small-help"}
-                smallHelp={"We'll never share your email with anyone else. LIES!!"}
+                required={true}
             />
             <FormGroupText
                 type={"password"} id={"login-id-password"} value={state.valPassword}
                 placeholder={"Password"} onChange={onInputChange("valPassword")}
+                required={true}
             />
-            <button type="submit" className="btn">{props.textButton}</button>
+            <button type="submit" className="btn">
+                {props.textButton}
+            </button>
         </form>
     );
 };

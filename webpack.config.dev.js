@@ -141,12 +141,18 @@ class WebpackConfig {
             }),
             new webpack.HotModuleReplacementPlugin()
         ];
+
         if (fs.existsSync(this.common.envFilePath)) {
             const fromDotEnv = new webpack.DefinePlugin({
                 "process.env": JSON.stringify(dotenv.config({ path: this.common.envFilePath }).parsed)
             });
             base = [...base, fromDotEnv];
         }
+        else {
+            console.error(`Development Environment: ${this.common.envFilePath} file is not provided! => Provide the file!`);
+            process.exit(1);
+        }
+
         if (forBuildServerOnceToWatch) {
             return base;
         }
@@ -279,21 +285,16 @@ class WebpackConfig {
 module.exports = (env, argv) => {
     const webpackConfig = new WebpackConfig();
 
-    if (argv["stack"] === "client") {
-        const client = webpackConfig.setClientConfig(forBuild = false);
-        return client;
-    }
-    else if (argv["stack"] === "server-build-once") {
-        const server = webpackConfig.setServerConfig(forBuildServerOnceToWatch = true);
-        return server;
-    }
-    else if (argv["stack"] === "server") {
-        const server = webpackConfig.setServerConfig(forBuildServerOnceToWatch = false);
-        return server;
-    }
-    else { // build both
-        const client = webpackConfig.setClientConfig(forBuild = true);
-        const server = webpackConfig.setServerConfig(forBuildServerOnceToWatch = false);
-        return [client, server];
+    switch(argv["stack"]) {
+        case "client":
+            return webpackConfig.setClientConfig(forBuild = false);
+        case "server":
+            return webpackConfig.setServerConfig(forBuildServerOnceToWatch = false);
+        case "server-build-once":
+            return webpackConfig.setServerConfig(forBuildServerOnceToWatch = true);
+        default:
+            const client = webpackConfig.setClientConfig(forBuild = true);
+            const server = webpackConfig.setServerConfig(forBuildServerOnceToWatch = false);
+            return [client, server];
     }
 };

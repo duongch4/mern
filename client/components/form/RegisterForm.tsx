@@ -8,7 +8,7 @@ import { checkEmptyFields, checkPasswordLength, checkConfirmPassword } from "./F
 import { LoginFormProps, LoginFormStates } from "./LoginForm";
 
 import Log from "../../utils/Log";
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../contexts/ModalContext";
 
 export type RegisterFormProps = LoginFormProps;
 
@@ -54,7 +54,7 @@ export const RegisterForm = (props: RegisterFormProps) => {
                 ...state,
                 message: response.message
             });
-            window.location = window.location;
+            window.location.href = response.extra ? response.extra.redirect : "/";
         }
         catch (err) {
             Log.error(`NAY: ${err}`);
@@ -118,16 +118,17 @@ export const RegisterForm = (props: RegisterFormProps) => {
             <FormGroupText
                 type={"email"} id={"register-id-email"} value={state.valEmail}
                 placeholder={"Enter Email"} onChange={onInputChange("valEmail")}
-                smallHelpId={"email-small-help"}
-                smallHelp={"We'll never share your email with anyone else. LIES!!"}
+                required={true}
             />
             <FormGroupText
                 type={"password"} id={"register-id-password"} value={state.valPassword}
                 placeholder={"Password"} onChange={onInputChange("valPassword")}
+                required={true}
             />
             <FormGroupText
                 type={"password"} id={"register-id-confirmPassword"} value={state.valConfirmPassword}
                 placeholder={"Confirm Password"} onChange={onInputChange("valConfirmPassword")}
+                required={true}
             />
             <button type="submit" className="btn">{props.textButton}</button>
         </form>

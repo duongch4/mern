@@ -2,12 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { AuthModal } from "../modal/AuthModal";
-import { useUserAuthenticated } from "../../context/UserContext";
+import { useUserAuthenticated } from "../../contexts/UserContext";
 
-import { useModal } from "../../context/ModalContext";
+import { useModal } from "../../contexts/ModalContext";
 
-export type HeaderProps = {
-    renderTopRightCorner: () => React.ReactElement;
+type HeaderProps = {
+    TopRightCorner: () => React.ReactElement;
 };
 
 export const Header = (props: HeaderProps) => (
@@ -25,22 +25,22 @@ export const Header = (props: HeaderProps) => (
                 </button>
 
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav mr-auto">
+                    <ul className="navbar-nav mr-auto text-upper">
                         <li className="nav-item"><Link className="nav-link" to="/">Profile</Link></li>
                         <li className="nav-item"><Link className="nav-link" to="/">Projects</Link></li>
                         <li className="nav-item"><Link className="nav-link" to="/">Contact</Link></li>
                         <li className="nav-item"><Link className="nav-link" to="/status">Status</Link></li>
                     </ul>
                     <div className="dropdown-divider"></div>
-                    {props.renderTopRightCorner()}
+                    {props.TopRightCorner()}
                 </div>
             </div>
         </nav>
     </div>
 );
 
-export const renderLoggedIn = (): React.ReactElement => {
-    const user = useUserAuthenticated().state;
+export const AuthenticatedCorner = () => {
+    const { user } = useUserAuthenticated();
     return (
         <div className="navbar-nav">
             <li id="account" className="nav-item dropdown">
@@ -52,7 +52,7 @@ export const renderLoggedIn = (): React.ReactElement => {
                 </a>
                 <ul className="dropdown-menu">
                     {/* Use <Link> so that the page is not refreshed which causes constant not logged in state! */}
-                    <li className="nav-item"><Link className="nav-link" to="/account">My Account</Link></li>
+                    <li className="nav-item"><Link className="nav-link" to={`/users/${user.id}`}>My Account</Link></li>
                     <li className="dropdown-divider"></li>
                     <li className="nav-item"><a className="nav-link" href="/api/logout">Logout</a></li>
                 </ul>
@@ -61,7 +61,7 @@ export const renderLoggedIn = (): React.ReactElement => {
     );
 };
 
-export const renderNotLoggedIn = (): React.ReactElement => {
+export const UnauthenticatedCorner = () => {
     const { state, setState } = useModal();
     const toggleButton = () => setState({ isOpen: !state.isOpen });
     const id = "auth-modal";

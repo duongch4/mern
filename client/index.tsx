@@ -7,7 +7,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { ScrollToTop } from "./components/utils/ScrollToTop";
 import { MainRoutes } from "./pages/MainRoutes";
 import store from "./redux/store";
-import { ContextProviders } from "./context/context";
+import { ContextProviders } from "./contexts/context";
 
 import { disableConsoleWindowIfNotSupported } from "./utils/NoConsoleSupport";
 
