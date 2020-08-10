@@ -24,7 +24,7 @@ type AsyncAction<DataType> =
     | { type: AsyncActionType.FAILURE; error: any }
     | { type: AsyncActionType.SUCCESS; data: DataType };
 
-const useSafeDispatch = <A, >(dispatch: React.Dispatch<A>) => {
+const useSafeDispatch = <A>(dispatch: React.Dispatch<A>) => {
     const mounted = React.useRef(false);
     React.useLayoutEffect(() => {
         mounted.current = true;
@@ -38,7 +38,7 @@ const useSafeDispatch = <A, >(dispatch: React.Dispatch<A>) => {
     );
 };
 
-const reducer = <DataType, >(_state: AsyncState<DataType>, action: AsyncAction<DataType>): AsyncState<DataType> => {
+const reducer = <DataType>(_state: AsyncState<DataType>, action: AsyncAction<DataType>): AsyncState<DataType> => {
     switch (action.type) {
         case AsyncActionType.REQUEST:
             return { status: AsyncStatusType.LOADING };
@@ -51,9 +51,9 @@ const reducer = <DataType, >(_state: AsyncState<DataType>, action: AsyncAction<D
     }
 };
 
-const actionRequest = <DataType, >(): AsyncAction<DataType> => ({ type: AsyncActionType.REQUEST });
-const actionSuccess = <DataType, >(data: DataType): AsyncAction<DataType> => ({ type: AsyncActionType.SUCCESS, data });
-const actionFailure = <DataType, >(error: any): AsyncAction<DataType> => ({ type: AsyncActionType.FAILURE, error });
+const actionRequest = <DataType>(): AsyncAction<DataType> => ({ type: AsyncActionType.REQUEST });
+const actionSuccess = <DataType>(data: DataType): AsyncAction<DataType> => ({ type: AsyncActionType.SUCCESS, data });
+const actionFailure = <DataType>(error: any): AsyncAction<DataType> => ({ type: AsyncActionType.FAILURE, error });
 
 // Example usage:
 // const {data, error, status, run} = useAsync()
@@ -61,7 +61,7 @@ const actionFailure = <DataType, >(error: any): AsyncAction<DataType> => ({ type
 //   run(fetchPokemon(pokemonName))
 // }, [pokemonName, run])
 
-const useAsync = <DataType, >(initialState: AsyncState<DataType> = { status: AsyncStatusType.EMPTY }) => {
+const useAsync = <DataType>(initialState: AsyncState<DataType> = { status: AsyncStatusType.EMPTY }) => {
     const initialStateRef = React.useRef<AsyncState<DataType>>(initialState);
 
     const [state, dispatch] = React.useReducer<React.Reducer<AsyncState<DataType>, AsyncAction<DataType>>>(reducer, initialStateRef.current);
