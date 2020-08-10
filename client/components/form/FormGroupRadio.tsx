@@ -5,6 +5,7 @@ type FormGroupRadioProps = {
     currValue: string;
     values: string[];
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    required?: boolean;
 };
 
 const setInputFormControl = (props: FormGroupRadioProps): React.ReactElement[] => {
@@ -16,6 +17,7 @@ const setInputFormControl = (props: FormGroupRadioProps): React.ReactElement[] =
                     type="radio" name={props.label} value={value} data-toggle="radio"
                     checked={props.currValue.toLowerCase() === value.toLowerCase()}
                     onChange={props.onChange}
+                    required={props.required}
                 />
                 <label className="form-check-label">{value}</label>
             </div>

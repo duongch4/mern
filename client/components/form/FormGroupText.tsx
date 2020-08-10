@@ -8,6 +8,7 @@ type FormGroupProps = {
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     smallHelpDiv?: React.ReactElement;
     label?: string;
+    required?: boolean;
 };
 
 const setInputFormControl = (props: FormGroupProps): React.ReactElement => (
@@ -18,7 +19,7 @@ const setInputFormControl = (props: FormGroupProps): React.ReactElement => (
         value={props.value}
         placeholder={props.placeholder}
         onChange={props.onChange}
-        required
+        required={props.required}
     />
 );
 

@@ -118,14 +118,17 @@ export const RegisterForm = (props: RegisterFormProps) => {
             <FormGroupText
                 type={"email"} id={"register-id-email"} value={state.valEmail}
                 placeholder={"Enter Email"} onChange={onInputChange("valEmail")}
+                required={true}
             />
             <FormGroupText
                 type={"password"} id={"register-id-password"} value={state.valPassword}
                 placeholder={"Password"} onChange={onInputChange("valPassword")}
+                required={true}
             />
             <FormGroupText
                 type={"password"} id={"register-id-confirmPassword"} value={state.valConfirmPassword}
                 placeholder={"Confirm Password"} onChange={onInputChange("valConfirmPassword")}
+                required={true}
             />
             <button type="submit" className="btn">{props.textButton}</button>
         </form>
