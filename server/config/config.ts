@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 
 export const setLogger = () => {
-    if (!process.env["OVERNIGHT_LOGGER_MODE"]) {
+    if (!process.env.OVERNIGHT_LOGGER_MODE) {
         if (process.env.NODE_ENV === "production") {
             Logger.mode = "OFF" as LoggerModeOptions;
         }
@@ -13,7 +13,7 @@ export const setLogger = () => {
         }
     }
     else {
-        Logger.mode = process.env["OVERNIGHT_LOGGER_MODE"] as LoggerModeOptions;
+        Logger.mode = process.env.OVERNIGHT_LOGGER_MODE as LoggerModeOptions;
         if (Logger.mode === "FILE") {
             const logFileDir = path.join(__dirname, "log"); // inside dist/ directory
             const today = new Date().toDateString().split(" ").join("_");
@@ -28,7 +28,7 @@ export const setLogger = () => {
 };
 
 export const getSessionSecret = () => {
-    const SESSION_SECRET = process.env["SESSION_SECRET"];
+    const SESSION_SECRET = process.env.SESSION_SECRET;
     if (typeof SESSION_SECRET === "undefined") {
         Logger.Info("No client secret => Require Setting SESSION_SECRET environment variable.");
         process.exit(1);
@@ -37,7 +37,7 @@ export const getSessionSecret = () => {
 };
 
 export const getMongoDbUri = () => {
-    const MONGODB_URI = process.env["MONGODB_URI"];
+    const MONGODB_URI = process.env.MONGODB_URI;
     if (!MONGODB_URI) {
         Logger.Info("No mongo connection string => Require Setting MONGODB_URI environment variable.");
         process.exit(1);
