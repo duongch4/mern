@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { check, validationResult } from "express-validator";
 
-import { User, UserDoc, UserPayload } from "../models/User";
+import { User, UserDoc } from "../models/User";
 
 import { Controller, Post } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
@@ -61,15 +61,9 @@ export class Register {
                     if (errLogin) {
                         return next(errLogin);
                     }
-                    const payload: UserPayload = {
-                        id: user.id,
-                        email: user.email,
-                        facebook: user.facebook,
-                        profile: user.profile
-                    };
                     const message = "Registered Successfully";
                     const extra = { redirect: "/" };
-                    return res.status(200).json(getResponse200(payload, message, extra));
+                    return res.status(200).json(getResponse200(undefined, message, extra));
                 });
             });
         });

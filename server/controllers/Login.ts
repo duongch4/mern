@@ -28,6 +28,7 @@ export class Login {
                     const userPayload: UserPayload = {
                         id: user.id,
                         email: user.email,
+                        emailVerified: user.emailVerified,
                         facebook: user.facebook,
                         profile: user.profile
                     };
@@ -71,16 +72,9 @@ export class Login {
                 if (errLogin) {
                     return next(errLogin);
                 }
-                const payload = {
-                    id: user.id,
-                    email: user.email,
-                    facebook: user.facebook,
-                    profile: user.profile
-                };
                 const message = "Logged In Successfully";
                 const extra = { redirect: "/" };
-                Log.Imp(payload, true);
-                return res.status(200).json(getResponse200(payload, message, extra));
+                return res.status(200).json(getResponse200(undefined, message, extra));
             });
         })(req, res, next);
     }
