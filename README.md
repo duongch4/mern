@@ -6,6 +6,7 @@ MERN stack
 NODE_ENV=development
 MONGODB_URI=mongodb://localhost:27017/test
 SESSION_SECRET=someSecret
+APP_ROOT=http://localhost:3000
 ```
 
 # Note

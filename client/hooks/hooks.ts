@@ -1,0 +1,121 @@
+import React from "react";
+
+enum AsyncStatusType {
+    EMPTY = "EMPTY",
+    LOADING = "LOADING",
+    FAILURE = "FAILURE",
+    SUCCESS = "SUCCESS"
+}
+
+type AsyncState<DataType> =
+    | { status: AsyncStatusType.EMPTY }
+    | { status: AsyncStatusType.LOADING }
+    | { status: AsyncStatusType.FAILURE; error: any }
+    | { status: AsyncStatusType.SUCCESS; data: DataType };
+
+enum AsyncActionType {
+    REQUEST = "REQUEST",
+    SUCCESS = "SUCCESS",
+    FAILURE = "FAILURE"
+}
+
+type AsyncAction<DataType> =
+    | { type: AsyncActionType.REQUEST }
+    | { type: AsyncActionType.FAILURE; error: any }
+    | { type: AsyncActionType.SUCCESS; data: DataType };
+
+const useSafeDispatch = <A>(dispatch: React.Dispatch<A>) => {
+    const mounted = React.useRef(false);
+    React.useLayoutEffect(() => {
+        mounted.current = true;
+        return () => {
+            mounted.current = false;
+        };
+    }, []);
+    return React.useCallback(
+        (action: A) => (mounted.current ? dispatch(action) : void 0),
+        [dispatch],
+    );
+};
+
+const reducer = <DataType>(_state: AsyncState<DataType>, action: AsyncAction<DataType>): AsyncState<DataType> => {
+    switch (action.type) {
+        case AsyncActionType.REQUEST:
+            return { status: AsyncStatusType.LOADING };
+        case AsyncActionType.FAILURE:
+            return { status: AsyncStatusType.FAILURE, error: action.error };
+        case AsyncActionType.SUCCESS:
+            return { status: AsyncStatusType.SUCCESS, data: action.data };
+        default:
+            throw new Error("Not implemented action type");
+    }
+};
+
+const actionRequest = <DataType>(): AsyncAction<DataType> => ({ type: AsyncActionType.REQUEST });
+const actionSuccess = <DataType>(data: DataType): AsyncAction<DataType> => ({ type: AsyncActionType.SUCCESS, data });
+const actionFailure = <DataType>(error: any): AsyncAction<DataType> => ({ type: AsyncActionType.FAILURE, error });
+
+// Example usage:
+// const {data, error, status, run} = useAsync()
+// React.useEffect(() => {
+//   run(fetchPokemon(pokemonName))
+// }, [pokemonName, run])
+
+const useAsync = <DataType>(initialState: AsyncState<DataType> = { status: AsyncStatusType.EMPTY }) => {
+    const initialStateRef = React.useRef<AsyncState<DataType>>(initialState);
+
+    const [state, dispatch] = React.useReducer<React.Reducer<AsyncState<DataType>, AsyncAction<DataType>>>(reducer, initialStateRef.current);
+
+    const safeDisPatch = useSafeDispatch(dispatch);
+
+    const dispatchData = React.useCallback(
+        (data: DataType) => safeDisPatch(actionSuccess(data)),
+        [safeDisPatch],
+    );
+    const dispatchError = React.useCallback(
+        (error: any) => safeDisPatch(actionFailure(error)),
+        [safeDisPatch],
+    );
+    const dispatchReset = React.useCallback(
+        () => safeDisPatch(actionRequest()),
+        [safeDisPatch]
+    );
+
+    const run = React.useCallback(
+        (promise: Promise<any>) => {
+            if (!promise || !promise.then) {
+                throw new Error(
+                    `The argument passed to useAsync().run must be a promise. Maybe a function that's passed isn't returning anything?`,
+                );
+            }
+            safeDisPatch(actionRequest());
+            return promise.then(
+                (data: DataType) => {
+                    dispatchData(data);
+                    return data;
+                },
+                (error) => {
+                    dispatchError(error);
+                    return error;
+                },
+            );
+        },
+        [safeDisPatch, dispatchData, dispatchError],
+    );
+
+    return {
+        // using the same names that react-query uses for convenience
+        isEmpty: state.status === AsyncStatusType.EMPTY,
+        isLoading: state.status === AsyncStatusType.LOADING,
+        isError: state.status === AsyncStatusType.FAILURE,
+        isSuccess: state.status === AsyncStatusType.SUCCESS,
+
+        state,
+        dispatchData,
+        dispatchError,
+        dispatchReset,
+        run
+    };
+};
+
+export { useAsync, AsyncState, AsyncStatusType };

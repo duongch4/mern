@@ -4,11 +4,11 @@
     --navbar-background-color: #696969;
 
     --section-font-family: "Roboto Slab";
-    --section-margin-top: 0rem;
+    --section-margin-top: 0;
     --section-font-weight: 700;
 
-    --line-height: 1.75rem;
-    --letter-spacing: 0.02rem;
+    --line-height: 1.75;
+    --letter-spacing: 0.02;
 
     --headers-font-family: "Roboto Slab";
     --headers-font-weight: 700;
@@ -79,12 +79,6 @@ body #profile .header, #projects .header, #contact .header, #credit .header  {
     margin-top: var(--section-margin-top);
 }
 
-body a {
-    color: var(--main-color);
-    font-family: var(--link-font-family);
-    font-weight: var(--link-font-weight);
-}
-
 body .btn {
     $color: #DCAF68;
     background-color: var(--main-color);
@@ -113,8 +107,16 @@ body .btn {
     margin: 50px 0;
 }
 
-.font-weight-bold {
+.font-bold-700 {
     font-weight: 700;
+}
+
+.font-italic {
+    font-style: italic;
+}
+
+.text-underline {
+    text-decoration: underline !important;
 }
 
 .text-right {
@@ -123,4 +125,18 @@ body .btn {
 
 .text-center {
     text-align: center;
+}
+
+.text-upper {
+    text-transform: uppercase;
+}
+
+.a-bold {
+    color: var(--main-color);
+    font-family: var(--link-font-family);
+    font-weight: var(--link-font-weight);
+}
+
+a {
+    cursor: pointer;
 }

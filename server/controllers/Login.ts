@@ -5,15 +5,43 @@ import { IVerifyOptions } from "passport-local";
 import { Request, Response, NextFunction } from "express";
 import { check, validationResult } from "express-validator";
 
-import { UserDoc } from "../models/User";
+import { User, UserDoc, UserPayload } from "../models/User";
 
-import { Controller, Post } from "@overnightjs/core";
+import { Controller, Post, Get } from "@overnightjs/core";
 import { Logger as Log } from "@overnightjs/logger";
 import { NotFoundException } from "../communication/Exception";
-import { TResponse } from "../communication/TResponse";
+import { getResponse200 } from "../communication/TResponse";
+
+type UserWithId = Express.User & { id: any };
 
 @Controller("api/login")
 export class Login {
+
+    @Get("check")
+    public checkLogginStatus(req: Request, res: Response) {
+        if (req.user) {
+            User.findById((req.user as UserWithId).id, (err, user: UserDoc) => {
+                if (err) {
+                    return res.status(404).json(new NotFoundException("Unknown User!!!", err).response);
+                }
+                else {
+                    const userPayload: UserPayload = {
+                        id: user.id,
+                        email: user.email,
+                        emailVerified: user.emailVerified,
+                        facebook: user.facebook,
+                        profile: user.profile
+                    };
+                    const message = "Status: Logged In";
+                    return res.status(200).json(getResponse200(userPayload, message));
+                }
+            });
+        }
+        else {
+            const message = "Status: Not Logged In";
+            return res.status(200).json(getResponse200(undefined, message));
+        }
+    }
 
     @Post()
     public postLogin(req: Request, res: Response, next: NextFunction) {
@@ -44,16 +72,9 @@ export class Login {
                 if (errLogin) {
                     return next(errLogin);
                 }
-                const response: TResponse = {
-                    status: "OK",
-                    code: 200,
-                    payload: {
-                        redirect: "/"
-                    },
-                    message: "Logged In Successfully"
-                };
-                Log.Info(req.user, true);
-                return res.status(200).json(response);
+                const message = "Logged In Successfully";
+                const extra = { redirect: "/" };
+                return res.status(200).json(getResponse200(undefined, message, extra));
             });
         })(req, res, next);
     }

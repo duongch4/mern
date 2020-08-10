@@ -5,7 +5,8 @@ module.exports = {
     plugins: [
         "@typescript-eslint",
         "@typescript-eslint/tslint",
-        "react"
+        "react",
+        "react-hooks"
     ],
     env: {
         browser: true,
@@ -260,7 +261,11 @@ module.exports = {
         //         devDependencies: ["./client/**/test.tsx", "./server/**/test.ts"]
         //     }
         // ],
-        "react/prop-types": "off" // Is this incompatible with TS props type?
+        "react/prop-types": "off", // Is this incompatible with TS props type?
+
+        //----------------------------- React Hooks -----------------------------
+        "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+        "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
     },
     settings: {
         "import/parsers": {
