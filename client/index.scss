@@ -107,12 +107,16 @@ body .btn {
     margin: 50px 0;
 }
 
-.font-weight-bold {
+.font-bold-700 {
     font-weight: 700;
 }
 
 .font-italic {
     font-style: italic;
+}
+
+.text-underline {
+    text-decoration: underline !important;
 }
 
 .text-right {
@@ -131,4 +135,8 @@ body .btn {
     color: var(--main-color);
     font-family: var(--link-font-family);
     font-weight: var(--link-font-weight);
+}
+
+a {
+    cursor: pointer;
 }
