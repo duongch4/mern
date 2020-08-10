@@ -6,6 +6,7 @@ import { promisify } from "util";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import sendgridMailService from "@sendgrid/mail";
+import querystring from "querystring";
 
 import { Controller, Get, Put, Delete, ClassMiddleware } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
@@ -20,9 +21,9 @@ import { getResponse200 } from "../communication/TResponse";
 const randomByteAsync = promisify(crypto.randomBytes);
 const sendgridTransport = require("nodemailer-sendgrid-transport");
 
-@Controller("api/account")
+@Controller("api/users")
 @ClassMiddleware([isAuthenticated])
-export class Account {
+export class UserAccount {
 
     @Get(":id")
     public getAccount(req: Request, res: Response) {
@@ -61,7 +62,11 @@ export class Account {
                 return res.status(404).json(new NotFoundException(message).response);
             }
 
+            if (user.email !== req.body.email) {
+                user.emailVerified = false;
+            }
             user.email = req.body.email || "";
+
             this.updateProfile(user, req);
 
             user.save((err: WriteError) => {
@@ -158,6 +163,7 @@ export class Account {
                 return res.status(200).json(getResponse200(undefined, message));
             }
 
+
             if (!mailChecker.isValid(user.email)) {
                 return res.status(400).json(new BadRequestException("Invalid Email").response);
             }
@@ -184,7 +190,7 @@ export class Account {
                     subject: "Please verify your email address on MERN",
                     html: `Thank you for registering with MERN.\n\n
                     To verify your email address please click on the following link (or paste into your browser):\n\n
-                    <a href="${req.protocol}://${req.headers.host}/api/account/${req.params.id}/verify/${token}">Click here</a>.\n\n`
+                    <a href="${req.protocol}://${req.headers.host}/api/users/${req.params.id}/verify/${token}">Click here</a>.\n\n`
                 };
 
                 sendgridMailService.setApiKey(process.env.SENDGRID_API_KEY as string);
@@ -209,34 +215,41 @@ export class Account {
     public getVerifyEmailToken(req: Request, res: Response) {
         User.findById(req.params.id, (err, user: UserDoc) => {
             if (err) {
-                return res.status(404).json(new NotFoundException(err).response);
+                return res.redirect("/");
             }
+
+            const redirectWithMessage = (message: string) => {
+                const query = querystring.stringify({ "message": message });
+                res.redirect(`/users/${req.params.id}/verification?${query}`);
+            };
 
             if (user.emailVerified) {
                 const message = "The email address has been verified";
-                return res.status(200).json(getResponse200(undefined, message));
+                return redirectWithMessage(message);
             }
 
             const isHex = (token: string) => /^[0-9a-fA-F]+$/.test(token);
 
             if (req.params.token && !isHex(req.params.token)) {
-                return res.status(400).json(new BadRequestException("Requested token is invalid. Please send a verification email again.").response);
+                const message = "Requested token is invalid. Please send a verification email again.";
+                return redirectWithMessage(message);
             }
 
             if (req.params.token === user.emailVerificationToken) {
-                Logger.Imp("Great. This may work");
                 user.emailVerificationToken = "";
                 user.emailVerified = true;
                 user.save().then(
-                    () => res.status(200).json(getResponse200(user, "Email verified successfully")).redirect("/account")
+                    () => {
+                        const message = "Thank you for verifying your email address.";
+                        return redirectWithMessage(message);
+                    }
                 ).catch(
-                    (errUserSave) => res.status(500).json(new InternalServerException(errUserSave).response)
+                    (errSave) => redirectWithMessage(errSave)
                 );
             }
             else {
                 const message = "The verification link was invalid, or is for a different account";
-                Logger.Err(message);
-                return res.status(400).json(new BadRequestException(message).response);
+                return redirectWithMessage(message);
             }
         });
     }
