@@ -115,12 +115,12 @@ export const LoginForm = (props: LoginFormProps) => {
             <FormGroupText
                 type={"email"} id={"login-id-email"} value={state.valEmail}
                 placeholder={"Enter Email"} onChange={onInputChange("valEmail")}
-                smallHelpId={"email-small-help"}
-                smallHelp={"We'll never share your email with anyone else. LIES!!"}
+                required={true}
             />
             <FormGroupText
                 type={"password"} id={"login-id-password"} value={state.valPassword}
                 placeholder={"Password"} onChange={onInputChange("valPassword")}
+                required={true}
             />
             <button type="submit" className="btn">
                 {props.textButton}

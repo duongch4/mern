@@ -52,7 +52,7 @@ export const AuthenticatedCorner = () => {
                 </a>
                 <ul className="dropdown-menu">
                     {/* Use <Link> so that the page is not refreshed which causes constant not logged in state! */}
-                    <li className="nav-item"><Link className="nav-link" to="/account">My Account</Link></li>
+                    <li className="nav-item"><Link className="nav-link" to={`/users/${user.id}`}>My Account</Link></li>
                     <li className="dropdown-divider"></li>
                     <li className="nav-item"><a className="nav-link" href="/api/logout">Logout</a></li>
                 </ul>

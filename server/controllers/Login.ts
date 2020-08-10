@@ -10,7 +10,7 @@ import { User, UserDoc, UserPayload } from "../models/User";
 import { Controller, Post, Get } from "@overnightjs/core";
 import { Logger as Log } from "@overnightjs/logger";
 import { NotFoundException } from "../communication/Exception";
-import { TResponse } from "../communication/TResponse";
+import { getResponse200 } from "../communication/TResponse";
 
 type UserWithId = Express.User & { id: any };
 
@@ -28,27 +28,18 @@ export class Login {
                     const userPayload: UserPayload = {
                         id: user.id,
                         email: user.email,
+                        emailVerified: user.emailVerified,
                         facebook: user.facebook,
                         profile: user.profile
                     };
-                    const response: TResponse<UserPayload> = {
-                        status: "OK",
-                        code: 200,
-                        payload: userPayload,
-                        message: "Status: Logged In"
-                    };
-                    return res.status(200).json(response);
+                    const message = "Status: Logged In";
+                    return res.status(200).json(getResponse200(userPayload, message));
                 }
             });
         }
         else {
-            const response: TResponse<undefined> = {
-                status: "OK",
-                code: 200,
-                payload: undefined,
-                message: "Status: Not Logged In"
-            };
-            return res.status(200).json(response);
+            const message = "Status: Not Logged In";
+            return res.status(200).json(getResponse200(undefined, message));
         }
     }
 
@@ -81,22 +72,9 @@ export class Login {
                 if (errLogin) {
                     return next(errLogin);
                 }
-                const response: TResponse<UserPayload> = {
-                    status: "OK",
-                    code: 200,
-                    payload: {
-                        id: user.id,
-                        email: user.email,
-                        facebook: user.facebook,
-                        profile: user.profile
-                    },
-                    message: "Logged In Successfully",
-                    extra: {
-                        redirect: "/"
-                    }
-                };
-                Log.Imp(response.payload, true);
-                return res.status(200).json(response);
+                const message = "Logged In Successfully";
+                const extra = { redirect: "/" };
+                return res.status(200).json(getResponse200(undefined, message, extra));
             });
         })(req, res, next);
     }
