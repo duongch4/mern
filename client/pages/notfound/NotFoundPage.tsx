@@ -6,7 +6,7 @@ type MatchParams = {
 };
 
 export const NotFoundPage = (props: RouteComponentProps<MatchParams>) => (
-    <div id="not-found-page" className="container-fluid container-main text-center">
+    <div id="not-found-page" className="container-fluid container-main">
         <div className="pb-2 mt-2 mb-4">
             <h1>HTTP ERROR 404</h1>
             <h3>Requested Path: '{`${props.location.pathname.substr(0, 20)}...`}' Does Not Exist</h3>
