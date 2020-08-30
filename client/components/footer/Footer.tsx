@@ -1,7 +1,7 @@
 import React from "react";
 
 export const Footer = () => (
-    <nav className="footer navbar-dark bg-dark static-bottom text-center">
+    <nav className="footer navbar-dark bg-dark static-bottom">
         <div className="social-icons">
             <a className="social-icon" href="https://www.linkedin.com/in/bang-chi-duong/" target="_blank" rel="noopener noreferrer">
                 <i className="fab fa-linkedin social-icons" aria-hidden="true" />
