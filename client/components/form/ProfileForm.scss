@@ -1,0 +1,7 @@
+.email-verification {
+    font-weight: 500;
+    font-weight: var(--font-weight-500);
+    @media screen and (min-width: 576px) {
+        text-align: left;
+    }
+}

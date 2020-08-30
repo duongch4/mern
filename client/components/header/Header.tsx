@@ -11,46 +11,45 @@ type HeaderProps = {
 };
 
 export const Header = (props: HeaderProps) => (
-    <div id="navigation">
-        <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-            <div className="container">
-                <Link className="navbar-brand" to="/">BCD<span className="sr-only">(current)</span></Link>
+    <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+        <div className="container">
+            <Link className="navbar-brand" to="/">BCD<span className="sr-only">(current)</span></Link>
 
+            <div className="navbar__burger">
                 <button
                     className="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    data-target="#navbar__support-content" aria-controls="navbar__support-content"
                     aria-expanded="false" aria-label="Toggle navigation"
                 >
-                    <span className="fas fa-bars burger-icon" />
+                    <span className="fas fa-bars navbar__burger-icon" />
                 </button>
-
-                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav mr-auto text-upper">
-                        <li className="nav-item"><Link className="nav-link" to="/">Profile</Link></li>
-                        <li className="nav-item"><Link className="nav-link" to="/">Projects</Link></li>
-                        <li className="nav-item"><Link className="nav-link" to="/">Contact</Link></li>
-                        <li className="nav-item"><Link className="nav-link" to="/status">Status</Link></li>
-                    </ul>
-                    <div className="dropdown-divider"></div>
-                    {props.TopRightCorner()}
-                </div>
             </div>
-        </nav>
-    </div>
+            <div id="navbar__support-content" className="collapse navbar-collapse">
+                <ul className="navbar-nav mr-auto text-upper">
+                    <li className="nav-item"><Link className="nav-link" to="/">Profile</Link></li>
+                    <li className="nav-item"><Link className="nav-link" to="/">Projects</Link></li>
+                    <li className="nav-item"><Link className="nav-link" to="/">Contact</Link></li>
+                    <li className="nav-item"><Link className="nav-link" to="/status">Status</Link></li>
+                </ul>
+                <div className="dropdown-divider"></div>
+                {props.TopRightCorner()}
+            </div>
+        </div>
+    </nav>
 );
 
 export const AuthenticatedCorner = () => {
     const { user } = useUserAuthenticated();
     return (
-        <div className="navbar-nav">
-            <li id="account" className="nav-item dropdown">
+        <div className="navbar-nav navbar-nav--authenticated">
+            <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                    <img className="avatar" src={user.profile.picture}
+                    <img className="navbar-nav--authenticated-avatar" src={user.profile.picture}
                         alt={user.profile.firstName || user.email} />
                     <span>&emsp;</span>
                     <span>{user.profile.firstName || user.email}</span>
                 </a>
-                <ul className="dropdown-menu">
+                <ul className="dropdown-menu navbar-nav--authenticated-dropdown-menu">
                     {/* Use <Link> so that the page is not refreshed which causes constant not logged in state! */}
                     <li className="nav-item"><Link className="nav-link" to={`/users/${user.id}`}>My Account</Link></li>
                     <li className="dropdown-divider"></li>

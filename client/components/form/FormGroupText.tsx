@@ -28,7 +28,7 @@ export const FormGroupText = (props: FormGroupProps): React.ReactElement => {
     if (props.label) {
         return (
             <div className="form-group row">
-                <label htmlFor={props.id} className="col-sm-3 col-md-3 col-form-label font-weight-bold text-center">{props.label}</label>
+                <label htmlFor={props.id} className="col-sm-3 col-form-label">{props.label}</label>
                 <div className="col-sm-5 col-md-5">
                     {setInputFormControl(props)}
                 </div>

@@ -13,6 +13,26 @@ const fs = require("fs");
 const dotenv = require("dotenv");
 const webpackConstants = require("./webpack.config.const");
 
+/*
+* Custom plugin to trigger a compile when
+* saving files outside the bundle
+*/
+class WatchExternalFilesPlugin {
+    constructor(files=[]) {
+        this.files = files;
+    }
+    // Define `apply` as its prototype method which is supplied with compiler as its argument
+    apply(compiler) {
+        if (this.files.length === 0) return;
+        // Specify the event hook to attach to
+        compiler.plugin("after-compile", (compilation, callback) => {
+            this.files.forEach(path => compilation.contextDependencies.add(path));
+            callback();
+        });
+    }
+}
+
+
 class WebpackConfig {
 
     constructor() {
@@ -176,12 +196,15 @@ class WebpackConfig {
             open: true,
             port: 8000,
             hot: true,
-            contentBase: this.client.distPath,
+            // contentBase: this.client.srcPath,
             // watchContentBase: true, // watch the static shell html
             compress: true,
             historyApiFallback: true,
             clientLogLevel: "info", // debug, trace, silent, warn, error
             stats: "minimal", // errors-only, errors-warnings
+            watchOptions: {
+                ignored: ["node_modules/**"]
+            },
             proxy: [
                 {
                     context: ["/api/**"],
@@ -234,6 +257,7 @@ class WebpackConfig {
                     chunkfilename: "[id].css"
                 }),
                 new ImageminPlugin({}),
+                new WatchExternalFilesPlugin(["./client"])
             ],
             externals: {
                 "react": "React",
@@ -264,7 +288,10 @@ class WebpackConfig {
             optimization: {
                 minimizer: [this.setOptMinimizerUglifyJs()]
             },
-            plugins: this.setCommonPlugins(this.server.tsconfigPath, forBuildServerOnceToWatch),
+            plugins: [
+                ...this.setCommonPlugins(this.server.tsconfigPath, forBuildServerOnceToWatch),
+                new WatchExternalFilesPlugin(["./server"])
+            ],
             externals: [
                 nodeExternals({
                     whitelist: ["webpack/hot/poll?1000"]
@@ -285,7 +312,7 @@ class WebpackConfig {
 module.exports = (env, argv) => {
     const webpackConfig = new WebpackConfig();
 
-    switch(argv["stack"]) {
+    switch (argv["stack"]) {
         case "client":
             return webpackConfig.setClientConfig(forBuild = false);
         case "server":

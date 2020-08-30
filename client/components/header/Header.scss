@@ -1,58 +1,57 @@
 .navbar {
+    margin: 0;
     padding: 0;
     z-index: 1050;
 }
 
 .navbar-brand {
-    font-size: 2em;
+    font-size: 2rem;
     font-family: "Roboto";
     font-weight: 900;
 
-    font-size: var(--font-size-navbar-brand);
-    font-family: var(--headers-strong-font-family);
-    font-weight: var(--headers-strong-font-weight);
+    font-size: var(--font-size-header-brand);
+    font-family: var(--font-family-main);
+    font-weight: var(--font-weight-900);
+
+    &:hover {
+        color: #DCAF68;
+        color: var(--clr-main);
+    }
+    margin: 0;
+    padding: 0 1em;
 }
 
-.navbar .navbar-brand:hover {
-    color: #DCAF68;
-    color: var(--main-color);
-}
-
-.navbar .nav-link {
+.nav-link {
     font-family: "Roboto";
     font-weight: 500;
 
-    font-family: var(--body-strong-font-family);
-    font-weight: var(--body-strong-font-weight);
+    font-family: var(--font-family-main);
+    font-weight: var(--font-weight-500);
 }
 
-.navbar .navbar-nav li a:hover {
-    color: #DCAF68 !important;
-    color: var(--main-color) !important;
-    background-color: transparent !important;
+#navbar__support-content {
+    padding: 0 0.5em;
 }
 
-.navbar .navbar-nav li a:focus {
-    color: #DCAF68 !important;
-    color: var(--main-color) !important;
-    background-color: transparent !important;
+.navbar__burger {
+    padding: 0 1.5em;
 }
 
-.navbar .navbar-toggler {
+.navbar-toggler {
     background-color: #696969;
-    background-color: var(--navbar-background-color);
+    background-color: var(--clr-header-background);
 }
 
-.navbar .navbar-toggler .burger-icon {
+.navbar__burger-icon {
     color: #DCAF68;
-    color: var(--main-color);
+    color: var(--clr-main);
 }
 
-#account .avatar {
+.navbar-nav--authenticated-avatar {
     width: 30px;
     // border-radius: 50%;
 }
 
-.navbar-nav .dropdown-menu {
+.navbar-nav--authenticated-dropdown-menu {
     background-color: #414346!important;
 }
