@@ -15,13 +15,15 @@ export const Header = (props: HeaderProps) => (
         <div className="container">
             <Link className="navbar-brand" to="/">BCD<span className="sr-only">(current)</span></Link>
 
-            <button
-                className="navbar-toggler" type="button" data-toggle="collapse"
-                data-target="#navbar__support-content" aria-controls="navbar__support-content"
-                aria-expanded="false" aria-label="Toggle navigation"
-            >
-                <span className="fas fa-bars navbar__burger-icon" />
-            </button>
+            <div className="navbar__burger">
+                <button
+                    className="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbar__support-content" aria-controls="navbar__support-content"
+                    aria-expanded="false" aria-label="Toggle navigation"
+                >
+                    <span className="fas fa-bars navbar__burger-icon" />
+                </button>
+            </div>
             <div id="navbar__support-content" className="collapse navbar-collapse">
                 <ul className="navbar-nav mr-auto text-upper">
                     <li className="nav-item"><Link className="nav-link" to="/">Profile</Link></li>
