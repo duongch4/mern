@@ -78,16 +78,10 @@ h1, h2, h3, h4, h5, h6 {
 
 /* margin of every main container is the height of the navigation menu + 50px */
 .container-main {
-    margin: 70px 0;
-    padding: 25px 10%;
-}
-
-.container-main-no-padding {
-    margin: 50px 0;
-}
-
-.font-bold-700 {
-    font-weight: 700;
+    margin: 4em auto;
+    padding: 1em;
+    width: 80%;
+    max-width: 1140px;
 }
 
 .font-italic {
@@ -98,22 +92,8 @@ h1, h2, h3, h4, h5, h6 {
     text-decoration: underline !important;
 }
 
-.text-right {
-    text-align: right;
-}
-
-.text-center {
-    text-align: center;
-}
-
 .text-upper {
     text-transform: uppercase;
-}
-
-.a-bold {
-    color: var(--clr-main);
-    font-family: var(--font-family-highlight);
-    font-weight: var(--font-weight-700);
 }
 
 a {
