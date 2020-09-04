@@ -111,11 +111,11 @@ export const ProfileForm = () => {
     };
 
     const EmailVerification = () => (
-        <div className="offset-sm-3 col-sm-5 col-md-5 pl-3">
+        <div className="offset-sm-3 col-sm-5 pl-3">
             {
                 state.emailVerified ?
-                    <div className="font-italic text-success">Verified</div> :
-                    <div>
+                    <div className="email-verification font-italic text-success">Verified</div> :
+                    <div className="email-verification">
                         <span className="font-italic text-danger">Unverified: </span>
                         <a className="font-italic text-underline" onClick={verifyEmail}>Send verification email</a>
                     </div>

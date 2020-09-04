@@ -1,58 +1,47 @@
 .navbar {
+    margin: 0;
     padding: 0;
     z-index: 1050;
 }
 
 .navbar-brand {
-    font-size: 2em;
-    font-family: "Roboto";
-    font-weight: 900;
+    font-size: var(--font-size-header-brand, 2rem);
+    font-family: var(--font-family-main, "Roboto");
+    font-weight: var(--font-weight-900, 900);
 
-    font-size: var(--font-size-navbar-brand);
-    font-family: var(--headers-strong-font-family);
-    font-weight: var(--headers-strong-font-weight);
+    &:hover {
+        color: var(--clr-main, #DCAF68);
+    }
+    margin: 0;
+    padding: 0 1em;
 }
 
-.navbar .navbar-brand:hover {
-    color: #DCAF68;
-    color: var(--main-color);
+.nav-link {
+    font-family: var(--font-family-main, "Roboto");
+    font-weight: var(--font-weight-500, 500);
 }
 
-.navbar .nav-link {
-    font-family: "Roboto";
-    font-weight: 500;
-
-    font-family: var(--body-strong-font-family);
-    font-weight: var(--body-strong-font-weight);
+#navbar__support-content {
+    padding: 0 0.5em;
 }
 
-.navbar .navbar-nav li a:hover {
-    color: #DCAF68 !important;
-    color: var(--main-color) !important;
-    background-color: transparent !important;
+.navbar__burger {
+    padding: 0 1.5em;
 }
 
-.navbar .navbar-nav li a:focus {
-    color: #DCAF68 !important;
-    color: var(--main-color) !important;
-    background-color: transparent !important;
+.navbar-toggler {
+    background-color: var(--clr-header-background, #696969);
 }
 
-.navbar .navbar-toggler {
-    background-color: #696969;
-    background-color: var(--navbar-background-color);
+.navbar__burger-icon {
+    color: var(--clr-main, #DCAF68);
 }
 
-.navbar .navbar-toggler .burger-icon {
-    color: #DCAF68;
-    color: var(--main-color);
-}
-
-#account .avatar {
+.navbar-nav--authenticated-avatar {
     width: 30px;
     // border-radius: 50%;
 }
 
-.navbar-nav .dropdown-menu {
+.navbar-nav--authenticated-dropdown-menu {
     background-color: #414346!important;
 }
