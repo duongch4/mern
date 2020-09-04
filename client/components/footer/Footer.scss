@@ -4,18 +4,14 @@
 }
 
 .social-icon {
-    color: #DCAF68;
-    color: var(--clr-main);
+    color: var(--clr-main, #DCAF68);
     font-size: 1.5rem;
     padding: 0 0.2em;
 }
 
 .footer .navbar-text {
-    font-family: "Roboto";
-    font-weight: 500;
-
-    font-family: var(--font-family-main);
-    font-weight: var(--font-weight-500);
+    font-family: var(--font-family-main, "Roboto");
+    font-weight: var(--font-weight-500, 500);
 
     font-size: 0.7rem;
     color: white;

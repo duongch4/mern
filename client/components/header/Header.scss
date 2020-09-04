@@ -5,28 +5,20 @@
 }
 
 .navbar-brand {
-    font-size: 2rem;
-    font-family: "Roboto";
-    font-weight: 900;
-
-    font-size: var(--font-size-header-brand);
-    font-family: var(--font-family-main);
-    font-weight: var(--font-weight-900);
+    font-size: var(--font-size-header-brand, 2rem);
+    font-family: var(--font-family-main, "Roboto");
+    font-weight: var(--font-weight-900, 900);
 
     &:hover {
-        color: #DCAF68;
-        color: var(--clr-main);
+        color: var(--clr-main, #DCAF68);
     }
     margin: 0;
     padding: 0 1em;
 }
 
 .nav-link {
-    font-family: "Roboto";
-    font-weight: 500;
-
-    font-family: var(--font-family-main);
-    font-weight: var(--font-weight-500);
+    font-family: var(--font-family-main, "Roboto");
+    font-weight: var(--font-weight-500, 500);
 }
 
 #navbar__support-content {
@@ -38,13 +30,11 @@
 }
 
 .navbar-toggler {
-    background-color: #696969;
-    background-color: var(--clr-header-background);
+    background-color: var(--clr-header-background, #696969);
 }
 
 .navbar__burger-icon {
-    color: #DCAF68;
-    color: var(--clr-main);
+    color: var(--clr-main, #DCAF68);
 }
 
 .navbar-nav--authenticated-avatar {

@@ -1,6 +1,5 @@
 .col-form-label {
-    font-weight: 700;
-    font-weight: var(--font-weight-700);
+    font-weight: var(--font-weight-700, 700);
     @media screen and (min-width: 576px) {
         text-align: right;
     }
