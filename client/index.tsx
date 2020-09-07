@@ -9,6 +9,8 @@ import { MainRoutes } from "./pages/MainRoutes";
 import store from "./redux/store";
 import { ContextProviders } from "./contexts/context";
 
+import { Footer } from "./components/footer/Footer";
+
 import { disableConsoleWindowIfNotSupported } from "./utils/NoConsoleSupport";
 
 disableConsoleWindowIfNotSupported();
@@ -23,6 +25,7 @@ let render = () => {
                         <MainRoutes />
                     </ContextProviders>
                 </ScrollToTop>
+                <Footer />
             </Router>
         </Provider>
         ,
