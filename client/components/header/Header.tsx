@@ -11,7 +11,7 @@ type HeaderProps = {
 };
 
 export const Header = (props: HeaderProps) => (
-    <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
             <Link className="navbar-brand" to="/">BCD<span className="sr-only">(current)</span></Link>
 
@@ -35,7 +35,7 @@ export const Header = (props: HeaderProps) => (
                 {props.TopRightCorner()}
             </div>
         </div>
-    </nav>
+    </div>
 );
 
 export const AuthenticatedCorner = () => {

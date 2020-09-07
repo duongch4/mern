@@ -1,7 +1,7 @@
 import React from "react";
 
 export const Footer = () => (
-    <nav className="footer navbar-dark bg-dark static-bottom">
+    <div className="footer bg-dark">
         <div className="social-icons">
             <a className="social-icon" href="https://www.linkedin.com/in/bang-chi-duong/" target="_blank" rel="noopener noreferrer">
                 <i className="fab fa-linkedin social-icons" aria-hidden="true" />
@@ -14,8 +14,8 @@ export const Footer = () => (
             </a>
         </div>
 
-        <div className="navbar-text">
+        <div className="footer__navbar-text">
             Bang Chi Duong © {new Date().getFullYear()}. All Right Reserved
         </div>
-    </nav>
+    </div>
 );
