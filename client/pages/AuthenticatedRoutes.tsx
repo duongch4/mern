@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 
 import { Header, AuthenticatedCorner } from "../components/header/Header";
-import { Footer } from "../components/footer/Footer";
 
 import { HomePage } from "./home/HomePage";
 import { UserPage } from "./user/UserPage";
@@ -24,7 +23,6 @@ const AuthenticatedRoutes = () => (
             <Route path={`/status`} component={StatusPage} />
             <Route component={NotFoundPage} />
         </Switch>
-        <Footer />
     </div>
 );
 

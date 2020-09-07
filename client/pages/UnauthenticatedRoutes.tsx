@@ -8,7 +8,6 @@ import {
 import { ModalProvider } from "../contexts/ModalContext";
 
 import { Header, UnauthenticatedCorner } from "../components/header/Header";
-import { Footer } from "../components/footer/Footer";
 
 import { UnauthenticatedHomePage } from "./home/UnauthenticatedHomePage";
 import { StatusPage } from "./status/StatusPage";
@@ -23,7 +22,6 @@ const UnauthenticatedRoutes = () => (
                 <Route path={`/status`} component={StatusPage} />
                 <Route component={NotFoundPage} />
             </Switch>
-            <Footer />
         </div>
     </ModalProvider>
 );

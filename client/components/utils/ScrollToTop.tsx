@@ -13,7 +13,7 @@ class ScrollToTopComponent extends Component<any, any> {
 
     public render() {
         return (
-            <div>
+            <div id="scroll-to-top">
                 {this.props.children}
             </div>
         );
