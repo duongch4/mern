@@ -55,6 +55,7 @@ class WebpackConfig {
     setStyleLoader() {
         return {
             test: /\.s?css$/,
+            exclude: /node_modules/,
             use: [
                 MiniCssExtractPlugin.loader,
                 {
@@ -83,15 +84,38 @@ class WebpackConfig {
 
     setImageLoader() {
         return {
-            test: /\.(jpe?g|png|gif|svg)$/,
-            loader: "image-webpack-loader",
+            test: /\.(jpe?g|png|gif|svg|webp)$/,
+            use: [
+                {
+                    loader: "image-webpack-loader",
+                    options: {
+                        mozjpeg: {
+                            progressive: true,
+                            quality: 65
+                        },
+                        optipng: {
+                            enabled: false,
+                        },
+                        pngquant: {
+                            quality: [0.65, 0.90],
+                            speed: 4
+                        },
+                        gifsicle: {
+                            interlaced: false,
+                        },
+                        webp: {
+                            quality: 75
+                        }
+                    }
+                }
+            ],
             enforce: "pre"
         };
     }
 
     setFileLoaderClient() {
         return {
-            test: /\.(jpe?g|png|gif|svg|pdf)$/,
+            test: /\.(jpe?g|png|gif|svg|webp|pdf)$/,
             use: [
                 {
                     loader: "file-loader",

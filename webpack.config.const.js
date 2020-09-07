@@ -16,6 +16,11 @@ module.exports = Object.freeze({
         htmlTitle: "MERN",
         faviconPath: path.resolve(__dirname, "./client/assets/png/titleImg.png"),
 
+        assetsPath: path.resolve(__dirname, "./clients/assets"),
+        pngPath: path.resolve(__dirname, "./client/assets/png/*.png"),
+        jpgPath: path.resolve(__dirname, "./client/assets/jpg/*.jpg"),
+        webpDestPath: path.resolve(__dirname, "./client/assets/webp"),
+
         entryTsPath: path.resolve(__dirname, "./client/index.tsx"),
         entryHtmlPath: path.resolve(__dirname, "./client/index.html"),
         allStylingPaths: path.resolve(__dirname, "./client/**/*.scss"),
