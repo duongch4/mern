@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import homeImg from "../../assets/png/titleImg.png";
+import homeImgPng from "../../assets/png/titleImg.png";
+import homeImgWebp from "../../assets/webp/titleImg.webp";
 import { AjaxHandler, TGenericObject } from "../../utils/AjaxHandler";
 import { AlertMessage } from "../utils/AlertMessage";
 import { JsonPrint } from "../utils/JsonPrint";
@@ -24,8 +25,12 @@ export class Home extends Component<any, HomeState> {
         return (
             <div id="home" className="container-fluid">
                 <div className="row">
-                    <div className="col-md-4 img-sect d-none d-md-block">
-                        <img src={homeImg} className="home-img img-fluid" alt="HomeImage" />
+                    <div className="col-md-4 d-none d-md-block">
+                        <picture>
+                            <source srcSet={homeImgWebp} type="image/webp" className="home-img" />
+                            <img src={homeImgPng} className="home-img" alt="HomeImage" />
+                        </picture>
+
                         <input type="button" onClick={this.onClick1} value="Testing GraphQL: Simple Query" />
                         <input type="button" onClick={this.onClick2} value="Testing GraphQL: Aliases and Fragment" />
                         <input type="button" onClick={this.onClick3} value="Testing GraphQL: Mutation" />
