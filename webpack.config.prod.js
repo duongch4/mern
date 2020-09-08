@@ -5,6 +5,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // to extract css into it own file
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const ImageminPlugin = require("imagemin-webpack-plugin").default;
+const CompressionPlugin = require("compression-webpack-plugin");
+const zopfli = require('@gfx/zopfli');
+const zlib = require("zlib");
 const MomentLocalesPlugin = require("moment-locales-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin"); // to use with transpileOnly in ts-loader
 const nodeExternals = require("webpack-node-externals"); // for backend
@@ -150,6 +153,35 @@ class WebpackConfig {
         });
     }
 
+    setCompressionPlugin() {
+        return [
+            // "Zopfli" output better .gz than "gzip"
+            new CompressionPlugin({
+                test: /\.(js|css|html|jpe?g|png|gif|svg|webp|pdf)$/,
+                compressionOptions: {
+                    numiterations: 15,
+                },
+                algorithm(input, compressionOptions, callback) {
+                    return zopfli.gzip(input, compressionOptions, callback);
+                },
+                threshold: 1000,
+                // Compress all assets, including files with `0` bytes size
+                minRatio: Infinity
+            }),
+            new CompressionPlugin({
+                filename: "[path].br",
+                algorithm: "brotliCompress",
+                test: /\.(js|css|html|jpe?g|png|gif|svg|webp|pdf)$/,
+                compressionOptions: {
+                    level: 11, // zlib’s `level` option matches Brotli’s `BROTLI_PARAM_QUALITY` option.
+                },
+                threshold: 1000,
+                // Compress all assets, including files with `0` bytes size
+                minRatio: Infinity
+            }),
+        ];
+    }
+
     setCommonPlugins(tsconfigPath) {
         const plugins = [
             new webpack.optimize.OccurrenceOrderPlugin(),
@@ -163,7 +195,8 @@ class WebpackConfig {
                 async: false, // check type/lint first then build
                 // workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE // recommended - leave two CPUs free (one for build, one for system)
             }),
-            new webpack.EnvironmentPlugin(envkeys.ENV_KEYS) // For CI production process!!!
+            new webpack.EnvironmentPlugin(envkeys.ENV_KEYS), // For CI production process!!!
+            ...this.setCompressionPlugin()
         ];
         if (fs.existsSync(this.common.envFilePath)) {
             const fromDotEnv = new webpack.DefinePlugin({
