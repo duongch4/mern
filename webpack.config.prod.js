@@ -157,6 +157,7 @@ class WebpackConfig {
         return [
             // "Zopfli" output better .gz than "gzip"
             new CompressionPlugin({
+                // The images are probably already compressed by image-webpack-loader and imagein-webpack-plugin
                 test: /\.(js|css|html|jpe?g|png|gif|svg|webp|pdf)$/,
                 compressionOptions: {
                     numiterations: 15,
