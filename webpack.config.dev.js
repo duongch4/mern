@@ -2,6 +2,7 @@ const webpack = require("webpack"); // access built-in plugins
 const glob = require("glob"); // sync all css files, no need to import css
 const TerserPlugin = require("terser-webpack-plugin"); // minify js: ES6
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html template
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // to extract css into it own file
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const ImageminPlugin = require("imagemin-webpack-plugin").default;
@@ -111,7 +112,7 @@ class WebpackConfig {
 
     setImageLoader() {
         return {
-            test: /\.(jpe?g|png|gif|svg|webp)$/,
+            test: /\.(ico|jpe?g|png|gif|svg|webp)$/,
             use: [
                 {
                     loader: "image-webpack-loader",
@@ -142,7 +143,7 @@ class WebpackConfig {
 
     setFileLoaderClient() {
         return {
-            test: /\.(jpe?g|png|gif|svg|webp|pdf)$/,
+            test: /\.(ico|jpe?g|png|gif|svg|webp|pdf)$/,
             use: [
                 {
                     loader: "file-loader",
@@ -157,7 +158,7 @@ class WebpackConfig {
 
     setFileLoaderServer() {
         return {
-            test: /\.(jpe?g|png|gif|svg|pdf)$/,
+            test: /\.(ico|jpe?g|png|gif|svg|webp|pdf)$/,
             use: [
                 {
                     loader: "file-loader",
@@ -275,6 +276,11 @@ class WebpackConfig {
                     template: this.client.entryHtmlPath,
                     title: this.client.htmlTitle,
                     favicon: this.client.faviconPath
+                }),
+                new CopyWebpackPlugin({
+                    patterns: [
+                        this.client.manifestPwaPath
+                    ],
                 }),
                 new MiniCssExtractPlugin({
                     filename: "[name].css",
