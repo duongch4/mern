@@ -120,7 +120,7 @@ class WebpackConfig {
                 {
                     loader: "file-loader",
                     options: {
-                        name: "[hash]/[name].[ext]",
+                        name: "[contenthash:8]/[name].[ext]",
                         outputPath: "assets"
                     }
                 }
@@ -246,8 +246,8 @@ class WebpackConfig {
                     }
                 }),
                 new MiniCssExtractPlugin({
-                    filename: "[name].[hash].css",
-                    chunkfilename: "[id].[hash].css"
+                    filename: "[name].[contenthash:8].css",
+                    chunkfilename: "[id].[contenthash:8].css"
                 }),
                 new ImageminPlugin({}),
             ],

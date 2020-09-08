@@ -14,7 +14,7 @@ module.exports = Object.freeze({
         instanceName: "client",
 
         htmlTitle: "MERN",
-        faviconPath: path.resolve(__dirname, "./client/assets/png/titleImg.png"),
+        faviconPath: path.resolve(__dirname, "./client/assets/webp/titleImg.webp"),
 
         assetsPath: path.resolve(__dirname, "./clients/assets"),
         pngPath: path.resolve(__dirname, "./client/assets/png/*.png"),
