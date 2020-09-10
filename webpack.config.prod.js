@@ -211,6 +211,7 @@ class WebpackConfig {
     }
 
     setClientConfig() {
+        const manifest = require(this.client.manifestPwaPath);
         return {
             name: this.client.instanceName,
             target: "web",
@@ -266,7 +267,15 @@ class WebpackConfig {
                     inject: true,
                     template: this.client.entryHtmlPath,
                     title: this.client.htmlTitle,
-                    favicon: this.client.faviconPath,
+                    meta: {
+                        "viewport": "width=device-width, initial-scale=1",
+                        "theme-color": manifest["theme_color"],
+                        "description": manifest["description"],
+                        // iOS
+                        "mobile-web-app-capable": "yes",
+                        "mobile-web-app-status-bar-style": "default", // or black
+                        "mobile-web-app-title": this.client.htmlTitle
+                    },
                     hash: true,
                     minify: {
                         removeComments: true,
@@ -283,7 +292,13 @@ class WebpackConfig {
                 }),
                 new CopyWebpackPlugin({
                     patterns: [
-                        this.client.manifestPwaPath
+                        this.client.manifestPwaPath,
+                        this.client.serviceWorkerPath,
+                        this.client.offlineHtmlPath,
+                        {
+                            from: this.client.iconsSrcPath,
+                            to: this.client.iconsDistPath
+                        }
                     ],
                 }),
                 new MiniCssExtractPlugin({

@@ -3,20 +3,13 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
     <title><%= htmlWebpackPlugin.options.title %></title>
 
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#2A3443" />
-    <meta name="description" content="PWA MERN App" />
-
-    <!-- iOS -->
-    <link rel="apple-touch-icon" href="/favicon.png" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="mobile-web-app-status-bar-style" content="black" />
-    <meta name="mobile-web-app-title" content="PWA-MERN" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" href="./assets/icons/favicon_144x144.png" />
+    <link rel="apple-touch-icon" href="./assets/icons/favicon_144x144.png" />
 
     <!-- Latest compiled and minified CSS -->
 
@@ -27,10 +20,11 @@
     <!-- Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,500,900|Roboto+Slab:700">
 
-    <!-- To Be Added Icon & CSS -->
+    <!-- To Be Added Meta-tags (for PWA) and CSS -->
 </head>
 
 <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
 
     <!-- JavaScript and dependencies -->
@@ -56,6 +50,16 @@
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.14/lodash.min.js"
         integrity="sha256-SmtwmVvHBrVWUXiJck4F7jgN2ioB+T2KPIBueY8S4SE=" crossorigin="anonymous"></script>
 
+    <!-- Service Worker for PWA -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("./serviceWorker.js")
+                    .then((reg) => console.log("Success: ", reg.scope))
+                    .catch((err) => console.log("Error: ", err))
+            })
+        }
+    </script>
     <!-- To Be Added Bundled Files-->
 </body>
 
