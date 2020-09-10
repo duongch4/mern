@@ -14,15 +14,19 @@ module.exports = Object.freeze({
         instanceName: "client",
 
         htmlTitle: "MERN",
-        faviconPath: path.resolve(__dirname, "./client/assets/png/titleImg.png"),
+        iconsSrcPath: path.resolve(__dirname, "./client/assets/icons"),
+        iconsDistPath: path.resolve(__dirname, "./dist/client/assets/icons"),
 
         assetsPath: path.resolve(__dirname, "./clients/assets"),
-        pngPath: path.resolve(__dirname, "./client/assets/png/*.png"),
-        jpgPath: path.resolve(__dirname, "./client/assets/jpg/*.jpg"),
+        pngPath: path.posix.join(path.resolve(__dirname, "./client/assets/png").replace(/\\/g, "/"), "*.png"), // "*.png" is a glob pattern => should use forward-slashes "/"
+        jpgPath: path.posix.join(path.resolve(__dirname, "./client/assets/jpg").replace(/\\/g, "/"), "*.jpg"),
         webpDestPath: path.resolve(__dirname, "./client/assets/webp"),
 
         entryTsPath: path.resolve(__dirname, "./client/index.tsx"),
         entryHtmlPath: path.resolve(__dirname, "./client/index.html"),
+        manifestPwaPath: path.resolve(__dirname, "./client/manifest.json"),
+        serviceWorkerPath: path.resolve(__dirname, "./client/serviceWorker.js"),
+        offlineHtmlPath: path.resolve(__dirname, "./client/offline.html"),
         allStylingPaths: path.resolve(__dirname, "./client/**/*.scss"),
         distPath: path.resolve(__dirname, "./dist/client"),
 

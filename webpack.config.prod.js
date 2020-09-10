@@ -2,9 +2,13 @@ const webpack = require("webpack"); // access built-in plugins
 const glob = require("glob"); // sync all css files, no need to import css
 const TerserPlugin = require("terser-webpack-plugin"); // minify js: ES6
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html template
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // to extract css into it own file
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const ImageminPlugin = require("imagemin-webpack-plugin").default;
+const CompressionPlugin = require("compression-webpack-plugin");
+const zopfli = require('@gfx/zopfli');
+const zlib = require("zlib");
 const MomentLocalesPlugin = require("moment-locales-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin"); // to use with transpileOnly in ts-loader
 const nodeExternals = require("webpack-node-externals"); // for backend
@@ -84,7 +88,7 @@ class WebpackConfig {
 
     setImageLoader() {
         return {
-            test: /\.(jpe?g|png|gif|svg|webp)$/,
+            test: /\.(ico|jpe?g|png|gif|svg|webp)$/,
             use: [
                 {
                     loader: "image-webpack-loader",
@@ -115,12 +119,12 @@ class WebpackConfig {
 
     setFileLoaderClient() {
         return {
-            test: /\.(jpe?g|png|gif|svg|webp|pdf)$/,
+            test: /\.(ico|jpe?g|png|gif|svg|webp|pdf)$/,
             use: [
                 {
                     loader: "file-loader",
                     options: {
-                        name: "[hash]/[name].[ext]",
+                        name: "[contenthash:8]/[name].[ext]",
                         outputPath: "assets"
                     }
                 }
@@ -130,7 +134,7 @@ class WebpackConfig {
 
     setFileLoaderServer() {
         return {
-            test: /\.(jpe?g|png|gif|svg|pdf)$/,
+            test: /\.(ico|jpe?g|png|gif|svg|webp|pdf)$/,
             use: [
                 {
                     loader: "file-loader",
@@ -150,6 +154,37 @@ class WebpackConfig {
         });
     }
 
+    setCompressionPlugin() {
+        const testExt = /\.(js|css|html|ico|jpe?g|png|gif|svg|webp|pdf)$/;
+        return [
+            // "Zopfli" output better .gz than "gzip"
+            new CompressionPlugin({
+                // The images are probably already compressed by image-webpack-loader and imagein-webpack-plugin
+                test: testExt,
+                compressionOptions: {
+                    numiterations: 15,
+                },
+                algorithm(input, compressionOptions, callback) {
+                    return zopfli.gzip(input, compressionOptions, callback);
+                },
+                threshold: 1000,
+                // Compress all assets, including files with `0` bytes size
+                minRatio: Infinity
+            }),
+            new CompressionPlugin({
+                filename: "[path].br",
+                algorithm: "brotliCompress",
+                test: testExt,
+                compressionOptions: {
+                    level: 11, // zlib’s `level` option matches Brotli’s `BROTLI_PARAM_QUALITY` option.
+                },
+                threshold: 1000,
+                // Compress all assets, including files with `0` bytes size
+                minRatio: Infinity
+            }),
+        ];
+    }
+
     setCommonPlugins(tsconfigPath) {
         const plugins = [
             new webpack.optimize.OccurrenceOrderPlugin(),
@@ -163,7 +198,8 @@ class WebpackConfig {
                 async: false, // check type/lint first then build
                 // workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE // recommended - leave two CPUs free (one for build, one for system)
             }),
-            new webpack.EnvironmentPlugin(envkeys.ENV_KEYS) // For CI production process!!!
+            new webpack.EnvironmentPlugin(envkeys.ENV_KEYS), // For CI production process!!!
+            ...this.setCompressionPlugin()
         ];
         if (fs.existsSync(this.common.envFilePath)) {
             const fromDotEnv = new webpack.DefinePlugin({
@@ -175,6 +211,7 @@ class WebpackConfig {
     }
 
     setClientConfig() {
+        const manifest = require(this.client.manifestPwaPath);
         return {
             name: this.client.instanceName,
             target: "web",
@@ -230,7 +267,15 @@ class WebpackConfig {
                     inject: true,
                     template: this.client.entryHtmlPath,
                     title: this.client.htmlTitle,
-                    favicon: this.client.faviconPath,
+                    meta: {
+                        "viewport": "width=device-width, initial-scale=1",
+                        "theme-color": manifest["theme_color"],
+                        "description": manifest["description"],
+                        // iOS
+                        "mobile-web-app-capable": "yes",
+                        "mobile-web-app-status-bar-style": "default", // or black
+                        "mobile-web-app-title": this.client.htmlTitle
+                    },
                     hash: true,
                     minify: {
                         removeComments: true,
@@ -245,9 +290,20 @@ class WebpackConfig {
                         minifyURLs: true,
                     }
                 }),
+                new CopyWebpackPlugin({
+                    patterns: [
+                        this.client.manifestPwaPath,
+                        this.client.serviceWorkerPath,
+                        this.client.offlineHtmlPath,
+                        {
+                            from: this.client.iconsSrcPath,
+                            to: this.client.iconsDistPath
+                        }
+                    ],
+                }),
                 new MiniCssExtractPlugin({
-                    filename: "[name].[hash].css",
-                    chunkfilename: "[id].[hash].css"
+                    filename: "[name].[contenthash:8].css",
+                    chunkfilename: "[id].[contenthash:8].css"
                 }),
                 new ImageminPlugin({}),
             ],
