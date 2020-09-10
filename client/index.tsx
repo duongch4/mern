@@ -20,11 +20,10 @@ let render = () => {
     ReactDOM.render(
         <Provider store={store}>
             <Router>
-                <ScrollToTop>
-                    <ContextProviders>
-                        <MainRoutes />
-                    </ContextProviders>
-                </ScrollToTop>
+                <ScrollToTop />
+                <ContextProviders>
+                    <MainRoutes />
+                </ContextProviders>
                 <Footer />
             </Router>
         </Provider>
@@ -53,7 +52,8 @@ if (module.hot) {
         }
     };
 
-    module.hot.accept("./pages/MainRoutes", () => render());
+    module.hot.accept("./index", () => render());
+    // module.hot.accept("./pages/MainRoutes", () => render());
 }
 
 render();

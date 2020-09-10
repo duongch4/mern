@@ -2,6 +2,7 @@ const webpack = require("webpack"); // access built-in plugins
 const glob = require("glob"); // sync all css files, no need to import css
 const TerserPlugin = require("terser-webpack-plugin"); // minify js: ES6
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // to build from html template
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // to extract css into it own file
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const ImageminPlugin = require("imagemin-webpack-plugin").default;
@@ -87,7 +88,7 @@ class WebpackConfig {
 
     setImageLoader() {
         return {
-            test: /\.(jpe?g|png|gif|svg|webp)$/,
+            test: /\.(ico|jpe?g|png|gif|svg|webp)$/,
             use: [
                 {
                     loader: "image-webpack-loader",
@@ -118,7 +119,7 @@ class WebpackConfig {
 
     setFileLoaderClient() {
         return {
-            test: /\.(jpe?g|png|gif|svg|webp|pdf)$/,
+            test: /\.(ico|jpe?g|png|gif|svg|webp|pdf)$/,
             use: [
                 {
                     loader: "file-loader",
@@ -133,7 +134,7 @@ class WebpackConfig {
 
     setFileLoaderServer() {
         return {
-            test: /\.(jpe?g|png|gif|svg|pdf)$/,
+            test: /\.(ico|jpe?g|png|gif|svg|webp|pdf)$/,
             use: [
                 {
                     loader: "file-loader",
@@ -154,11 +155,12 @@ class WebpackConfig {
     }
 
     setCompressionPlugin() {
+        const testExt = /\.(js|css|html|ico|jpe?g|png|gif|svg|webp|pdf)$/;
         return [
             // "Zopfli" output better .gz than "gzip"
             new CompressionPlugin({
                 // The images are probably already compressed by image-webpack-loader and imagein-webpack-plugin
-                test: /\.(js|css|html|jpe?g|png|gif|svg|webp|pdf)$/,
+                test: testExt,
                 compressionOptions: {
                     numiterations: 15,
                 },
@@ -172,7 +174,7 @@ class WebpackConfig {
             new CompressionPlugin({
                 filename: "[path].br",
                 algorithm: "brotliCompress",
-                test: /\.(js|css|html|jpe?g|png|gif|svg|webp|pdf)$/,
+                test: testExt,
                 compressionOptions: {
                     level: 11, // zlib’s `level` option matches Brotli’s `BROTLI_PARAM_QUALITY` option.
                 },
@@ -209,6 +211,7 @@ class WebpackConfig {
     }
 
     setClientConfig() {
+        const manifest = require(this.client.manifestPwaPath);
         return {
             name: this.client.instanceName,
             target: "web",
@@ -264,7 +267,15 @@ class WebpackConfig {
                     inject: true,
                     template: this.client.entryHtmlPath,
                     title: this.client.htmlTitle,
-                    favicon: this.client.faviconPath,
+                    meta: {
+                        "viewport": "width=device-width, initial-scale=1",
+                        "theme-color": manifest["theme_color"],
+                        "description": manifest["description"],
+                        // iOS
+                        "mobile-web-app-capable": "yes",
+                        "mobile-web-app-status-bar-style": "default", // or black
+                        "mobile-web-app-title": this.client.htmlTitle
+                    },
                     hash: true,
                     minify: {
                         removeComments: true,
@@ -278,6 +289,17 @@ class WebpackConfig {
                         minifyCSS: true,
                         minifyURLs: true,
                     }
+                }),
+                new CopyWebpackPlugin({
+                    patterns: [
+                        this.client.manifestPwaPath,
+                        this.client.serviceWorkerPath,
+                        this.client.offlineHtmlPath,
+                        {
+                            from: this.client.iconsSrcPath,
+                            to: this.client.iconsDistPath
+                        }
+                    ],
                 }),
                 new MiniCssExtractPlugin({
                     filename: "[name].[contenthash:8].css",
