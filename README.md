@@ -1,13 +1,39 @@
 # mern
 MERN stack
 
-# Setup .env
+# Setup .env / .env.dev
 ```
-NODE_ENV=development
 MONGODB_URI=mongodb://localhost:27017/test
 SESSION_SECRET=someSecret
+OVERNIGHT_LOGGER_MODE=OFF
 APP_ROOT=http://localhost:3000
+SENDGRID_API_KEY=<Your-Key>
 ```
+
+# Installation
+```
+npm i
+```
+
+# Watch both server and client
+```
+npm run watch
+```
+Should auto open a new tab on your default browser for you
+
+# Build for development
+```
+npm run build-dev
+npm run serve
+```
+Open browser at "http://localhost:3000"
+
+# Build for production
+```
+npm run build
+npm run serve
+```
+Open browser at "http://localhost:3000"
 
 # Note
 After `build-*`, we cannot open static `client/index.html` as a standalone file since it will not recognise the paths to `js/css` files, have to use `webpack-dev-server` in `watch` mode so that there is a single truth of `root`
