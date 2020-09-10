@@ -1,5 +1,8 @@
-# mern
+# MERN
 MERN stack
+
+# Live Web App
+https://mern-00.azurewebsites.net
 
 # Setup .env / .env.dev
 ```

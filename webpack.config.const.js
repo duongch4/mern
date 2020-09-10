@@ -13,7 +13,8 @@ module.exports = Object.freeze({
     client: {
         instanceName: "client",
 
-        htmlTitle: "MERN",
+        htmlTitle: "MERN-PWA",
+
         iconsSrcPath: path.resolve(__dirname, "./client/assets/icons"),
         iconsDistPath: path.resolve(__dirname, "./dist/client/assets/icons"),
 

@@ -1,7 +1,7 @@
 {
     "name": "full-stack",
     "version": "1.0.0",
-    "description": "T-MERN App",
+    "description": "MERN-PWA",
     "main": "dist/server.js",
     "scripts": {
         "build-prod": "npm ci && npm run build && npm run build-types && npm prune --production",
@@ -37,7 +37,8 @@
         "React",
         "Redux",
         "NodeJS",
-        "GraphQL"
+        "GraphQL",
+        "PWA"
     ],
     "author": "DBC",
     "license": "ISC",
