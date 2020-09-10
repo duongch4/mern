@@ -1,13 +1,13 @@
 {
-    "short_name": "PWA MERN",
-    "name": "PWA MERN",
-    "description": "A PWA MERN Application",
+    "name": "MERN-PWA",
+    "short_name": "MERN-PWA",
+    "description": "A MERN-PWA Application",
     "icons": [
         {
             "src": "/assets/icons/favicon_144x144.png",
             "sizes": "144x144",
             "type": "image/png",
-            "purpose": "maskable"
+            "purpose": "any maskable"
         },
         {
             "src": "/assets/icons/favicon_192x192.png",
