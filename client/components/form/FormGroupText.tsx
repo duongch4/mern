@@ -24,7 +24,7 @@ const setInputFormControl = (props: FormGroupProps): React.ReactElement => (
 );
 
 export const FormGroupText = (props: FormGroupProps): React.ReactElement => {
-    const SmallHelpDiv = () => props.smallHelpDiv ? props.smallHelpDiv : <div>{undefined}</div>;
+    const SmallHelpDiv = () => props.smallHelpDiv ? props.smallHelpDiv : <div style={{marginBottom: "1em"}} />;
     if (props.label) {
         return (
             <div className="form-group row">
