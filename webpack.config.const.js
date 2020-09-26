@@ -26,7 +26,7 @@ module.exports = Object.freeze({
         entryTsPath: path.resolve(__dirname, "./client/index.tsx"),
         entryHtmlPath: path.resolve(__dirname, "./client/index.html"),
         manifestPwaPath: path.resolve(__dirname, "./client/manifest.json"),
-        serviceWorkerPath: path.resolve(__dirname, "./client/serviceWorker.js"),
+        serviceWorkerPath: path.resolve(__dirname, "./client/sw.js"),
         offlineHtmlPath: path.resolve(__dirname, "./client/offline.html"),
         allStylingPaths: path.resolve(__dirname, "./client/**/*.scss"),
         distPath: path.resolve(__dirname, "./dist/client"),

@@ -50,16 +50,6 @@
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.14/lodash.min.js"
         integrity="sha256-SmtwmVvHBrVWUXiJck4F7jgN2ioB+T2KPIBueY8S4SE=" crossorigin="anonymous"></script>
 
-    <!-- Service Worker for PWA -->
-    <script>
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("./serviceWorker.js")
-                    .then((reg) => console.log("Success: ", reg.scope))
-                    .catch((err) => console.log("Error: ", err))
-            })
-        }
-    </script>
     <!-- To Be Added Bundled Files-->
 </body>
 

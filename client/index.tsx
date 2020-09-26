@@ -12,8 +12,10 @@ import { ContextProviders } from "./contexts/context";
 import { Footer } from "./components/footer/Footer";
 
 import { disableConsoleWindowIfNotSupported } from "./utils/NoConsoleSupport";
+import { loadServiceWorker } from "./serviceworker/LoadingServiceWorker";
 
 disableConsoleWindowIfNotSupported();
+loadServiceWorker();
 
 const rootElem = document.getElementById("root");
 let render = () => {
