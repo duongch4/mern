@@ -1,14 +1,14 @@
-const Imagein = require("imagemin");
+const Imagemin = require("imagemin");
 const ImageminWebp = require("imagemin-webp");
 const webpackConstants = require("./webpack.config.const");
 
 const getWebp = async () => {
-    await Imagein([webpackConstants.client.pngPath], {
+    await Imagemin([webpackConstants.client.pngPath], {
         destination: webpackConstants.client.webpDestPath,
         plugins: [ImageminWebp({ lossless: true })],
     });
 
-    await Imagein([webpackConstants.client.jpgPath], {
+    await Imagemin([webpackConstants.client.jpgPath], {
         destination: webpackConstants.client.webpDestPath,
         plugins: [ImageminWebp({ quality: 65 })],
     });
