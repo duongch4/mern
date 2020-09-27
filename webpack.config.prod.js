@@ -88,7 +88,7 @@ class WebpackConfig {
 
     setImageLoader() {
         return {
-            test: /\.(ico|jpe?g|png|gif|svg|webp)$/,
+            test: webpackConstants.client.imagesExts,
             use: [
                 {
                     loader: "image-webpack-loader",
@@ -119,7 +119,7 @@ class WebpackConfig {
 
     setFileLoaderClient() {
         return {
-            test: /\.(ico|jpe?g|png|gif|svg|webp|pdf)$/,
+            test: webpackConstants.client.assetsExts,
             use: [
                 {
                     loader: "file-loader",
@@ -134,7 +134,7 @@ class WebpackConfig {
 
     setFileLoaderServer() {
         return {
-            test: /\.(ico|jpe?g|png|gif|svg|webp|pdf)$/,
+            test: webpackConstants.server.assetsExts,
             use: [
                 {
                     loader: "file-loader",
@@ -155,12 +155,11 @@ class WebpackConfig {
     }
 
     setCompressionPlugin() {
-        const testExt = /\.(js|css|html|ico|jpe?g|png|gif|svg|webp|pdf)$/;
         return [
             // "Zopfli" output better .gz than "gzip"
             new CompressionPlugin({
                 // The images are probably already compressed by image-webpack-loader and imagein-webpack-plugin
-                test: testExt,
+                test: webpackConstants.common.compressionExts,
                 compressionOptions: {
                     numiterations: 15,
                 },
@@ -172,9 +171,9 @@ class WebpackConfig {
                 minRatio: Infinity
             }),
             new CompressionPlugin({
-                filename: "[path].br",
+                filename: "[path][base].br",
                 algorithm: "brotliCompress",
-                test: testExt,
+                test: webpackConstants.common.compressionExts,
                 compressionOptions: {
                     level: 11, // zlib’s `level` option matches Brotli’s `BROTLI_PARAM_QUALITY` option.
                 },
@@ -307,12 +306,12 @@ class WebpackConfig {
                 }),
                 new ImageminPlugin({}),
             ],
-            externals: {
-                "react": "React",
-                "react-dom": "ReactDOM",
-                "react-dom/server": "ReactDOMServer",
-                "lodash": "_"
-            },
+            // externals: {
+            //     "react": "React",
+            //     "react-dom": "ReactDOM",
+            //     "react-dom/server": "ReactDOMServer",
+            //     "lodash": "_"
+            // },
         };
     }
 

@@ -7,7 +7,8 @@ module.exports = Object.freeze({
 
     common: {
         babelConfigPath: path.resolve(__dirname, "babel.config.js"),
-        nodeModulesPath: path.resolve(__dirname, "node_modules")
+        nodeModulesPath: path.resolve(__dirname, "node_modules"),
+        compressionExts: /\.(js|css|html|ico|jpe?g|png|gif|svg|webp|pdf)$/,
     },
 
     client: {
@@ -19,6 +20,8 @@ module.exports = Object.freeze({
         iconsDistPath: path.resolve(__dirname, "./dist/client/assets/icons"),
 
         assetsPath: path.resolve(__dirname, "./clients/assets"),
+        assetsExts: /\.(ico|jpe?g|png|gif|svg|webp|pdf|mp4|7z)$/,
+        imagesExts: /\.(ico|jpe?g|png|gif|svg|webp)$/,
         pngPath: path.posix.join(path.resolve(__dirname, "./client/assets/png").replace(/\\/g, "/"), "*.png"), // "*.png" is a glob pattern => should use forward-slashes "/"
         jpgPath: path.posix.join(path.resolve(__dirname, "./client/assets/jpg").replace(/\\/g, "/"), "*.jpg"),
         webpDestPath: path.resolve(__dirname, "./client/assets/webp"),
@@ -49,6 +52,8 @@ module.exports = Object.freeze({
         distPath: path.resolve(__dirname, "./dist"),
 
         tsconfigPath: path.resolve(__dirname, "./tsconfig.server.json"),
+
+        assetsExts: /\.(ico|jpe?g|png|gif|svg|webp|pdf|mp4|7z)$/,
 
         toServerFile: "server.js"
     }

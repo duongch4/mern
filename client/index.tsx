@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import { ScrollToTop } from "./components/utils/ScrollToTop";
+import { ScrollToTop } from "./components/scrolltotop/ScrollToTop";
 import { MainRoutes } from "./pages/MainRoutes";
 import store from "./redux/store";
 import { ContextProviders } from "./contexts/context";
@@ -55,7 +55,6 @@ if (module.hot) {
     };
 
     module.hot.accept("./index", () => render());
-    // module.hot.accept("./pages/MainRoutes", () => render());
 }
 
 render();

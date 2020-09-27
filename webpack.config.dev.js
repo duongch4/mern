@@ -112,7 +112,7 @@ class WebpackConfig {
 
     setImageLoader() {
         return {
-            test: /\.(ico|jpe?g|png|gif|svg|webp)$/,
+            test: webpackConstants.client.imagesExts,
             use: [
                 {
                     loader: "image-webpack-loader",
@@ -143,7 +143,7 @@ class WebpackConfig {
 
     setFileLoaderClient() {
         return {
-            test: /\.(ico|jpe?g|png|gif|svg|webp|pdf)$/,
+            test: webpackConstants.client.assetsExts,
             use: [
                 {
                     loader: "file-loader",
@@ -158,7 +158,7 @@ class WebpackConfig {
 
     setFileLoaderServer() {
         return {
-            test: /\.(ico|jpe?g|png|gif|svg|webp|pdf)$/,
+            test: webpackConstants.server.assetsExts,
             use: [
                 {
                     loader: "file-loader",
@@ -304,12 +304,12 @@ class WebpackConfig {
                 new ImageminPlugin({}),
                 new WatchExternalFilesPlugin(["./client"])
             ],
-            externals: {
-                "react": "React",
-                "react-dom": "ReactDOM",
-                "react-dom/server": "ReactDOMServer",
-                "lodash": "_"
-            },
+            // externals: {
+            //     "react": "React",
+            //     "react-dom": "ReactDOM",
+            //     "react-dom/server": "ReactDOMServer",
+            //     "lodash": "_"
+            // },
         };
     }
 

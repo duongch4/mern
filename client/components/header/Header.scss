@@ -10,7 +10,7 @@
     font-weight: var(--font-weight-900, 900);
 
     &:hover {
-        color: var(--clr-main, #DCAF68);
+        color: var(--clr-main, #DCAF68) !important;
     }
     margin: 0;
     padding: 0 1em;
@@ -19,6 +19,9 @@
 .nav-link {
     font-family: var(--font-family-main, "Roboto");
     font-weight: var(--font-weight-500, 500);
+    &:hover {
+        color: var(--clr-main, #DCAF68) !important;
+    }
 }
 
 #navbar__support-content {
